@@ -21,24 +21,24 @@ import {
 } from "lucide-react"
 
 const theme = {
-  "--color-background": "#050a18",
-  "--color-foreground": "#e0e8ff",
-  "--color-card": "#0a1628",
-  "--color-card-foreground": "#e0e8ff",
-  "--color-popover": "#0a1628",
-  "--color-popover-foreground": "#e0e8ff",
-  "--color-primary": "#00f0ff",
-  "--color-primary-foreground": "#050a18",
-  "--color-secondary": "#111d35",
-  "--color-secondary-foreground": "#00f0ff",
-  "--color-muted": "#111d35",
-  "--color-muted-foreground": "#4a6080",
-  "--color-accent": "#ff00aa",
-  "--color-accent-foreground": "#050a18",
-  "--color-destructive": "#ff2244",
-  "--color-border": "#1a2d50",
-  "--color-input": "#0d1a30",
-  "--color-ring": "#00f0ff",
+  "--color-background": "#040C1B",
+  "--color-foreground": "#E2E8F4",
+  "--color-card": "#081830",
+  "--color-card-foreground": "#E2E8F4",
+  "--color-popover": "#081830",
+  "--color-popover-foreground": "#E2E8F4",
+  "--color-primary": "#3580FF",
+  "--color-primary-foreground": "#040C1B",
+  "--color-secondary": "#0D1F3D",
+  "--color-secondary-foreground": "#3580FF",
+  "--color-muted": "#0D1F3D",
+  "--color-muted-foreground": "#4A6896",
+  "--color-accent": "#FF2D4A",
+  "--color-accent-foreground": "#FFFFFF",
+  "--color-destructive": "#FF2244",
+  "--color-border": "#152A4D",
+  "--color-input": "#0B1828",
+  "--color-ring": "#3580FF",
   "--radius-sm": "0.15rem",
   "--radius-md": "0.2rem",
   "--radius-lg": "0.25rem",
@@ -60,34 +60,30 @@ export default function Design3() {
         className="pointer-events-none fixed inset-0 opacity-[0.03]"
         style={{
           backgroundImage:
-            "linear-gradient(0deg, transparent 24%, #00f0ff 25%, #00f0ff 26%, transparent 27%, transparent 74%, #00f0ff 75%, #00f0ff 76%, transparent 77%), linear-gradient(90deg, transparent 24%, #00f0ff 25%, #00f0ff 26%, transparent 27%, transparent 74%, #00f0ff 75%, #00f0ff 76%, transparent 77%)",
+            "linear-gradient(0deg, transparent 24%, #3580FF 25%, #3580FF 26%, transparent 27%, transparent 74%, #3580FF 75%, #3580FF 76%, transparent 77%), linear-gradient(90deg, transparent 24%, #3580FF 25%, #3580FF 26%, transparent 27%, transparent 74%, #3580FF 75%, #3580FF 76%, transparent 77%)",
           backgroundSize: "60px 60px",
         }}
       />
-
-      <div className="pointer-events-none fixed inset-0 overflow-hidden opacity-[0.04]">
-        <div className="animate-[scanline_8s_linear_infinite] h-[2px] w-full bg-[#00f0ff]" />
-      </div>
 
       <header className="relative border-b border-border px-6 py-4">
         <div
           className="absolute inset-x-0 bottom-0 h-px"
           style={{
             background:
-              "linear-gradient(90deg, transparent, #00f0ff, #ff00aa, #00f0ff, transparent)",
-            opacity: 0.5,
+              "linear-gradient(90deg, transparent, #3580FF, rgba(255,255,255,0.25), #FF2D4A, transparent)",
+            opacity: 0.6,
           }}
         />
         <div className="mx-auto flex max-w-7xl items-center justify-between">
           <div>
             <h1
-              style={{ fontFamily: "'Orbitron', sans-serif" }}
-              className="text-xl font-bold tracking-[0.3em] text-primary sm:text-2xl"
+              style={{ fontFamily: "'Syne', sans-serif" }}
+              className="text-xl font-extrabold tracking-[0.25em] text-primary sm:text-2xl"
             >
-              NEXUS<span className="text-accent">_</span>EVENTS
+              PAR<span className="text-accent">BIN</span>
             </h1>
             <p className="text-[10px] tracking-[0.2em] text-muted-foreground">
-              ▸ TECH MEETUP NETWORK v2.6
+              ▸ TECH MEETUPS · PANAMÁ
             </p>
           </div>
           <nav className="flex gap-2">
@@ -95,7 +91,7 @@ export default function Design3() {
               onClick={() => mgr.setView("events")}
               className={`border px-3 py-1.5 text-[11px] uppercase tracking-wider transition-all ${
                 mgr.view === "events"
-                  ? "border-primary bg-primary/10 text-primary shadow-[0_0_10px_rgba(0,240,255,0.2)]"
+                  ? "border-primary bg-primary/10 text-primary shadow-[0_0_10px_rgba(53,128,255,0.2)]"
                   : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
               }`}
             >
@@ -105,7 +101,7 @@ export default function Design3() {
               onClick={() => mgr.setView("admin")}
               className={`border px-3 py-1.5 text-[11px] uppercase tracking-wider transition-all ${
                 mgr.view === "admin"
-                  ? "border-accent bg-accent/10 text-accent shadow-[0_0_10px_rgba(255,0,170,0.2)]"
+                  ? "border-accent bg-accent/10 text-accent shadow-[0_0_10px_rgba(255,45,74,0.2)]"
                   : "border-border text-muted-foreground hover:border-accent/50 hover:text-foreground"
               }`}
             >
@@ -123,7 +119,7 @@ export default function Design3() {
                 ▸ ACTIVE_FEED // {mgr.events.length} NODES DETECTED
               </div>
               <h2
-                style={{ fontFamily: "'Orbitron', sans-serif" }}
+                style={{ fontFamily: "'Syne', sans-serif" }}
                 className="text-3xl font-bold tracking-wider sm:text-5xl"
               >
                 <span className="text-primary">EVENT</span>
@@ -139,14 +135,14 @@ export default function Design3() {
                   className="group relative overflow-hidden border border-border bg-card transition-all duration-300 hover:border-primary"
                   style={{
                     boxShadow:
-                      "0 0 0 1px rgba(0,240,255,0.05), inset 0 1px 0 rgba(0,240,255,0.05)",
+                      "0 0 0 1px rgba(53,128,255,0.05), inset 0 1px 0 rgba(53,128,255,0.05)",
                   }}
                 >
                   <div
                     className="pointer-events-none absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100"
                     style={{
                       boxShadow:
-                        "0 0 20px rgba(0,240,255,0.1), inset 0 0 20px rgba(0,240,255,0.03)",
+                        "0 0 20px rgba(53,128,255,0.1), inset 0 0 20px rgba(53,128,255,0.03)",
                     }}
                   />
 
@@ -157,7 +153,7 @@ export default function Design3() {
                       className="h-full w-full object-cover"
                       style={{ filter: "saturate(0.6) brightness(0.7) contrast(1.2)" }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#050a18] via-[#050a18]/50 to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-t from-[#040C1B] via-[#040C1B]/50 to-transparent" />
                     <div className="absolute right-3 top-3 border border-primary/30 bg-background/80 px-2 py-0.5 text-[10px] text-primary backdrop-blur-sm">
                       NODE_{String(i + 1).padStart(3, "0")}
                     </div>
@@ -176,7 +172,7 @@ export default function Design3() {
 
                   <div className="p-5">
                     <h3
-                      style={{ fontFamily: "'Orbitron', sans-serif" }}
+                      style={{ fontFamily: "'Syne', sans-serif" }}
                       className="mb-2 text-base font-semibold tracking-wide"
                     >
                       {event.title}
@@ -200,7 +196,7 @@ export default function Design3() {
                     <div className="flex gap-2">
                       <Button
                         size="sm"
-                        className="flex-1 text-[10px] uppercase tracking-wider shadow-[0_0_10px_rgba(0,240,255,0.15)]"
+                        className="flex-1 text-[10px] uppercase tracking-wider shadow-[0_0_10px_rgba(53,128,255,0.15)]"
                         asChild
                       >
                         <a
@@ -233,7 +229,7 @@ export default function Design3() {
                 ▸ ADMIN_CONSOLE // RESTRICTED ACCESS
               </div>
               <h2
-                style={{ fontFamily: "'Orbitron', sans-serif" }}
+                style={{ fontFamily: "'Syne', sans-serif" }}
                 className="text-3xl font-bold tracking-wider sm:text-5xl"
               >
                 <span className="text-accent">NEW</span>
@@ -247,7 +243,7 @@ export default function Design3() {
                 className="absolute -mt-8 ml-[-33px] h-px w-[calc(100%+66px)]"
                 style={{
                   background:
-                    "linear-gradient(90deg, transparent, #ff00aa, transparent)",
+                    "linear-gradient(90deg, transparent, #FF2D4A, transparent)",
                   opacity: 0.3,
                 }}
               />
@@ -368,7 +364,7 @@ export default function Design3() {
 
                 <Button
                   onClick={mgr.addEvent}
-                  className="w-full text-[11px] uppercase tracking-[0.3em] shadow-[0_0_15px_rgba(0,240,255,0.2)]"
+                  className="w-full text-[11px] uppercase tracking-[0.3em] shadow-[0_0_15px_rgba(53,128,255,0.2)]"
                   size="lg"
                   disabled={
                     !mgr.form.title || !mgr.form.date || !mgr.form.endDate
@@ -385,7 +381,7 @@ export default function Design3() {
       <footer className="border-t border-border px-6 py-4">
         <div className="mx-auto flex max-w-7xl items-center justify-between">
           <p className="text-[10px] tracking-[0.2em] text-muted-foreground">
-            DESIGN_03 // NEXUS
+            PARBIN // PANAMÁ
           </p>
           <div className="flex items-center gap-3">
             <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
