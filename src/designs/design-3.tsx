@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom"
 import { useEventManager } from "@/hooks/use-event-manager"
 import {
   getGoogleCalendarUrl,
@@ -14,7 +13,6 @@ import { Separator } from "@/components/ui/separator"
 import {
   Calendar,
   MapPin,
-  ArrowLeft,
   Plus,
   Download,
   ExternalLink,
@@ -81,13 +79,7 @@ export default function Design3() {
           }}
         />
         <div className="mx-auto flex max-w-7xl items-center justify-between">
-          <Link
-            to="/"
-            className="text-xs text-muted-foreground transition-colors hover:text-primary"
-          >
-            <ArrowLeft className="mr-1 inline h-3 w-3" /> EXIT
-          </Link>
-          <div className="text-center">
+          <div>
             <h1
               style={{ fontFamily: "'Orbitron', sans-serif" }}
               className="text-xl font-bold tracking-[0.3em] text-primary sm:text-2xl"
