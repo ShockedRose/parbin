@@ -8,3 +8,27 @@ export interface MeetupEvent {
   image: string
   tags: string[]
 }
+
+export interface EventPayload {
+  title: string
+  description: string
+  date: string
+  endDate: string
+  location: string
+  image: string
+  tags: string[]
+}
+
+export interface EventSuggestion extends MeetupEvent {
+  status: "pending" | "approved" | "rejected"
+  sourceEventId: string | null
+  createdAt: string
+  reviewedAt: string | null
+  reviewedBy: string | null
+}
+
+export interface AdminSession {
+  id: string
+  email: string
+  createdAt: string
+}
