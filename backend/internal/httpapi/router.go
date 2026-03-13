@@ -310,7 +310,7 @@ func setSessionCookie(c *gin.Context, cfg config.Config, token string, expiresAt
 		maxAge = 0
 	}
 
-	c.SetSameSite(http.SameSiteLaxMode)
+	c.SetSameSite(http.SameSiteNoneMode)
 	c.SetCookie(
 		cfg.SessionCookieName,
 		token,
@@ -323,7 +323,7 @@ func setSessionCookie(c *gin.Context, cfg config.Config, token string, expiresAt
 }
 
 func clearSessionCookie(c *gin.Context, cfg config.Config) {
-	c.SetSameSite(http.SameSiteLaxMode)
+	c.SetSameSite(http.SameSiteNoneMode)
 	c.SetCookie(cfg.SessionCookieName, "", -1, "/", "", cfg.SessionSecureCookies, true)
 }
 
