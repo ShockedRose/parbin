@@ -2,7 +2,7 @@
 
 Parbin is now split into:
 
-- a Vite + React frontend in the repo root
+- a Vite + React frontend in `frontend/`
 - a Go + Gin backend in `backend/`
 - a Postgres database for local development via `backend/docker-compose.yml`
 
@@ -49,7 +49,13 @@ pnpm dev:all
 
 ### 4. Configure the frontend
 
-Create `.env` from `.env.example` if you need to override the backend URL.
+Install frontend dependencies from the repo root:
+
+```bash
+pnpm prepare:frontend
+```
+
+Create `frontend/.env` from `frontend/.env.example` if you need to override the backend URL.
 
 Default frontend API target:
 
@@ -61,6 +67,12 @@ VITE_API_URL=http://localhost:8080
 
 ```bash
 pnpm dev:frontend
+```
+
+To prepare the root utility package, frontend, and backend from the repo root:
+
+```bash
+pnpm prepare:all
 ```
 
 ## Notes
