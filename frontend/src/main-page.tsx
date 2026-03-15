@@ -1,15 +1,15 @@
-import { useEventManager } from "@/hooks/use-event-manager"
-import {
-  downloadICS,
-  formatDateRange,
-  getGoogleCalendarUrl,
-} from "@/lib/calendar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
+import { useEventManager } from "@/hooks/use-event-manager"
+import {
+  downloadICS,
+  formatDateRange,
+  getGoogleCalendarUrl,
+} from "@/lib/calendar"
 import {
   Calendar,
   Check,
@@ -25,34 +25,6 @@ import {
   X,
   Zap,
 } from "lucide-react"
-
-const theme = {
-  "--color-background": "#040C1B",
-  "--color-foreground": "#E2E8F4",
-  "--color-card": "#081830",
-  "--color-card-foreground": "#E2E8F4",
-  "--color-popover": "#081830",
-  "--color-popover-foreground": "#E2E8F4",
-  "--color-primary": "#3580FF",
-  "--color-primary-foreground": "#040C1B",
-  "--color-secondary": "#0D1F3D",
-  "--color-secondary-foreground": "#3580FF",
-  "--color-muted": "#0D1F3D",
-  "--color-muted-foreground": "#4A6896",
-  "--color-accent": "#FF2D4A",
-  "--color-accent-foreground": "#FFFFFF",
-  "--color-destructive": "#FF2244",
-  "--color-border": "#152A4D",
-  "--color-input": "#0B1828",
-  "--color-ring": "#3580FF",
-  "--radius-sm": "0.15rem",
-  "--radius-md": "0.2rem",
-  "--radius-lg": "0.25rem",
-  "--radius-xl": "0.35rem",
-  "--radius-2xl": "0.45rem",
-  "--radius-3xl": "0.55rem",
-  "--radius-4xl": "0.65rem",
-} as React.CSSProperties
 
 type EventFormModel = {
   title: string
@@ -240,14 +212,11 @@ function StatusBanner({
   )
 }
 
-export default function Design3() {
+export default function MainPage() {
   const mgr = useEventManager()
 
   return (
-    <div
-      style={{ ...theme, fontFamily: "'Share Tech Mono', monospace" }}
-      className="relative min-h-screen bg-background text-foreground"
-    >
+    <div className="relative min-h-screen bg-background font-mono text-foreground">
       <div
         className="pointer-events-none fixed inset-0 opacity-[0.03]"
         style={{
@@ -268,10 +237,7 @@ export default function Design3() {
         />
         <div className="mx-auto flex max-w-7xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1
-              style={{ fontFamily: "'Syne', sans-serif" }}
-              className="text-xl font-extrabold tracking-[0.25em] text-primary sm:text-2xl"
-            >
+            <h1 className="font-display text-xl font-extrabold tracking-[0.25em] text-primary sm:text-2xl">
               PAR<span className="text-accent">BIN</span>
             </h1>
             <p className="text-[10px] tracking-[0.2em] text-muted-foreground">
@@ -332,10 +298,7 @@ export default function Design3() {
               <div className="mb-1 text-[10px] tracking-[0.3em] text-muted-foreground">
                 ▸ ACTIVE_FEED // {mgr.events.length} NODES DETECTED
               </div>
-              <h2
-                style={{ fontFamily: "'Syne', sans-serif" }}
-                className="text-3xl font-bold tracking-wider sm:text-5xl"
-              >
+              <h2 className="font-display text-3xl font-bold tracking-wider sm:text-5xl">
                 <span className="text-primary">EVENT</span>
                 <span className="text-accent">_</span>
                 <span className="text-foreground">STREAM</span>
@@ -378,7 +341,7 @@ export default function Design3() {
                           filter: "saturate(0.6) brightness(0.7) contrast(1.2)",
                         }}
                       />
-                      <div className="absolute inset-0 bg-linear-to-t from-[#040C1B] via-[#040C1B]/50 to-transparent" />
+                      <div className="absolute inset-0 bg-linear-to-t from-background via-background/50 to-transparent" />
                       <div className="absolute right-3 top-3 border border-primary/30 bg-background/80 px-2 py-0.5 text-[10px] text-primary backdrop-blur-sm">
                         NODE_{String(i + 1).padStart(3, "0")}
                       </div>
@@ -396,10 +359,7 @@ export default function Design3() {
                     </div>
 
                     <div className="p-5">
-                      <h3
-                        style={{ fontFamily: "'Syne', sans-serif" }}
-                        className="mb-2 text-base font-semibold tracking-wide"
-                      >
+                      <h3 className="font-display mb-2 text-base font-semibold tracking-wide">
                         {event.title}
                       </h3>
 
@@ -456,10 +416,7 @@ export default function Design3() {
               <div className="mb-1 text-[10px] tracking-[0.3em] text-muted-foreground">
                 ▸ PUBLIC_UPLINK // COMMUNITY INPUT
               </div>
-              <h2
-                style={{ fontFamily: "'Syne', sans-serif" }}
-                className="text-3xl font-bold tracking-wider sm:text-5xl"
-              >
+              <h2 className="font-display text-3xl font-bold tracking-wider sm:text-5xl">
                 <span className="text-primary">SUGGEST</span>
                 <span className="text-accent">_</span>
                 <span className="text-foreground">EVENT</span>
@@ -489,10 +446,7 @@ export default function Design3() {
               <div className="mb-1 text-[10px] tracking-[0.3em] text-muted-foreground">
                 ▸ ADMIN_CONSOLE // RESTRICTED ACCESS
               </div>
-              <h2
-                style={{ fontFamily: "'Syne', sans-serif" }}
-                className="text-3xl font-bold tracking-wider sm:text-5xl"
-              >
+              <h2 className="font-display text-3xl font-bold tracking-wider sm:text-5xl">
                 <span className="text-accent">CONTROL</span>
                 <span className="text-primary">_</span>
                 <span className="text-foreground">PANEL</span>
@@ -626,10 +580,7 @@ export default function Design3() {
                           >
                             <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
                               <div>
-                                <h3
-                                  style={{ fontFamily: "'Syne', sans-serif" }}
-                                  className="text-lg tracking-wide"
-                                >
+                                <h3 className="font-display text-lg tracking-wide">
                                   {suggestion.title}
                                 </h3>
                                 <div className="mt-1 space-y-1 text-xs text-muted-foreground">
