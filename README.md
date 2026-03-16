@@ -24,6 +24,31 @@ Parbin is now split into:
 pnpm db:up
 ```
 
+## Environment variables
+
+### Frontend
+
+| Variable | Required | Default | Description |
+| --- | --- | --- | --- |
+| `VITE_API_URL` | No | `http://localhost:8080` | Base URL used by the frontend when calling the backend API. |
+
+### Backend
+
+| Variable | Required | Default | Description |
+| --- | --- | --- | --- |
+| `APP_ENV` | No | `development` | Application environment name used by the backend. |
+| `PORT` | No | `8080` | Port used by the backend HTTP server. |
+| `APP_TIMEZONE` | No | `America/Panama` | Timezone used for event timestamps and app time handling. |
+| `DATABASE_URL` | Yes | None | Postgres connection string for the backend database. |
+| `FRONTEND_ORIGIN` | No | `http://localhost:5173` | Allowed frontend origin for browser requests and cookies. |
+| `SESSION_COOKIE_NAME` | No | `parbin_session` | Name of the session cookie used for admin auth. |
+| `SESSION_SECRET` | Yes | None | Secret used to sign and validate session data. |
+| `SESSION_TTL` | No | `7d` in code, `2h` in `backend/.env.example` | Session lifetime parsed as a Go duration string. |
+| `SESSION_SECURE_COOKIES` | No | `false` | Enables the `Secure` cookie flag when set to `true`. |
+| `SEED_ADMIN_AUTO_PROVISION` | No | `true` | Automatically creates the seed admin account on boot. |
+| `SEED_ADMIN_EMAIL` | No | `admin@parbin.local` | Email for the seed admin account. |
+| `SEED_ADMIN_PASSWORD` | No | `change-me-123` | Password for the seed admin account. |
+
 ### 2. Configure the backend
 
 Create `backend/.env` from `backend/.env.example` and adjust values if needed.
