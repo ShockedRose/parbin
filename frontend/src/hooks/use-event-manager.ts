@@ -14,8 +14,6 @@ import {
 } from "@/lib/api"
 import type { AdminSession, EventPayload, EventSuggestion, MeetupEvent } from "@/types/event"
 
-type View = "events" | "suggest" | "admin"
-
 interface EventFormState {
   title: string
   description: string
@@ -76,7 +74,6 @@ export function useEventManager() {
   const [events, setEvents] = useState<MeetupEvent[]>([])
   const [suggestions, setSuggestions] = useState<EventSuggestion[]>([])
   const [admin, setAdmin] = useState<AdminSession | null>(null)
-  const [view, setView] = useState<View>("events")
   const [eventForm, setEventForm] = useState<EventFormState>(emptyEventForm)
   const [suggestionForm, setSuggestionForm] =
     useState<EventFormState>(emptyEventForm)
@@ -202,11 +199,12 @@ export function useEventManager() {
       setEventForm(emptyEventForm)
       setNotice("Event deployed.")
       setError(null)
-      setView("events")
       await loadEvents()
       await loadSuggestions()
+      return true
     } catch (err) {
       setError(getErrorMessage(err))
+      return false
     } finally {
       setIsSubmitting(false)
     }
@@ -220,9 +218,10 @@ export function useEventManager() {
       setSuggestionForm(emptyEventForm)
       setNotice("Suggestion submitted for review.")
       setError(null)
-      setView("events")
+      return true
     } catch (err) {
       setError(getErrorMessage(err))
+      return false
     } finally {
       setIsSubmitting(false)
     }
@@ -295,8 +294,6 @@ export function useEventManager() {
 
   return {
     admin,
-    view,
-    setView,
     events,
     suggestions,
     eventForm,

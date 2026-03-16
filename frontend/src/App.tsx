@@ -1,7 +1,9 @@
-import MainPage from "@/main-page"
+import { RouterProvider } from "@tanstack/react-router"
+
+import { router } from "@/router"
 
 export function App() {
-  return <MainPage />
+  return <RouterProvider router={router} />
 }
 
 export default App
