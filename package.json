@@ -20,6 +20,7 @@
     "preview:frontend": "pnpm --dir frontend preview"
   },
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "concurrently": "^9.2.1",
+    "vite-plugin-mkcert": "^1.17.10"
   }
 }
