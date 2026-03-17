@@ -1,4 +1,6 @@
+## Agents
 
+- Whenever a change in the API, environment, startup behavior or if new services to the repository are added, update the README
 
 ## Plans
 
