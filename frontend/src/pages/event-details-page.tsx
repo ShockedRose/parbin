@@ -31,7 +31,9 @@ interface EditFormState {
   description: string
   date: string
   endDate: string
+  location: string
   image: string
+  tags: string
 }
 
 function eventToEditForm(event: MeetupEvent): EditFormState {
@@ -40,7 +42,9 @@ function eventToEditForm(event: MeetupEvent): EditFormState {
     description: event.description,
     date: event.date,
     endDate: event.endDate,
+    location: event.location,
     image: event.image,
+    tags: event.tags.join(", "),
   }
 }
 
@@ -54,7 +58,9 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
     description: "",
     date: "",
     endDate: "",
+    location: "",
     image: "",
+    tags: "",
   })
 
   const isAdmin = !!mgr.admin
@@ -81,9 +87,12 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
       description: editForm.description.trim(),
       date: editForm.date,
       endDate: editForm.endDate,
-      location: event.location,
+      location: editForm.location.trim(),
       image: editForm.image.trim(),
-      tags: event.tags,
+      tags: editForm.tags
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean),
     })
 
     if (success) {
@@ -228,6 +237,30 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
                   className="border-border bg-background"
                 />
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-[11px] tracking-wider text-primary uppercase">
+                event.location
+              </Label>
+              <Input
+                value={editForm.location}
+                onChange={(e) => updateField("location", e.target.value)}
+                placeholder=">> Venue, City, State"
+                className="border-border bg-background font-mono"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-[11px] tracking-wider text-primary uppercase">
+                event.tags[]
+              </Label>
+              <Input
+                value={editForm.tags}
+                onChange={(e) => updateField("tags", e.target.value)}
+                placeholder=">> AI, Workshop, Community"
+                className="border-border bg-background font-mono"
+              />
             </div>
 
             <div className="space-y-2">
