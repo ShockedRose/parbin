@@ -45,14 +45,14 @@ export function AdminPage() {
 
       {!mgr.admin ? (
         <div className="mx-auto max-w-xl border border-border bg-card p-8">
-          <div className="mb-6 flex items-center gap-2 text-[11px] uppercase tracking-[0.25em] text-accent">
+          <div className="mb-6 flex items-center gap-2 text-[11px] tracking-[0.25em] text-accent uppercase">
             <Shield className="h-4 w-4" />
             AUTH_REQUIRED
           </div>
 
           <div className="space-y-5">
             <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-wider text-primary">
+              <Label className="text-[11px] tracking-wider text-primary uppercase">
                 admin.email
               </Label>
               <Input
@@ -65,13 +65,15 @@ export function AdminPage() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-wider text-primary">
+              <Label className="text-[11px] tracking-wider text-primary uppercase">
                 admin.password
               </Label>
               <Input
                 type="password"
                 value={mgr.loginForm.password}
-                onChange={(e) => mgr.updateLoginField("password", e.target.value)}
+                onChange={(e) =>
+                  mgr.updateLoginField("password", e.target.value)
+                }
                 placeholder=">> Enter password"
                 className="border-border bg-background font-mono"
               />
@@ -81,7 +83,7 @@ export function AdminPage() {
               onClick={() => {
                 void mgr.login()
               }}
-              className="w-full text-[11px] uppercase tracking-[0.3em]"
+              className="w-full text-[11px] tracking-[0.3em] uppercase"
               size="lg"
               disabled={
                 mgr.isAuthenticating ||
@@ -113,7 +115,7 @@ export function AdminPage() {
                   void mgr.logout()
                 }}
                 disabled={mgr.isAuthenticating}
-                className="text-[10px] uppercase tracking-[0.2em]"
+                className="text-[10px] tracking-[0.2em] uppercase"
               >
                 <LogOut className="mr-2 h-3 w-3" />
                 {mgr.isAuthenticating ? "CLOSING..." : "LOGOUT"}
@@ -239,7 +241,7 @@ export function AdminPage() {
                             void mgr.approveSuggestion(suggestion.id)
                           }}
                           disabled={!isPending || isBusy}
-                          className="text-[10px] uppercase tracking-[0.2em]"
+                          className="text-[10px] tracking-[0.2em] uppercase"
                         >
                           <Check className="mr-1 h-3 w-3" />
                           {isBusy ? "PROCESSING..." : "APPROVE"}
@@ -251,7 +253,7 @@ export function AdminPage() {
                             void mgr.rejectSuggestion(suggestion.id)
                           }}
                           disabled={!isPending || isBusy}
-                          className="text-[10px] uppercase tracking-[0.2em]"
+                          className="text-[10px] tracking-[0.2em] uppercase"
                         >
                           <X className="mr-1 h-3 w-3" />
                           REJECT

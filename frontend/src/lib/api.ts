@@ -31,8 +31,12 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     return undefined as T
   }
 
-  const isJSON = response.headers.get("content-type")?.includes("application/json")
-  const payload = isJSON ? ((await response.json()) as T | { error?: string }) : null
+  const isJSON = response.headers
+    .get("content-type")
+    ?.includes("application/json")
+  const payload = isJSON
+    ? ((await response.json()) as T | { error?: string })
+    : null
 
   if (!response.ok) {
     const message =

@@ -1,7 +1,5 @@
 type ViewTransitionDocument = Document & {
-  startViewTransition?: (
-    updateCallback: () => Promise<void> | void
-  ) => {
+  startViewTransition?: (updateCallback: () => Promise<void> | void) => {
     finished: Promise<void>
   }
 }
@@ -16,9 +14,9 @@ export function runViewTransition(
   const transitionDocument = document as ViewTransitionDocument
 
   if (typeof transitionDocument.startViewTransition === "function") {
-    void transitionDocument.startViewTransition(updateCallback).finished.catch(
-      () => undefined
-    )
+    void transitionDocument
+      .startViewTransition(updateCallback)
+      .finished.catch(() => undefined)
     return
   }
 

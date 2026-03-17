@@ -10,13 +10,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
-import {
-  PanelLeft,
-  Send,
-  Terminal,
-  type LucideIcon,
-  Zap,
-} from "lucide-react"
+import { PanelLeft, Send, Terminal, type LucideIcon, Zap } from "lucide-react"
 
 type NavigationItem = {
   to: "/" | "/suggest" | "/admin"
@@ -57,7 +51,9 @@ function useCurrentPathname() {
 }
 
 function getNavigationItem(pathname: string) {
-  return navigationItems.find((item) => item.to === pathname) ?? navigationItems[0]
+  return (
+    navigationItems.find((item) => item.to === pathname) ?? navigationItems[0]
+  )
 }
 
 function NavigationLink({
@@ -108,10 +104,12 @@ function NavigationLink({
         )}
       />
       <div className="min-w-0">
-        <div className="text-[11px] uppercase tracking-[0.24em]">
+        <div className="text-[11px] tracking-[0.24em] uppercase">
           {item.label}
         </div>
-        <div className={cn("mt-1 text-[10px] tracking-[0.16em]", detailClasses)}>
+        <div
+          className={cn("mt-1 text-[10px] tracking-[0.16em]", detailClasses)}
+        >
           {item.description}
         </div>
       </div>
@@ -157,13 +155,13 @@ export function AppHeader({ adminEmail }: { adminEmail?: string | null }) {
             <div className="flex w-full items-center gap-3 sm:hidden">
               <Button
                 variant="outline"
-                className="border-primary/40 bg-card/80 px-3 text-[10px] uppercase tracking-[0.24em]"
+                className="border-primary/40 bg-card/80 px-3 text-[10px] tracking-[0.24em] uppercase"
                 onClick={() => setIsMobileMenuOpen(true)}
               >
                 <PanelLeft className="h-3.5 w-3.5" />
                 Menu
               </Button>
-              <div className="border border-border bg-card/70 px-3 py-2 text-[10px] uppercase tracking-[0.24em] text-foreground">
+              <div className="border border-border bg-card/70 px-3 py-2 text-[10px] tracking-[0.24em] text-foreground uppercase">
                 {activeItem.label}
               </div>
             </div>
@@ -180,10 +178,10 @@ export function AppHeader({ adminEmail }: { adminEmail?: string | null }) {
       <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
         <SheetContent side="left" className="border-border bg-card/95 p-0">
           <SheetHeader className="border-b border-border px-5 py-4">
-            <SheetTitle className="font-display text-xl uppercase tracking-[0.22em] text-primary">
+            <SheetTitle className="font-display text-xl tracking-[0.22em] text-primary uppercase">
               Menu
             </SheetTitle>
-            <SheetDescription className="text-[10px] uppercase tracking-[0.18em]">
+            <SheetDescription className="text-[10px] tracking-[0.18em] uppercase">
               Switch between feed, suggestion form, and admin.
             </SheetDescription>
           </SheetHeader>

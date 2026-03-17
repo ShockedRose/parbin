@@ -57,7 +57,7 @@ export function EventFormPanel({
 
       <div className="space-y-5">
         <div className="space-y-2">
-          <Label className="text-[11px] uppercase tracking-wider text-primary">
+          <Label className="text-[11px] tracking-wider text-primary uppercase">
             event.title *
           </Label>
           <Input
@@ -69,7 +69,7 @@ export function EventFormPanel({
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[11px] uppercase tracking-wider text-primary">
+          <Label className="text-[11px] tracking-wider text-primary uppercase">
             event.description
           </Label>
           <Textarea
@@ -83,7 +83,7 @@ export function EventFormPanel({
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label className="text-[11px] uppercase tracking-wider text-primary">
+            <Label className="text-[11px] tracking-wider text-primary uppercase">
               date.start *
             </Label>
             <Input
@@ -94,7 +94,7 @@ export function EventFormPanel({
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-[11px] uppercase tracking-wider text-primary">
+            <Label className="text-[11px] tracking-wider text-primary uppercase">
               date.end *
             </Label>
             <Input
@@ -107,7 +107,7 @@ export function EventFormPanel({
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[11px] uppercase tracking-wider text-primary">
+          <Label className="text-[11px] tracking-wider text-primary uppercase">
             event.location
           </Label>
           <Input
@@ -119,7 +119,7 @@ export function EventFormPanel({
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[11px] uppercase tracking-wider text-primary">
+          <Label className="text-[11px] tracking-wider text-primary uppercase">
             event.tags[]
           </Label>
           <Input
@@ -131,7 +131,7 @@ export function EventFormPanel({
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[11px] uppercase tracking-wider text-primary">
+          <Label className="text-[11px] tracking-wider text-primary uppercase">
             event.image_url
           </Label>
           <Input
@@ -150,7 +150,7 @@ export function EventFormPanel({
                   filter: "saturate(0.6) brightness(0.8) contrast(1.1)",
                 }}
               />
-              <div className="absolute right-2 top-2 bg-background/80 px-2 py-0.5 text-[10px] text-primary">
+              <div className="absolute top-2 right-2 bg-background/80 px-2 py-0.5 text-[10px] text-primary">
                 PREVIEW
               </div>
             </div>
@@ -161,7 +161,7 @@ export function EventFormPanel({
 
         <Button
           onClick={onSubmit}
-          className="w-full text-[11px] uppercase tracking-[0.3em] shadow-[0_0_15px_rgba(53,128,255,0.2)]"
+          className="w-full text-[11px] tracking-[0.3em] uppercase shadow-[0_0_15px_rgba(53,128,255,0.2)]"
           size="lg"
           disabled={disabled || !form.title || !form.date || !form.endDate}
         >

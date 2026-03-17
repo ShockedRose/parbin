@@ -117,7 +117,10 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
           This event could not be found in the current feed. It may have been
           removed or the link is no longer valid.
         </p>
-        <Button asChild className="mt-6 text-[11px] uppercase tracking-[0.24em]">
+        <Button
+          asChild
+          className="mt-6 text-[11px] tracking-[0.24em] uppercase"
+        >
           <Link to="/">
             <ArrowLeft className="h-4 w-4" />
             Back To Event Stream
@@ -131,7 +134,11 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
     <article className="mx-auto max-w-4xl overflow-hidden border border-border bg-card">
       <div className="relative h-72 overflow-hidden border-b border-border sm:h-96">
         <img
-          src={isEditing && editForm.image.trim() ? editForm.image.trim() : event.image}
+          src={
+            isEditing && editForm.image.trim()
+              ? editForm.image.trim()
+              : event.image
+          }
           alt={event.title}
           className="h-full w-full object-cover"
           style={{
@@ -140,13 +147,13 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
           }}
         />
         <div className="absolute inset-0 bg-linear-to-t from-background via-background/20 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
+        <div className="absolute right-0 bottom-0 left-0 p-6 sm:p-8">
           <div className="mb-3 flex flex-wrap gap-2">
             {event.tags.map((tag) => (
               <Badge
                 key={tag}
                 variant="outline"
-                className="border-primary/40 bg-background/70 text-[10px] uppercase tracking-[0.18em] text-primary backdrop-blur-sm"
+                className="border-primary/40 bg-background/70 text-[10px] tracking-[0.18em] text-primary uppercase backdrop-blur-sm"
               >
                 {tag}
               </Badge>
@@ -156,11 +163,11 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
             <Input
               value={editForm.title}
               onChange={(e) => updateField("title", e.target.value)}
-              className="font-display max-w-3xl border-primary/30 bg-background/80 text-2xl font-bold tracking-wide text-foreground backdrop-blur-sm sm:text-4xl"
+              className="max-w-3xl border-primary/30 bg-background/80 font-display text-2xl font-bold tracking-wide text-foreground backdrop-blur-sm sm:text-4xl"
               placeholder=">> Event title"
             />
           ) : (
-            <h1 className="font-display max-w-3xl text-3xl font-bold tracking-wide text-foreground sm:text-5xl">
+            <h1 className="max-w-3xl font-display text-3xl font-bold tracking-wide text-foreground sm:text-5xl">
               {event.title}
             </h1>
           )}
@@ -172,7 +179,7 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
           <Button
             variant="outline"
             onClick={startEditing}
-            className="text-[11px] uppercase tracking-[0.22em]"
+            className="text-[11px] tracking-[0.22em] uppercase"
           >
             <Pencil className="h-3.5 w-3.5" />
             Edit Event
@@ -186,7 +193,7 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-wider text-primary">
+              <Label className="text-[11px] tracking-wider text-primary uppercase">
                 event.description
               </Label>
               <Textarea
@@ -200,7 +207,7 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label className="text-[11px] uppercase tracking-wider text-primary">
+                <Label className="text-[11px] tracking-wider text-primary uppercase">
                   date.start *
                 </Label>
                 <Input
@@ -211,7 +218,7 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-[11px] uppercase tracking-wider text-primary">
+                <Label className="text-[11px] tracking-wider text-primary uppercase">
                   date.end *
                 </Label>
                 <Input
@@ -224,7 +231,7 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-wider text-primary">
+              <Label className="text-[11px] tracking-wider text-primary uppercase">
                 event.image_url
               </Label>
               <Input
@@ -241,7 +248,7 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
               <Button
                 onClick={saveChanges}
                 disabled={!canSave || mgr.isSubmitting}
-                className="flex-1 text-[11px] uppercase tracking-[0.3em] shadow-[0_0_15px_rgba(53,128,255,0.2)]"
+                className="flex-1 text-[11px] tracking-[0.3em] uppercase shadow-[0_0_15px_rgba(53,128,255,0.2)]"
                 size="lg"
               >
                 <Save className="h-4 w-4" />
@@ -251,7 +258,7 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
                 onClick={cancelEditing}
                 variant="outline"
                 disabled={mgr.isSubmitting}
-                className="text-[11px] uppercase tracking-[0.22em]"
+                className="text-[11px] tracking-[0.22em] uppercase"
                 size="lg"
               >
                 <X className="h-4 w-4" />
@@ -287,10 +294,10 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
                 >
                   <ExternalLink className="h-4 w-4" />
                   <span className="flex flex-col items-start">
-                    <span className="text-[11px] uppercase tracking-[0.22em]">
+                    <span className="text-[11px] tracking-[0.22em] uppercase">
                       Add To Google Calendar
                     </span>
-                    <span className="text-[10px] uppercase tracking-[0.14em] text-primary-foreground/75">
+                    <span className="text-[10px] tracking-[0.14em] text-primary-foreground/75 uppercase">
                       Open the event with date, time, and location prefilled
                     </span>
                   </span>
@@ -305,11 +312,12 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
               >
                 <Download className="h-4 w-4" />
                 <span className="flex flex-col items-start">
-                  <span className="text-[11px] uppercase tracking-[0.22em]">
+                  <span className="text-[11px] tracking-[0.22em] uppercase">
                     Download ICS File
                   </span>
-                  <span className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
-                    Save a calendar file for Apple Calendar, Outlook, or any ICS app
+                  <span className="text-[10px] tracking-[0.14em] text-muted-foreground uppercase">
+                    Save a calendar file for Apple Calendar, Outlook, or any ICS
+                    app
                   </span>
                 </span>
               </Button>
@@ -319,12 +327,16 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
               <div className="text-[10px] tracking-[0.3em] text-muted-foreground">
                 ▸ EVENT_BRIEFING // DESCRIPTION
               </div>
-              <p className="whitespace-pre-wrap text-sm leading-7 text-foreground/88 sm:text-base">
+              <p className="text-sm leading-7 whitespace-pre-wrap text-foreground/88 sm:text-base">
                 {event.description}
               </p>
             </section>
 
-            <Button asChild variant="ghost" className="px-0 text-[11px] uppercase tracking-[0.24em]">
+            <Button
+              asChild
+              variant="ghost"
+              className="px-0 text-[11px] tracking-[0.24em] uppercase"
+            >
               <Link to="/">
                 <ArrowLeft className="h-4 w-4" />
                 Back To Event Stream

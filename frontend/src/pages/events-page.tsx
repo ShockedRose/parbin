@@ -12,12 +12,7 @@ import {
   getEventImageTransitionName,
   runViewTransition,
 } from "@/lib/view-transitions"
-import {
-  Calendar,
-  Download,
-  ExternalLink,
-  MapPin,
-} from "lucide-react"
+import { Calendar, Download, ExternalLink, MapPin } from "lucide-react"
 import type { KeyboardEvent, MouseEvent } from "react"
 
 export function EventsPage() {
@@ -119,7 +114,7 @@ export function EventsPage() {
               </div>
 
               <div className="p-5">
-                <h3 className="font-display mb-2 text-base font-semibold tracking-wide">
+                <h3 className="mb-2 font-display text-base font-semibold tracking-wide">
                   {event.title}
                 </h3>
 
@@ -141,7 +136,7 @@ export function EventsPage() {
                 <div className="flex gap-2">
                   <Button
                     size="sm"
-                    className="flex-1 text-[10px] uppercase tracking-wider shadow-[0_0_10px_rgba(53,128,255,0.15)]"
+                    className="flex-1 text-[10px] tracking-wider uppercase shadow-[0_0_10px_rgba(53,128,255,0.15)]"
                     asChild
                   >
                     <a
@@ -157,7 +152,7 @@ export function EventsPage() {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="text-[10px] uppercase tracking-wider"
+                    className="text-[10px] tracking-wider uppercase"
                     onClick={(clickedEvent) => {
                       stopCardNavigation(clickedEvent)
                       downloadICS(event)

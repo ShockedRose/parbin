@@ -13,7 +13,12 @@ import {
   logout as logoutRequest,
   rejectSuggestion as rejectSuggestionRequest,
 } from "@/lib/api"
-import type { AdminSession, EventPayload, EventSuggestion, MeetupEvent } from "@/types/event"
+import type {
+  AdminSession,
+  EventPayload,
+  EventSuggestion,
+  MeetupEvent,
+} from "@/types/event"
 
 interface EventFormState {
   title: string
