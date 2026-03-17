@@ -66,6 +66,17 @@ export async function createEvent(payload: EventPayload): Promise<MeetupEvent> {
   return response.event
 }
 
+export async function updateEvent(
+  id: string,
+  payload: EventPayload
+): Promise<MeetupEvent> {
+  const response = await request<{ event: MeetupEvent }>(`/api/events/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  })
+  return response.event
+}
+
 export async function createSuggestion(
   payload: EventPayload
 ): Promise<EventSuggestion> {

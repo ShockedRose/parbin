@@ -10,6 +10,7 @@ Parbin is now split into:
 
 - `GET /api/events` to list all published events
 - `POST /api/events` for admin-only event creation
+- `PUT /api/events/:id` for admin-only event editing
 - `POST /api/event-suggestions` for public event suggestions
 - `GET /api/admin/event-suggestions` to review suggestions
 - `POST /api/admin/event-suggestions/:id/approve` to convert a suggestion into an event

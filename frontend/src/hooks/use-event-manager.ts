@@ -4,6 +4,7 @@ import {
   approveSuggestion as approveSuggestionRequest,
   createEvent as createEventRequest,
   createSuggestion as createSuggestionRequest,
+  updateEvent as updateEventRequest,
   getCurrentAdmin,
   isApiError,
   listEvents,
@@ -292,6 +293,23 @@ export function useEventManager() {
     }
   }
 
+  const editEvent = async (id: string, payload: EventPayload) => {
+    setIsSubmitting(true)
+
+    try {
+      await updateEventRequest(id, payload)
+      setNotice("Event updated.")
+      setError(null)
+      await loadEvents()
+      return true
+    } catch (err) {
+      setError(getErrorMessage(err))
+      return false
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   return {
     admin,
     events,
@@ -315,6 +333,7 @@ export function useEventManager() {
     updateSuggestionField,
     updateLoginField,
     addEvent,
+    editEvent,
     submitSuggestion,
     login,
     logout,

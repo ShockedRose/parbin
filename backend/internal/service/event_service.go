@@ -38,6 +38,20 @@ func (s *EventService) ListEvents(ctx context.Context) ([]store.Event, error) {
 	return s.events.List(ctx)
 }
 
+func (s *EventService) UpdateEvent(ctx context.Context, id string, payload EventPayload) (store.Event, error) {
+	id = strings.TrimSpace(id)
+	if id == "" {
+		return store.Event{}, fmt.Errorf("%w: event id is required", ErrValidation)
+	}
+
+	input, err := buildEventInput(payload, s.location)
+	if err != nil {
+		return store.Event{}, err
+	}
+
+	return s.events.Update(ctx, id, input)
+}
+
 func (s *EventService) CreateEvent(ctx context.Context, payload EventPayload) (store.Event, error) {
 	input, err := buildEventInput(payload, s.location)
 	if err != nil {

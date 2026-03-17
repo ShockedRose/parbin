@@ -66,6 +66,47 @@ func (s *EventStore) List(ctx context.Context) ([]Event, error) {
 	return events, nil
 }
 
+func (s *EventStore) Update(ctx context.Context, id string, input EventInput) (Event, error) {
+	const query = `
+		UPDATE events
+		SET title = $2, description = $3, starts_at = $4, ends_at = $5, location = $6, image_url = $7, tags = $8, updated_at = NOW()
+		WHERE id = $1
+		RETURNING id, title, description, starts_at, ends_at, location, image_url, tags, created_at, updated_at
+	`
+
+	var event Event
+	if err := s.pool.QueryRow(
+		ctx,
+		query,
+		id,
+		input.Title,
+		input.Description,
+		input.StartsAt,
+		input.EndsAt,
+		input.Location,
+		input.ImageURL,
+		input.Tags,
+	).Scan(
+		&event.ID,
+		&event.Title,
+		&event.Description,
+		&event.StartsAt,
+		&event.EndsAt,
+		&event.Location,
+		&event.ImageURL,
+		&event.Tags,
+		&event.CreatedAt,
+		&event.UpdatedAt,
+	); err != nil {
+		if err.Error() == "no rows in result set" {
+			return Event{}, ErrNotFound
+		}
+		return Event{}, fmt.Errorf("update event: %w", err)
+	}
+
+	return event, nil
+}
+
 func (s *EventStore) Create(ctx context.Context, input EventInput) (Event, error) {
 	const query = `
 		INSERT INTO events (title, description, starts_at, ends_at, location, image_url, tags)

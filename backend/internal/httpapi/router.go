@@ -74,7 +74,7 @@ func NewRouter(cfg config.Config, authService *service.AuthService, eventService
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{cfg.FrontendOrigin},
-		AllowMethods:     []string{http.MethodGet, http.MethodPost, http.MethodOptions},
+		AllowMethods:     []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodOptions},
 		AllowHeaders:     []string{"Content-Type"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
@@ -94,6 +94,7 @@ func NewRouter(cfg config.Config, authService *service.AuthService, eventService
 	admin := api.Group("/")
 	admin.Use(server.requireAdmin())
 	admin.POST("/events", server.createEvent)
+	admin.PUT("/events/:id", server.updateEvent)
 	admin.GET("/admin/event-suggestions", server.listSuggestions)
 	admin.POST("/admin/event-suggestions/:id/approve", server.approveSuggestion)
 	admin.POST("/admin/event-suggestions/:id/reject", server.rejectSuggestion)
@@ -130,6 +131,22 @@ func (s *Server) createEvent(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"event": s.toEventResponse(event)})
+}
+
+func (s *Server) updateEvent(c *gin.Context) {
+	var req eventRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		respondError(c, http.StatusBadRequest, "invalid request body")
+		return
+	}
+
+	event, err := s.eventService.UpdateEvent(c.Request.Context(), c.Param("id"), service.EventPayload(req))
+	if err != nil {
+		handleServiceError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"event": s.toEventResponse(event)})
 }
 
 func (s *Server) createSuggestion(c *gin.Context) {

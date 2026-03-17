@@ -1,3 +1,5 @@
+import { useNavigate } from "@tanstack/react-router"
+
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useEventManagerContext } from "@/event-manager-context"
@@ -7,14 +9,45 @@ import {
   getGoogleCalendarUrl,
 } from "@/lib/calendar"
 import {
+  getEventImageTransitionName,
+  runViewTransition,
+} from "@/lib/view-transitions"
+import {
   Calendar,
   Download,
   ExternalLink,
   MapPin,
 } from "lucide-react"
+import type { KeyboardEvent, MouseEvent } from "react"
 
 export function EventsPage() {
   const mgr = useEventManagerContext()
+  const navigate = useNavigate()
+
+  const openEventDetails = (eventId: string) => {
+    runViewTransition(() =>
+      navigate({
+        to: "/events/$eventId",
+        params: { eventId },
+      })
+    )
+  }
+
+  const stopCardNavigation = (event: MouseEvent<HTMLElement>) => {
+    event.stopPropagation()
+  }
+
+  const handleCardKeyDown = (
+    event: KeyboardEvent<HTMLElement>,
+    eventId: string
+  ) => {
+    if (event.key !== "Enter" && event.key !== " ") {
+      return
+    }
+
+    event.preventDefault()
+    openEventDetails(eventId)
+  }
 
   return (
     <div>
@@ -39,10 +72,16 @@ export function EventsPage() {
         </div>
       ) : (
         <div className="grid gap-5 lg:grid-cols-2">
-          {mgr.events.map((event, i) => (
-            <div
+          {mgr.events.map((event) => (
+            <article
               key={event.id}
               className="group relative overflow-hidden border border-border bg-card transition-all duration-300 hover:border-primary"
+              role="button"
+              tabIndex={0}
+              onClick={() => openEventDetails(event.id)}
+              onKeyDown={(clickedEvent) =>
+                handleCardKeyDown(clickedEvent, event.id)
+              }
               style={{
                 boxShadow:
                   "0 0 0 1px rgba(53,128,255,0.05), inset 0 1px 0 rgba(53,128,255,0.05)",
@@ -62,13 +101,10 @@ export function EventsPage() {
                   alt={event.title}
                   className="h-full w-full object-cover"
                   style={{
-                    filter: "saturate(0.6) brightness(0.7) contrast(1.2)",
+                    filter: "saturate(1) brightness(0.7) contrast(1.2)",
+                    viewTransitionName: getEventImageTransitionName(event.id),
                   }}
                 />
-                <div className="absolute inset-0 bg-linear-to-t from-background via-background/50 to-transparent" />
-                <div className="absolute right-3 top-3 border border-primary/30 bg-background/80 px-2 py-0.5 text-[10px] text-primary backdrop-blur-sm">
-                  NODE_{String(i + 1).padStart(3, "0")}
-                </div>
                 <div className="absolute bottom-3 left-3 flex flex-wrap gap-1.5">
                   {event.tags.map((tag) => (
                     <Badge
@@ -112,22 +148,27 @@ export function EventsPage() {
                       href={getGoogleCalendarUrl(event)}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={stopCardNavigation}
                     >
                       <ExternalLink className="mr-1 h-3 w-3" />
-                      SYNC
+                      ADD TO CALENDAR
                     </a>
                   </Button>
                   <Button
                     size="sm"
                     variant="outline"
                     className="text-[10px] uppercase tracking-wider"
-                    onClick={() => downloadICS(event)}
+                    onClick={(clickedEvent) => {
+                      stopCardNavigation(clickedEvent)
+                      downloadICS(event)
+                    }}
                   >
                     <Download className="h-3 w-3" />
+                    <span className="sr-only">Download ICS</span>
                   </Button>
                 </div>
               </div>
-            </div>
+            </article>
           ))}
         </div>
       )}
