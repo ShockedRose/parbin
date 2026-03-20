@@ -33,26 +33,25 @@ export function AdminPage() {
   return (
     <div className="space-y-8">
       <div className="mb-4">
-        <div className="mb-1 text-[10px] tracking-[0.3em] text-muted-foreground">
+        <div className="mb-1 text-[10px] text-muted-foreground">
           ▸ ADMIN_CONSOLE // RESTRICTED ACCESS
         </div>
-        <h2 className="font-display text-3xl font-bold tracking-wider sm:text-5xl">
-          <span className="text-accent">CONTROL</span>
-          <span className="text-primary">_</span>
-          <span className="text-foreground">PANEL</span>
+        <h2 className="font-display text-3xl font-bold tracking-tight sm:text-5xl">
+          <span className="text-foreground">CONTROL_</span>
+          <span className="text-primary">PANEL</span>
         </h2>
       </div>
 
       {!mgr.admin ? (
-        <div className="mx-auto max-w-xl border border-border bg-card p-8">
-          <div className="mb-6 flex items-center gap-2 text-[11px] tracking-[0.25em] text-accent uppercase">
+        <div className="mx-auto max-w-xl rounded-xl border border-border bg-card p-8">
+          <div className="mb-6 flex items-center gap-2 text-[11px] text-accent uppercase">
             <Shield className="h-4 w-4" />
             AUTH_REQUIRED
           </div>
 
           <div className="space-y-5">
             <div className="space-y-2">
-              <Label className="text-[11px] tracking-wider text-primary uppercase">
+              <Label className="text-[11px]  text-primary uppercase">
                 admin.email
               </Label>
               <Input
@@ -60,12 +59,12 @@ export function AdminPage() {
                 value={mgr.loginForm.email}
                 onChange={(e) => mgr.updateLoginField("email", e.target.value)}
                 placeholder=">> admin@parbin.local"
-                className="border-border bg-background font-mono"
+                className="border-border bg-background"
               />
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[11px] tracking-wider text-primary uppercase">
+              <Label className="text-[11px]  text-primary uppercase">
                 admin.password
               </Label>
               <Input
@@ -75,7 +74,7 @@ export function AdminPage() {
                   mgr.updateLoginField("password", e.target.value)
                 }
                 placeholder=">> Enter password"
-                className="border-border bg-background font-mono"
+                className="border-border bg-background"
               />
             </div>
 
@@ -83,7 +82,7 @@ export function AdminPage() {
               onClick={() => {
                 void mgr.login()
               }}
-              className="w-full text-[11px] tracking-[0.3em] uppercase"
+              className="w-full text-[11px] uppercase"
               size="lg"
               disabled={
                 mgr.isAuthenticating ||
@@ -99,9 +98,9 @@ export function AdminPage() {
       ) : (
         <div className="grid gap-8 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
           <div className="space-y-6">
-            <div className="flex flex-col gap-3 border border-border bg-card px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-3 rounded-xl border border-border bg-card px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <div className="text-[10px] tracking-[0.25em] text-primary">
+                <div className="text-[10px] text-primary">
                   ADMIN_SESSION_ACTIVE
                 </div>
                 <div className="mt-1 text-sm text-foreground">
@@ -115,7 +114,7 @@ export function AdminPage() {
                   void mgr.logout()
                 }}
                 disabled={mgr.isAuthenticating}
-                className="text-[10px] tracking-[0.2em] uppercase"
+                className="text-[10px] uppercase"
               >
                 <LogOut className="mr-2 h-3 w-3" />
                 {mgr.isAuthenticating ? "CLOSING..." : "LOGOUT"}
@@ -124,7 +123,7 @@ export function AdminPage() {
 
             <EventFormPanel
               title="EVENT_CREATION_PIPELINE"
-              accent="#FF2D4A"
+              accent="var(--accent)"
               form={mgr.eventForm}
               preview={mgr.eventImagePreview}
               submitLabel="DEPLOY_EVENT"
@@ -138,27 +137,27 @@ export function AdminPage() {
             />
           </div>
 
-          <div className="border border-border bg-card p-6">
+          <div className="rounded-xl border border-border bg-card p-6">
             <div className="mb-6 flex items-center justify-between gap-4">
               <div>
-                <div className="text-[10px] tracking-[0.25em] text-accent">
+                <div className="text-[10px] text-accent">
                   REVIEW_QUEUE
                 </div>
                 <div className="mt-1 text-xs text-muted-foreground">
                   Pending suggestions can be converted directly into events.
                 </div>
               </div>
-              <div className="text-[10px] tracking-[0.2em] text-primary">
+              <div className="text-[10px] text-primary">
                 {mgr.suggestions.length} ITEMS
               </div>
             </div>
 
             {mgr.isSuggestionsLoading ? (
-              <div className="border border-border px-4 py-8 text-center text-[11px] tracking-[0.25em] text-primary">
+              <div className="border border-border px-4 py-8 text-center text-[11px] text-primary">
                 LOADING_QUEUE...
               </div>
             ) : mgr.suggestions.length === 0 ? (
-              <div className="border border-border px-4 py-8 text-center text-[11px] tracking-[0.25em] text-muted-foreground">
+              <div className="border border-border px-4 py-8 text-center text-[11px] text-muted-foreground">
                 NO_SUGGESTIONS_AVAILABLE
               </div>
             ) : (
@@ -170,11 +169,11 @@ export function AdminPage() {
                   return (
                     <div
                       key={suggestion.id}
-                      className="border border-border bg-background/40 p-4"
+                      className="rounded-lg border border-border bg-background p-4"
                     >
                       <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
                         <div>
-                          <h3 className="font-display text-lg tracking-wide">
+                          <h3 className="font-display text-lg">
                             {suggestion.title}
                           </h3>
                           <div className="mt-1 space-y-1 text-xs text-muted-foreground">
@@ -241,7 +240,7 @@ export function AdminPage() {
                             void mgr.approveSuggestion(suggestion.id)
                           }}
                           disabled={!isPending || isBusy}
-                          className="text-[10px] tracking-[0.2em] uppercase"
+                          className="text-[10px] uppercase"
                         >
                           <Check className="mr-1 h-3 w-3" />
                           {isBusy ? "PROCESSING..." : "APPROVE"}
@@ -253,7 +252,7 @@ export function AdminPage() {
                             void mgr.rejectSuggestion(suggestion.id)
                           }}
                           disabled={!isPending || isBusy}
-                          className="text-[10px] tracking-[0.2em] uppercase"
+                          className="text-[10px] uppercase"
                         >
                           <X className="mr-1 h-3 w-3" />
                           REJECT

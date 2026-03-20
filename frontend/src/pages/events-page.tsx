@@ -8,11 +8,12 @@ import {
   formatDateRange,
   getGoogleCalendarUrl,
 } from "@/lib/calendar"
+import { tagBadgeVariantForIndex } from "@/lib/tag-badge-variant"
 import {
   getEventImageTransitionName,
   runViewTransition,
 } from "@/lib/view-transitions"
-import { Calendar, Download, ExternalLink, MapPin } from "lucide-react"
+import { Calendar, Download, MapPin } from "lucide-react"
 import type { KeyboardEvent, MouseEvent } from "react"
 
 export function EventsPage() {
@@ -47,22 +48,21 @@ export function EventsPage() {
   return (
     <div>
       <div className="mb-10">
-        <div className="mb-1 text-[10px] tracking-[0.3em] text-muted-foreground">
+        <div className="mb-1 text-[10px] text-muted-foreground">
           ▸ ACTIVE_FEED // {mgr.events.length} NODES DETECTED
         </div>
-        <h2 className="font-display text-3xl font-bold tracking-wider sm:text-5xl">
-          <span className="text-primary">EVENT</span>
-          <span className="text-accent">_</span>
-          <span className="text-foreground">STREAM</span>
+        <h2 className="font-display text-3xl font-bold tracking-tight sm:text-5xl">
+          <span className="text-foreground">EVENT_</span>
+          <span className="text-primary">STREAM</span>
         </h2>
       </div>
 
       {mgr.isBootstrapping || mgr.isEventsLoading ? (
-        <div className="border border-border bg-card px-6 py-12 text-center text-xs tracking-[0.3em] text-primary">
+        <div className="rounded-xl border border-border bg-card px-6 py-12 text-center text-xs text-primary">
           SYNCING_EVENT_FEED...
         </div>
       ) : mgr.events.length === 0 ? (
-        <div className="border border-border bg-card px-6 py-12 text-center text-xs tracking-[0.3em] text-muted-foreground">
+        <div className="rounded-xl border border-border bg-card px-6 py-12 text-center text-xs text-muted-foreground">
           NO_EVENTS_FOUND
         </div>
       ) : (
@@ -70,51 +70,32 @@ export function EventsPage() {
           {mgr.events.map((event) => (
             <article
               key={event.id}
-              className="group relative overflow-hidden border border-border bg-card transition-all duration-300 hover:border-primary"
+              className="group relative overflow-hidden rounded-xl border border-border bg-card transition-all duration-300 hover:border-primary/60 hover:shadow-[0_0_24px_color-mix(in_srgb,var(--primary)_14%,transparent)]"
               role="button"
               tabIndex={0}
               onClick={() => openEventDetails(event.id)}
               onKeyDown={(clickedEvent) =>
                 handleCardKeyDown(clickedEvent, event.id)
               }
-              style={{
-                boxShadow:
-                  "0 0 0 1px rgba(53,128,255,0.05), inset 0 1px 0 rgba(53,128,255,0.05)",
-              }}
             >
-              <div
-                className="pointer-events-none absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100"
-                style={{
-                  boxShadow:
-                    "0 0 20px rgba(53,128,255,0.1), inset 0 0 20px rgba(53,128,255,0.03)",
-                }}
-              />
-
               <div className="relative h-40 overflow-hidden">
                 <img
                   src={event.image}
                   alt={event.title}
                   className="h-full w-full object-cover"
                   style={{
-                    filter: "saturate(1) brightness(0.7) contrast(1.2)",
+                    filter: "saturate(1) brightness(0.72) contrast(1.18)",
                     viewTransitionName: getEventImageTransitionName(event.id),
                   }}
                 />
-                <div className="absolute bottom-3 left-3 flex flex-wrap gap-1.5">
-                  {event.tags.map((tag) => (
-                    <Badge
-                      key={tag}
-                      variant="outline"
-                      className="border-primary/30 bg-background/60 text-[10px] text-primary backdrop-blur-sm"
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
               </div>
 
               <div className="p-5">
-                <h3 className="mb-2 font-display text-base font-semibold tracking-wide">
+                <div
+                  className="mb-3 h-0.5 w-9 rounded-full bg-accent shadow-[0_0_12px_color-mix(in_srgb,var(--accent)_35%,transparent)]"
+                  aria-hidden
+                />
+                <h3 className="mb-2 font-display text-base font-semibold text-foreground">
                   {event.title}
                 </h3>
 
@@ -133,10 +114,22 @@ export function EventsPage() {
                   {event.description}
                 </p>
 
-                <div className="flex gap-2">
+                <div className="mb-4 flex flex-wrap gap-1.5">
+                  {event.tags.map((tag, index) => (
+                    <Badge
+                      key={tag}
+                      variant={tagBadgeVariantForIndex(index)}
+                      className="text-[10px] font-medium tracking-wide uppercase"
+                    >
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+
+                <div className="flex flex-col gap-2 sm:flex-row">
                   <Button
                     size="sm"
-                    className="flex-1 text-[10px] tracking-wider uppercase shadow-[0_0_10px_rgba(53,128,255,0.15)]"
+                    className="h-auto min-h-11 w-full flex-1 py-3 text-[10px] uppercase parbin-glow-primary-sm sm:h-7 sm:min-h-0 sm:py-0 sm:min-w-0"
                     asChild
                   >
                     <a
@@ -145,21 +138,21 @@ export function EventsPage() {
                       rel="noopener noreferrer"
                       onClick={stopCardNavigation}
                     >
-                      <ExternalLink className="mr-1 h-3 w-3" />
+                      <Calendar className="mr-1.5 h-3.5 w-3.5" />
                       ADD TO CALENDAR
                     </a>
                   </Button>
                   <Button
                     size="sm"
                     variant="outline"
-                    className="text-[10px] tracking-wider uppercase"
+                    className="h-auto min-h-11 w-full shrink-0 border-white/20 py-3 text-[10px] uppercase sm:h-7 sm:min-h-0 sm:py-0 sm:w-auto"
                     onClick={(clickedEvent) => {
                       stopCardNavigation(clickedEvent)
                       downloadICS(event)
                     }}
                   >
-                    <Download className="h-3 w-3" />
-                    <span className="sr-only">Download ICS</span>
+                    <Download className="mr-1 h-3 w-3" />
+                    ICS
                   </Button>
                 </div>
               </div>

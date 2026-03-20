@@ -1,83 +1,83 @@
-@import url("https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400..800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Syne:wght@400..800&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/geist";
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-    --background: #040c1b;
-    --foreground: #e2e8f4;
-    --card: #081830;
-    --card-foreground: #e2e8f4;
-    --popover: #081830;
-    --popover-foreground: #e2e8f4;
-    --primary: #3580ff;
-    --primary-foreground: #040c1b;
-    --secondary: #0d1f3d;
-    --secondary-foreground: #3580ff;
-    --muted: #0d1f3d;
-    --muted-foreground: #4a6896;
-    --accent: #ff2d4a;
+    --background: #0a0e14;
+    --foreground: #f1f5fb;
+    --card: #101922;
+    --card-foreground: #f1f5fb;
+    --popover: #101922;
+    --popover-foreground: #f1f5fb;
+    --primary: #0095ff;
+    --primary-foreground: #ffffff;
+    --secondary: #141c28;
+    --secondary-foreground: #0095ff;
+    --muted: #161f2e;
+    --muted-foreground: #8ba3c0;
+    --accent: #e11d48;
     --accent-foreground: #ffffff;
-    --destructive: #ff2244;
-    --border: #152a4d;
-    --input: #0b1828;
-    --ring: #3580ff;
+    --destructive: #e11d48;
+    --border: #243044;
+    --input: #0d131c;
+    --ring: #0095ff;
     --chart-1: oklch(0.809 0.105 251.813);
     --chart-2: oklch(0.623 0.214 259.815);
     --chart-3: oklch(0.546 0.245 262.881);
     --chart-4: oklch(0.488 0.243 264.376);
     --chart-5: oklch(0.424 0.199 265.638);
-    --radius: 0.25rem;
-    --sidebar: #081830;
-    --sidebar-foreground: #e2e8f4;
-    --sidebar-primary: #3580ff;
-    --sidebar-primary-foreground: #040c1b;
-    --sidebar-accent: #0d1f3d;
-    --sidebar-accent-foreground: #3580ff;
-    --sidebar-border: #152a4d;
-    --sidebar-ring: #3580ff;
+    --radius: 0.5rem;
+    --sidebar: #101922;
+    --sidebar-foreground: #f1f5fb;
+    --sidebar-primary: #0095ff;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #161f2e;
+    --sidebar-accent-foreground: #0095ff;
+    --sidebar-border: #243044;
+    --sidebar-ring: #0095ff;
 }
 
 .dark {
-    --background: #040c1b;
-    --foreground: #e2e8f4;
-    --card: #081830;
-    --card-foreground: #e2e8f4;
-    --popover: #081830;
-    --popover-foreground: #e2e8f4;
-    --primary: #3580ff;
-    --primary-foreground: #040c1b;
-    --secondary: #0d1f3d;
-    --secondary-foreground: #3580ff;
-    --muted: #0d1f3d;
-    --muted-foreground: #4a6896;
-    --accent: #ff2d4a;
+    --background: #0a0e14;
+    --foreground: #f1f5fb;
+    --card: #101922;
+    --card-foreground: #f1f5fb;
+    --popover: #101922;
+    --popover-foreground: #f1f5fb;
+    --primary: #0095ff;
+    --primary-foreground: #ffffff;
+    --secondary: #141c28;
+    --secondary-foreground: #0095ff;
+    --muted: #161f2e;
+    --muted-foreground: #8ba3c0;
+    --accent: #e11d48;
     --accent-foreground: #ffffff;
-    --destructive: #ff2244;
-    --border: #152a4d;
-    --input: #0b1828;
-    --ring: #3580ff;
+    --destructive: #e11d48;
+    --border: #243044;
+    --input: #0d131c;
+    --ring: #0095ff;
     --chart-1: oklch(0.809 0.105 251.813);
     --chart-2: oklch(0.623 0.214 259.815);
     --chart-3: oklch(0.546 0.245 262.881);
     --chart-4: oklch(0.488 0.243 264.376);
     --chart-5: oklch(0.424 0.199 265.638);
-    --sidebar: #081830;
-    --sidebar-foreground: #e2e8f4;
-    --sidebar-primary: #3580ff;
-    --sidebar-primary-foreground: #040c1b;
-    --sidebar-accent: #0d1f3d;
-    --sidebar-accent-foreground: #3580ff;
-    --sidebar-border: #152a4d;
-    --sidebar-ring: #3580ff;
+    --radius: 0.5rem;
+    --sidebar: #101922;
+    --sidebar-foreground: #f1f5fb;
+    --sidebar-primary: #0095ff;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #161f2e;
+    --sidebar-accent-foreground: #0095ff;
+    --sidebar-border: #243044;
+    --sidebar-ring: #0095ff;
 }
 
 @theme inline {
-    --font-sans: "Share Tech Mono", monospace;
-    --font-mono: "Share Tech Mono", monospace;
+    --font-sans: "Inter", sans-serif;
+    --font-mono: "Inter", sans-serif;
     --font-display: "Syne", sans-serif;
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
@@ -117,6 +117,66 @@
     --radius-2xl: calc(var(--radius) * 1.8);
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
+    --color-primary-500: var(--primary);
+    --color-primary-400: hsl(from var(--primary) h s calc(l * 0.8));
+    --color-primary-300: hsl(from var(--primary) h s calc(l * 0.6));
+    --color-primary-200: hsl(from var(--primary) h s calc(l * 0.4));
+    --color-primary-100: hsl(from var(--primary) h s calc(l * 0.2));
+    --color-accent-500: var(--accent);
+    --color-accent-400: hsl(from var(--accent) h s calc(l * 0.85));
+    --color-accent-300: hsl(from var(--accent) h s calc(l * 0.7));
+}
+
+@layer components {
+  .parbin-shell-grid {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    opacity: 0.05;
+    background-image:
+      linear-gradient(
+        90deg,
+        transparent 47%,
+        color-mix(in srgb, var(--primary) 40%, transparent) 50%,
+        transparent 53%
+      ),
+      linear-gradient(
+        0deg,
+        transparent 47%,
+        color-mix(in srgb, var(--primary) 32%, transparent) 50%,
+        transparent 53%
+      );
+    background-size: 52px 52px;
+  }
+
+  .parbin-shell-edges {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    opacity: 0.08;
+    background:
+      radial-gradient(
+        ellipse 100% 70% at 0% 45%,
+        color-mix(in srgb, var(--primary) 38%, transparent),
+        transparent 58%
+      ),
+      radial-gradient(
+        ellipse 100% 70% at 100% 55%,
+        color-mix(in srgb, var(--primary) 28%, transparent),
+        transparent 58%
+      );
+  }
+
+  .parbin-glow-primary {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--primary) 18%, transparent),
+      0 0 28px color-mix(in srgb, var(--primary) 28%, transparent);
+  }
+
+  .parbin-glow-primary-sm {
+    box-shadow: 0 0 18px color-mix(in srgb, var(--primary) 22%, transparent);
+  }
+
 }
 
 @layer base {
@@ -125,10 +185,10 @@
   }
 
   body {
-    @apply bg-background font-mono text-foreground;
+    @apply bg-background font-sans text-foreground antialiased;
   }
 
   html {
-    @apply font-mono;
+    @apply font-sans;
   }
 }

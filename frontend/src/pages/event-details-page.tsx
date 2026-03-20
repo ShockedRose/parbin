@@ -13,6 +13,7 @@ import {
   formatDateRange,
   getGoogleCalendarUrl,
 } from "@/lib/calendar"
+import { tagBadgeVariantForIndex } from "@/lib/tag-badge-variant"
 import { getEventImageTransitionName } from "@/lib/view-transitions"
 import type { MeetupEvent } from "@/types/event"
 import {
@@ -107,7 +108,7 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
 
   if (mgr.isBootstrapping || mgr.isEventsLoading) {
     return (
-      <div className="border border-border bg-card px-6 py-12 text-center text-xs tracking-[0.3em] text-primary">
+      <div className="rounded-xl border border-border bg-card px-6 py-12 text-center text-xs text-primary">
         LOADING_EVENT_PAYLOAD...
       </div>
     )
@@ -115,11 +116,11 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
 
   if (!event) {
     return (
-      <div className="mx-auto max-w-3xl border border-border bg-card p-8">
-        <div className="mb-3 text-[10px] tracking-[0.3em] text-muted-foreground">
+      <div className="mx-auto max-w-3xl rounded-xl border border-border bg-card p-8">
+        <div className="mb-3 text-[10px] text-muted-foreground">
           ▸ EVENT_NODE // NOT_FOUND
         </div>
-        <h2 className="font-display text-2xl font-bold tracking-wider text-foreground sm:text-4xl">
+        <h2 className="font-display text-2xl font-bold text-foreground sm:text-4xl">
           EVENT NOT AVAILABLE
         </h2>
         <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground">
@@ -128,7 +129,7 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
         </p>
         <Button
           asChild
-          className="mt-6 text-[11px] tracking-[0.24em] uppercase"
+          className="mt-6 text-[11px] uppercase"
         >
           <Link to="/">
             <ArrowLeft className="h-4 w-4" />
@@ -140,7 +141,7 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
   }
 
   return (
-    <article className="mx-auto max-w-4xl overflow-hidden border border-border bg-card">
+    <article className="mx-auto w-full min-w-0 max-w-4xl overflow-hidden rounded-xl border border-border bg-card">
       <div className="relative h-72 overflow-hidden border-b border-border sm:h-96">
         <img
           src={
@@ -156,13 +157,13 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
           }}
         />
         <div className="absolute inset-0 bg-linear-to-t from-background via-background/20 to-transparent" />
-        <div className="absolute right-0 bottom-0 left-0 p-6 sm:p-8">
+        <div className="absolute right-0 bottom-0 left-0 min-w-0 p-6 sm:p-8">
           <div className="mb-3 flex flex-wrap gap-2">
-            {event.tags.map((tag) => (
+            {event.tags.map((tag, index) => (
               <Badge
                 key={tag}
-                variant="outline"
-                className="border-primary/40 bg-background/70 text-[10px] tracking-[0.18em] text-primary uppercase backdrop-blur-sm"
+                variant={tagBadgeVariantForIndex(index)}
+                className="text-[10px] font-medium tracking-wide uppercase backdrop-blur-sm"
               >
                 {tag}
               </Badge>
@@ -172,23 +173,23 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
             <Input
               value={editForm.title}
               onChange={(e) => updateField("title", e.target.value)}
-              className="max-w-3xl border-primary/30 bg-background/80 font-display text-2xl font-bold tracking-wide text-foreground backdrop-blur-sm sm:text-4xl"
+              className="max-w-3xl border-primary/30 bg-background/80 font-display text-2xl font-bold text-foreground backdrop-blur-sm sm:text-4xl"
               placeholder=">> Event title"
             />
           ) : (
-            <h1 className="max-w-3xl font-display text-3xl font-bold tracking-wide text-foreground sm:text-5xl">
+            <h1 className="max-w-full break-words font-display text-3xl font-bold text-foreground sm:max-w-3xl sm:text-5xl">
               {event.title}
             </h1>
           )}
         </div>
       </div>
 
-      <div className="space-y-8 p-6 sm:p-8">
+      <div className="min-w-0 space-y-8 p-6 sm:p-8">
         {isAdmin && !isEditing && (
           <Button
             variant="outline"
             onClick={startEditing}
-            className="text-[11px] tracking-[0.22em] uppercase"
+            className="text-[11px] uppercase"
           >
             <Pencil className="h-3.5 w-3.5" />
             Edit Event
@@ -197,12 +198,12 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
 
         {isEditing && (
           <div className="space-y-5 border border-primary/20 bg-background/60 p-5">
-            <div className="border-b border-border pb-2 text-[10px] tracking-[0.3em] text-primary">
+            <div className="border-b border-border pb-2 text-[10px] text-primary">
               ▸ ADMIN // EDIT_MODE
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[11px] tracking-wider text-primary uppercase">
+              <Label className="text-[11px] text-primary uppercase">
                 event.description
               </Label>
               <Textarea
@@ -210,13 +211,13 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
                 value={editForm.description}
                 onChange={(e) => updateField("description", e.target.value)}
                 placeholder=">> Describe the event..."
-                className="border-border bg-background font-mono"
+                className="border-border bg-background"
               />
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label className="text-[11px] tracking-wider text-primary uppercase">
+                <Label className="text-[11px] text-primary uppercase">
                   date.start *
                 </Label>
                 <Input
@@ -227,7 +228,7 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-[11px] tracking-wider text-primary uppercase">
+                <Label className="text-[11px] text-primary uppercase">
                   date.end *
                 </Label>
                 <Input
@@ -240,48 +241,48 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[11px] tracking-wider text-primary uppercase">
+              <Label className="text-[11px] text-primary uppercase">
                 event.location
               </Label>
               <Input
                 value={editForm.location}
                 onChange={(e) => updateField("location", e.target.value)}
                 placeholder=">> Venue, City, State"
-                className="border-border bg-background font-mono"
+                className="border-border bg-background"
               />
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[11px] tracking-wider text-primary uppercase">
+              <Label className="text-[11px] text-primary uppercase">
                 event.tags[]
               </Label>
               <Input
                 value={editForm.tags}
                 onChange={(e) => updateField("tags", e.target.value)}
                 placeholder=">> AI, Workshop, Community"
-                className="border-border bg-background font-mono"
+                className="border-border bg-background"
               />
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[11px] tracking-wider text-primary uppercase">
+              <Label className="text-[11px] text-primary uppercase">
                 event.image_url
               </Label>
               <Input
                 value={editForm.image}
                 onChange={(e) => updateField("image", e.target.value)}
                 placeholder=">> https://..."
-                className="border-border bg-background font-mono"
+                className="border-border bg-background"
               />
             </div>
 
             <Separator className="border-border" />
 
-            <div className="flex gap-3">
+            <div className="flex min-w-0 flex-col gap-3 sm:flex-row">
               <Button
                 onClick={saveChanges}
                 disabled={!canSave || mgr.isSubmitting}
-                className="flex-1 text-[11px] tracking-[0.3em] uppercase shadow-[0_0_15px_rgba(53,128,255,0.2)]"
+                className="w-full py-3 sm:py-0 flex-1 text-[11px] uppercase parbin-glow-primary-sm sm:w-auto"
                 size="lg"
               >
                 <Save className="h-4 w-4" />
@@ -291,7 +292,7 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
                 onClick={cancelEditing}
                 variant="outline"
                 disabled={mgr.isSubmitting}
-                className="text-[11px] tracking-[0.22em] uppercase"
+                className="w-full shrink-0 text-[11px] uppercase sm:w-auto"
                 size="lg"
               >
                 <X className="h-4 w-4" />
@@ -303,34 +304,37 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
 
         {!isEditing && (
           <>
-            <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
-              <div className="flex items-center gap-2 border border-border bg-background/60 px-3 py-2">
-                <Calendar className="h-3.5 w-3.5 text-primary" />
-                {formatDateRange(event.date, event.endDate)}
+            <div className="flex min-w-0 flex-wrap gap-3 text-xs text-muted-foreground">
+              <div className="flex min-w-0 max-w-full items-start gap-2 border border-border bg-background px-3 py-2">
+                <Calendar className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                <span className="min-w-0 break-words">
+                  {formatDateRange(event.date, event.endDate)}
+                </span>
               </div>
-              <div className="flex items-center gap-2 border border-border bg-background/60 px-3 py-2">
-                <MapPin className="h-3.5 w-3.5 text-accent" />
-                {event.location}
+              <div className="flex min-w-0 max-w-full items-start gap-2 border border-border bg-background/60 px-3 py-2">
+                <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />
+                <span className="min-w-0 break-words">{event.location}</span>
               </div>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid min-w-0 grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4">
               <Button
                 asChild
                 size="lg"
-                className="h-auto min-h-16 justify-start px-5 py-4 text-left shadow-[0_0_18px_rgba(53,128,255,0.15)]"
+                className="h-auto w-full min-w-0 max-w-full shrink !whitespace-normal flex-col items-start justify-start gap-2 px-4 py-3.5 text-left parbin-glow-primary-sm sm:flex-row sm:gap-3 sm:px-5 sm:py-4 lg:min-h-16"
               >
                 <a
                   href={getGoogleCalendarUrl(event)}
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="inline-flex w-full min-w-0 flex-col gap-1.5 sm:flex-row sm:items-start sm:gap-3"
                 >
-                  <ExternalLink className="h-4 w-4" />
-                  <span className="flex flex-col items-start">
-                    <span className="text-[11px] tracking-[0.22em] uppercase">
+                  <ExternalLink className="mt-0.5 h-4 w-4 shrink-0" />
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-[11px] uppercase">
                       Add To Google Calendar
                     </span>
-                    <span className="text-[10px] tracking-[0.14em] text-primary-foreground/75 uppercase">
+                    <span className="mt-0.5 block break-words text-[10px] leading-snug text-primary-foreground/75 sm:uppercase">
                       Open the event with date, time, and location prefilled
                     </span>
                   </span>
@@ -340,15 +344,15 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
               <Button
                 size="lg"
                 variant="outline"
-                className="h-auto min-h-16 justify-start px-5 py-4 text-left"
+                className="h-auto w-full min-w-0 max-w-full shrink !whitespace-normal flex-col items-start justify-start gap-2 px-4 py-3.5 text-left sm:flex-row sm:gap-3 sm:px-5 sm:py-4 lg:min-h-16"
                 onClick={() => downloadICS(event)}
               >
-                <Download className="h-4 w-4" />
-                <span className="flex flex-col items-start">
-                  <span className="text-[11px] tracking-[0.22em] uppercase">
+                <Download className="mt-0.5 h-4 w-4 shrink-0" />
+                <span className="min-w-0 flex-1 text-left">
+                  <span className="block text-[11px] uppercase">
                     Download ICS File
                   </span>
-                  <span className="text-[10px] tracking-[0.14em] text-muted-foreground uppercase">
+                  <span className="mt-0.5 block break-words text-[10px] leading-snug text-muted-foreground sm:uppercase">
                     Save a calendar file for Apple Calendar, Outlook, or any ICS
                     app
                   </span>
@@ -357,7 +361,7 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
             </div>
 
             <section className="space-y-3">
-              <div className="text-[10px] tracking-[0.3em] text-muted-foreground">
+              <div className="text-[10px] text-muted-foreground">
                 ▸ EVENT_BRIEFING // DESCRIPTION
               </div>
               <p className="text-sm leading-7 whitespace-pre-wrap text-foreground/88 sm:text-base">
@@ -368,7 +372,7 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
             <Button
               asChild
               variant="ghost"
-              className="px-0 text-[11px] tracking-[0.24em] uppercase"
+              className="px-0 text-[11px] uppercase"
             >
               <Link to="/">
                 <ArrowLeft className="h-4 w-4" />
