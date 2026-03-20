@@ -106,7 +106,7 @@ export function PastEventsPage() {
           NO_PAST_EVENTS_IN_ARCHIVE
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
           {events.map((event) => (
             <article
               key={event.id}
