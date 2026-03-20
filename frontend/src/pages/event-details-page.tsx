@@ -141,7 +141,7 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
 
   return (
     <article className="mx-auto w-full min-w-0 max-w-4xl overflow-hidden rounded-xl border border-border bg-card">
-      <div className="relative h-72 overflow-hidden border-b border-border sm:h-96">
+      <div className="h-72 overflow-hidden border-b border-border sm:h-96">
         <img
           src={
             isEditing && editForm.image.trim()
@@ -155,32 +155,32 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
             viewTransitionName: getEventImageTransitionName(event.id),
           }}
         />
-        <div className="absolute inset-0 bg-linear-to-t from-background via-background/20 to-transparent" />
-        <div className="absolute right-0 bottom-0 left-0 min-w-0 p-6 sm:p-8">
-          <div className="mb-3 flex flex-wrap gap-2">
-            {event.tags.map((tag) => (
-              <Badge
-                key={tag}
-                variant="node"
-                className="text-[10px] font-medium tracking-wide uppercase backdrop-blur-sm"
-              >
-                {tag}
-              </Badge>
-            ))}
-          </div>
-          {isEditing ? (
-            <Input
-              value={editForm.title}
-              onChange={(e) => updateField("title", e.target.value)}
-              className="max-w-3xl border-primary/30 bg-background/80 font-display text-2xl font-bold text-foreground backdrop-blur-sm sm:text-4xl"
-              placeholder=">> Event title"
-            />
-          ) : (
-            <h1 className="max-w-full break-words font-display text-3xl font-bold text-foreground sm:max-w-3xl sm:text-5xl">
-              {event.title}
-            </h1>
-          )}
+      </div>
+
+      <div className="min-w-0 border-b border-border px-6 py-5 sm:px-8 sm:py-6">
+        <div className="mb-3 flex flex-wrap gap-2">
+          {event.tags.map((tag) => (
+            <Badge
+              key={tag}
+              variant="node"
+              className="text-[10px] font-medium tracking-wide uppercase"
+            >
+              {tag}
+            </Badge>
+          ))}
         </div>
+        {isEditing ? (
+          <Input
+            value={editForm.title}
+            onChange={(e) => updateField("title", e.target.value)}
+            className="max-w-3xl border-border font-display text-[1.1875rem] font-bold text-foreground sm:text-lg"
+            placeholder=">> Event title"
+          />
+        ) : (
+          <h1 className="max-w-full break-words font-display text-[1.625rem] font-bold leading-tight text-foreground sm:max-w-3xl sm:text-2xl sm:leading-snug">
+            {event.title}
+          </h1>
+        )}
       </div>
 
       <div className="min-w-0 space-y-8 p-6 sm:p-8">
