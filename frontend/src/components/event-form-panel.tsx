@@ -42,7 +42,7 @@ export function EventFormPanel({
   onSubmit,
 }: EventFormPanelProps) {
   return (
-    <div className="relative border border-border bg-card p-8">
+    <div className="relative rounded-xl border border-border bg-card p-8">
       <div
         className="absolute inset-x-6 top-0 h-px"
         style={{
@@ -51,25 +51,25 @@ export function EventFormPanel({
         }}
       />
 
-      <div className="mb-6 border-b border-border pb-3 text-[10px] tracking-[0.2em] text-muted-foreground">
+      <div className="mb-6 border-b border-border pb-3 text-[10px] text-muted-foreground">
         ▸ {title}
       </div>
 
       <div className="space-y-5">
         <div className="space-y-2">
-          <Label className="text-[11px] tracking-wider text-primary uppercase">
+          <Label className="text-[11px] text-primary uppercase">
             event.title *
           </Label>
           <Input
             value={form.title}
             onChange={(e) => onFieldChange("title", e.target.value)}
             placeholder=">> Enter event title"
-            className="border-border bg-background font-mono"
+            className="border-border bg-background"
           />
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[11px] tracking-wider text-primary uppercase">
+          <Label className="text-[11px] text-primary uppercase">
             event.description
           </Label>
           <Textarea
@@ -77,13 +77,13 @@ export function EventFormPanel({
             value={form.description}
             onChange={(e) => onFieldChange("description", e.target.value)}
             placeholder=">> Describe the event..."
-            className="border-border bg-background font-mono"
+            className="border-border bg-background"
           />
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label className="text-[11px] tracking-wider text-primary uppercase">
+            <Label className="text-[11px] text-primary uppercase">
               date.start *
             </Label>
             <Input
@@ -94,7 +94,7 @@ export function EventFormPanel({
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-[11px] tracking-wider text-primary uppercase">
+            <Label className="text-[11px] text-primary uppercase">
               date.end *
             </Label>
             <Input
@@ -107,38 +107,38 @@ export function EventFormPanel({
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[11px] tracking-wider text-primary uppercase">
+          <Label className="text-[11px] text-primary uppercase">
             event.location
           </Label>
           <Input
             value={form.location}
             onChange={(e) => onFieldChange("location", e.target.value)}
             placeholder=">> Venue, City, State"
-            className="border-border bg-background font-mono"
+            className="border-border bg-background"
           />
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[11px] tracking-wider text-primary uppercase">
+          <Label className="text-[11px] text-primary uppercase">
             event.tags[]
           </Label>
           <Input
             value={form.tags}
             onChange={(e) => onFieldChange("tags", e.target.value)}
             placeholder=">> AI, Workshop, Community"
-            className="border-border bg-background font-mono"
+            className="border-border bg-background"
           />
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[11px] tracking-wider text-primary uppercase">
+          <Label className="text-[11px] text-primary uppercase">
             event.image_url
           </Label>
           <Input
             value={form.image}
             onChange={(e) => onFieldChange("image", e.target.value)}
             placeholder=">> https://..."
-            className="border-border bg-background font-mono"
+            className="border-border bg-background"
           />
           {preview && (
             <div className="relative mt-3">
@@ -161,7 +161,7 @@ export function EventFormPanel({
 
         <Button
           onClick={onSubmit}
-          className="w-full text-[11px] tracking-[0.3em] uppercase shadow-[0_0_15px_rgba(53,128,255,0.2)]"
+          className="w-full text-[11px] uppercase parbin-glow-primary-sm"
           size="lg"
           disabled={disabled || !form.title || !form.date || !form.endDate}
         >

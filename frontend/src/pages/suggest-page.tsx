@@ -19,20 +19,19 @@ export function SuggestPage() {
   return (
     <div>
       <div className="mb-10">
-        <div className="mb-1 text-[10px] tracking-[0.3em] text-muted-foreground">
+        <div className="mb-1 text-[10px] text-muted-foreground">
           ▸ PUBLIC_UPLINK // COMMUNITY INPUT
         </div>
-        <h2 className="font-display text-3xl font-bold tracking-wider sm:text-5xl">
-          <span className="text-primary">SUGGEST</span>
-          <span className="text-accent">_</span>
-          <span className="text-foreground">EVENT</span>
+        <h2 className="font-display text-3xl font-bold tracking-tight sm:text-5xl">
+          <span className="text-foreground">SUGGEST_</span>
+          <span className="text-primary">EVENT</span>
         </h2>
       </div>
 
       <div className="mx-auto max-w-3xl">
         <EventFormPanel
           title="SUGGESTION_PAYLOAD"
-          accent="#3580FF"
+          accent="var(--primary)"
           form={mgr.suggestionForm}
           preview={mgr.suggestionImagePreview}
           submitLabel="SUBMIT_FOR_REVIEW"

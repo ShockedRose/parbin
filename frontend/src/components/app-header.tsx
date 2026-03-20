@@ -17,7 +17,6 @@ type NavigationItem = {
   label: string
   description: string
   icon: LucideIcon
-  accent: "primary" | "accent"
 }
 
 const navigationItems: NavigationItem[] = [
@@ -26,21 +25,18 @@ const navigationItems: NavigationItem[] = [
     label: "Feed",
     description: "Browse active meetup signals",
     icon: Zap,
-    accent: "primary",
   },
   {
     to: "/suggest",
     label: "Suggest",
-    description: "Send an event for review",
+    description: "Suggest your event",
     icon: Send,
-    accent: "primary",
   },
   {
     to: "/admin",
     label: "Admin",
     description: "Manage sessions and approvals",
     icon: Terminal,
-    accent: "accent",
   },
 ]
 
@@ -70,45 +66,42 @@ function NavigationLink({
   const Icon = item.icon
 
   const activeClasses =
-    item.accent === "accent"
-      ? "border-accent bg-accent/12 text-accent shadow-[0_0_18px_rgba(255,45,74,0.18)]"
-      : "border-primary bg-primary/12 text-primary shadow-[0_0_18px_rgba(53,128,255,0.18)]"
+    "border-primary bg-primary/10 text-primary parbin-glow-primary"
 
   const inactiveClasses =
-    item.accent === "accent"
-      ? "border-border bg-card/60 text-foreground/85 hover:border-accent/60 hover:bg-accent/6"
-      : "border-border bg-card/60 text-foreground/85 hover:border-primary/60 hover:bg-primary/6"
+    "border-white/15 bg-secondary/80 text-foreground/90 hover:border-primary/45 hover:bg-card"
 
   const detailClasses = isActive
-    ? item.accent === "accent"
-      ? "text-accent/80"
-      : "text-primary/80"
-    : "text-muted-foreground transition-colors group-hover:text-foreground/75"
+    ? "text-primary/90"
+    : "text-muted-foreground transition-colors group-hover:text-primary/70"
 
   return (
     <Link
       to={item.to}
       onClick={() => onSelect?.()}
       className={cn(
-        "group border transition-all",
+        "group rounded-xl border transition-all",
         mobile
           ? "flex items-start gap-3 px-4 py-3"
-          : "flex min-w-44 items-start gap-3 px-4 py-3",
+          : "flex h-[4.25rem] w-44 shrink-0 items-center gap-2.5 px-3 py-2 lg:h-[5.5rem] lg:w-60 lg:gap-3 lg:px-4 lg:py-3",
         isActive ? activeClasses : inactiveClasses
       )}
     >
       <Icon
         className={cn(
-          "mt-0.5 h-4 w-4 shrink-0",
-          isActive ? "text-current" : "text-muted-foreground"
+          "h-6 w-6 shrink-0 lg:h-8 lg:w-8",
+          isActive ? "text-current" : "font-light"
         )}
       />
-      <div className="min-w-0">
-        <div className="text-[11px] tracking-[0.24em] uppercase">
+      <div className="min-w-0 flex-1">
+        <div className="text-xs font-bold uppercase lg:text-base">
           {item.label}
         </div>
         <div
-          className={cn("mt-1 text-[10px] tracking-[0.16em]", detailClasses)}
+          className={cn(
+            "text-[10px] leading-tight font-light sm:line-clamp-2 lg:text-xs lg:leading-snug",
+            detailClasses
+          )}
         >
           {item.description}
         </div>
@@ -129,59 +122,65 @@ export function AppHeader({ adminEmail }: { adminEmail?: string | null }) {
           className="absolute inset-x-0 bottom-0 h-px"
           style={{
             background:
-              "linear-gradient(90deg, transparent, #3580FF, rgba(255,255,255,0.25), #FF2D4A, transparent)",
-            opacity: 0.6,
+              "linear-gradient(90deg, transparent, color-mix(in srgb, var(--primary) 70%, transparent), rgba(255,255,255,0.2), color-mix(in srgb, var(--accent) 75%, transparent), transparent)",
+            opacity: 0.65,
           }}
         />
         <div className="mx-auto flex max-w-7xl flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <Link to="/">
-            <div>
-              <h1 className="font-display text-xl font-extrabold tracking-[0.25em] text-primary sm:text-2xl">
-                PAR<span className="text-accent">BIN</span>
-              </h1>
-              <p className="text-[10px] tracking-[0.2em] text-muted-foreground">
-                ▸ TECH MEETUPS · PANAMÁ
-              </p>
+            <div className="flex items-start gap-2.5">
+              <span
+                className="mt-1.5 inline-flex h-2 w-2 shrink-0 rounded-full bg-accent shadow-[0_0_10px_color-mix(in_srgb,var(--accent)_55%,transparent)]"
+                aria-hidden
+              />
+              <div>
+                <h1 className="font-display text-xl font-extrabold tracking-tight text-foreground sm:text-2xl">
+                  PARBIN
+                </h1>
+                <p className="text-[10px] tracking-wide">
+                  <span className="text-foreground/90">TECH MEETUPS</span>
+                  <span className="text-foreground/35"> · </span>
+                  <span className="text-primary">PANAMÁ</span>
+                </p>
+              </div>
             </div>
           </Link>
-
-          <div className="flex flex-col items-start gap-3 lg:items-end">
-            {adminEmail && (
-              <div className="text-[10px] tracking-[0.2em] text-primary">
-                ADMIN ONLINE // {adminEmail}
-              </div>
-            )}
-
-            <div className="flex w-full items-center gap-3 sm:hidden">
-              <Button
-                variant="outline"
-                className="border-primary/40 bg-card/80 px-3 text-[10px] tracking-[0.24em] uppercase"
-                onClick={() => setIsMobileMenuOpen(true)}
-              >
-                <PanelLeft className="h-3.5 w-3.5" />
-                Menu
-              </Button>
-              <div className="border border-border bg-card/70 px-3 py-2 text-[10px] tracking-[0.24em] text-foreground uppercase">
-                {activeItem.label}
-              </div>
+          {adminEmail && (
+            <div className="text-[10px] tracking-wide text-primary">
+              ADMIN ONLINE // {adminEmail}
             </div>
-
-            <nav className="hidden flex-wrap gap-3 sm:flex">
-              {navigationItems.map((item) => (
-                <NavigationLink key={item.to} item={item} />
-              ))}
-            </nav>
+          )}
+        </div>
+        <div className="mx-auto mt-6 flex w-full max-w-7xl flex-col items-center gap-3 sm:mt-8 lg:mt-10">
+          <div className="flex w-full items-center justify-start gap-3 sm:hidden">
+            <Button
+              variant="outline"
+              className="border-primary bg-card px-3 text-[10px] uppercase"
+              onClick={() => setIsMobileMenuOpen(true)}
+            >
+              <PanelLeft className="h-3.5 w-3.5" />
+              Menu
+            </Button>
+            <div className="border border-border bg-card px-3 py-2 text-[10px] text-foreground uppercase">
+              {activeItem.label}
+            </div>
           </div>
+
+          <nav className="hidden w-full flex-nowrap justify-center gap-2 sm:flex lg:gap-3">
+            {navigationItems.map((item) => (
+              <NavigationLink key={item.to} item={item} />
+            ))}
+          </nav>
         </div>
       </header>
 
       <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
         <SheetContent side="left" className="border-border bg-card/95 p-0">
           <SheetHeader className="border-b border-border px-5 py-4">
-            <SheetTitle className="font-display text-xl tracking-[0.22em] text-primary uppercase">
+            <SheetTitle className="font-display text-xl text-primary uppercase">
               Menu
             </SheetTitle>
-            <SheetDescription className="text-[10px] tracking-[0.18em] uppercase">
+            <SheetDescription className="text-[10px] uppercase">
               Switch between feed, suggestion form, and admin.
             </SheetDescription>
           </SheetHeader>
