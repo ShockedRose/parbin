@@ -13,7 +13,6 @@ import {
   formatDateRange,
   getGoogleCalendarUrl,
 } from "@/lib/calendar"
-import { tagBadgeVariantForIndex } from "@/lib/tag-badge-variant"
 import { getEventImageTransitionName } from "@/lib/view-transitions"
 import type { MeetupEvent } from "@/types/event"
 import {
@@ -159,10 +158,10 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
         <div className="absolute inset-0 bg-linear-to-t from-background via-background/20 to-transparent" />
         <div className="absolute right-0 bottom-0 left-0 min-w-0 p-6 sm:p-8">
           <div className="mb-3 flex flex-wrap gap-2">
-            {event.tags.map((tag, index) => (
+            {event.tags.map((tag) => (
               <Badge
                 key={tag}
-                variant={tagBadgeVariantForIndex(index)}
+                variant="node"
                 className="text-[10px] font-medium tracking-wide uppercase backdrop-blur-sm"
               >
                 {tag}

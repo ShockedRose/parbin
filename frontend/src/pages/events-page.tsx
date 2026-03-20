@@ -8,7 +8,6 @@ import {
   formatDateRange,
   getGoogleCalendarUrl,
 } from "@/lib/calendar"
-import { tagBadgeVariantForIndex } from "@/lib/tag-badge-variant"
 import {
   getEventImageTransitionName,
   runViewTransition,
@@ -70,7 +69,7 @@ export function EventsPage() {
           {mgr.events.map((event) => (
             <article
               key={event.id}
-              className="group relative overflow-hidden rounded-xl border border-border bg-card transition-all duration-300 hover:border-primary/60 hover:shadow-[0_0_24px_color-mix(in_srgb,var(--primary)_14%,transparent)]"
+              className="group relative flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-border bg-card transition-all duration-300 hover:border-primary/60 hover:shadow-[0_0_24px_color-mix(in_srgb,var(--primary)_14%,transparent)]"
               role="button"
               tabIndex={0}
               onClick={() => openEventDetails(event.id)}
@@ -78,7 +77,7 @@ export function EventsPage() {
                 handleCardKeyDown(clickedEvent, event.id)
               }
             >
-              <div className="relative h-40 overflow-hidden">
+              <div className="relative h-52 shrink-0 overflow-hidden">
                 <img
                   src={event.image}
                   alt={event.title}
@@ -90,7 +89,7 @@ export function EventsPage() {
                 />
               </div>
 
-              <div className="p-5">
+              <div className="flex min-h-0 flex-1 flex-col p-5">
                 <div
                   className="mb-3 h-0.5 w-9 rounded-full bg-accent shadow-[0_0_12px_color-mix(in_srgb,var(--accent)_35%,transparent)]"
                   aria-hidden
@@ -115,10 +114,10 @@ export function EventsPage() {
                 </p>
 
                 <div className="mb-4 flex flex-wrap gap-1.5">
-                  {event.tags.map((tag, index) => (
+                  {event.tags.map((tag) => (
                     <Badge
                       key={tag}
-                      variant={tagBadgeVariantForIndex(index)}
+                      variant="node"
                       className="text-[10px] font-medium tracking-wide uppercase"
                     >
                       {tag}
@@ -126,7 +125,7 @@ export function EventsPage() {
                   ))}
                 </div>
 
-                <div className="flex flex-col gap-2 sm:flex-row">
+                <div className="mt-auto flex shrink-0 flex-col gap-2 sm:flex-row">
                   <Button
                     size="sm"
                     className="h-auto min-h-11 w-full flex-1 py-3 text-[10px] uppercase parbin-glow-primary-sm sm:h-7 sm:min-h-0 sm:py-0 sm:min-w-0"
