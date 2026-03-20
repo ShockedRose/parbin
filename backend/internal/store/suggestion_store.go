@@ -60,16 +60,11 @@ func (s *EventSuggestionStore) List(ctx context.Context) ([]EventSuggestion, err
 	const query = `
 		SELECT id, title, description, starts_at, ends_at, location, image_url, tags, status, source_event_id, created_at, reviewed_at, reviewed_by
 		FROM event_suggestions
-		ORDER BY
-			CASE status
-				WHEN 'pending' THEN 0
-				WHEN 'approved' THEN 1
-				ELSE 2
-			END,
-			created_at DESC
+		WHERE status = $1
+		ORDER BY created_at DESC
 	`
 
-	rows, err := s.pool.Query(ctx, query)
+	rows, err := s.pool.Query(ctx, query, SuggestionStatusPending)
 	if err != nil {
 		return nil, fmt.Errorf("list suggestions: %w", err)
 	}
