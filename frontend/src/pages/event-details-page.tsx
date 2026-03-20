@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Link } from "@tanstack/react-router"
 
 import { Badge } from "@/components/ui/badge"
@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
 import { useEventManagerContext } from "@/event-manager-context"
+import { getEvent } from "@/lib/api"
 import {
   downloadICS,
   formatDateRange,
@@ -50,8 +51,10 @@ function eventToEditForm(event: MeetupEvent): EditFormState {
 
 export function EventDetailsPage({ eventId }: { eventId: string }) {
   const mgr = useEventManagerContext()
-  const event = mgr.events.find((item) => item.id === eventId)
-
+  const fromFeed = mgr.events.find((item) => item.id === eventId)
+  const [fetchedEvent, setFetchedEvent] = useState<MeetupEvent | null>(null)
+  const [isFetchingEvent, setIsFetchingEvent] = useState(false)
+  const fetchDoneRef = useRef<{ id: string } | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [editForm, setEditForm] = useState<EditFormState>({
     title: "",
@@ -62,6 +65,53 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
     image: "",
     tags: "",
   })
+
+  const event = fromFeed ?? fetchedEvent
+
+  useEffect(() => {
+    if (fromFeed) {
+      fetchDoneRef.current = null
+      setFetchedEvent(null)
+      setIsFetchingEvent(false)
+      return
+    }
+
+    if (mgr.isBootstrapping || mgr.isEventsLoading) {
+      return
+    }
+
+    if (fetchDoneRef.current?.id === eventId) {
+      return
+    }
+
+    let cancelled = false
+    fetchDoneRef.current = null
+    setFetchedEvent(null)
+    setIsFetchingEvent(true)
+
+    void getEvent(eventId)
+      .then((next) => {
+        if (!cancelled) {
+          fetchDoneRef.current = { id: eventId }
+          setFetchedEvent(next)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          fetchDoneRef.current = { id: eventId }
+          setFetchedEvent(null)
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setIsFetchingEvent(false)
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [eventId, fromFeed, mgr.isBootstrapping, mgr.isEventsLoading])
 
   const isAdmin = !!mgr.admin
 
@@ -105,7 +155,7 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
     editForm.date !== "" &&
     editForm.endDate !== ""
 
-  if (mgr.isBootstrapping || mgr.isEventsLoading) {
+  if (mgr.isBootstrapping || mgr.isEventsLoading || isFetchingEvent) {
     return (
       <div className="rounded-xl border border-border bg-card px-6 py-12 text-center text-xs text-primary">
         LOADING_EVENT_PAYLOAD...

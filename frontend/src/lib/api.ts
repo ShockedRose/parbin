@@ -62,6 +62,16 @@ export async function listEvents(): Promise<MeetupEvent[]> {
   return response.events
 }
 
+export async function listPastEvents(): Promise<MeetupEvent[]> {
+  const response = await request<{ events: MeetupEvent[] }>("/api/events/past")
+  return response.events
+}
+
+export async function getEvent(id: string): Promise<MeetupEvent> {
+  const response = await request<{ event: MeetupEvent }>(`/api/events/${id}`)
+  return response.event
+}
+
 export async function createEvent(payload: EventPayload): Promise<MeetupEvent> {
   const response = await request<{ event: MeetupEvent }>("/api/events", {
     method: "POST",

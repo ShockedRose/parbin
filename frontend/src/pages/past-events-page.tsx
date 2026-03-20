@@ -1,8 +1,9 @@
 import { useNavigate } from "@tanstack/react-router"
+import { useEffect, useState } from "react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { useEventManagerContext } from "@/event-manager-context"
+import { listPastEvents } from "@/lib/api"
 import {
   downloadICS,
   formatDateRange,
@@ -12,12 +13,44 @@ import {
   getEventImageTransitionName,
   runViewTransition,
 } from "@/lib/view-transitions"
+import type { MeetupEvent } from "@/types/event"
 import { Calendar, Download, MapPin } from "lucide-react"
 import type { KeyboardEvent, MouseEvent } from "react"
 
-export function EventsPage() {
-  const mgr = useEventManagerContext()
+export function PastEventsPage() {
   const navigate = useNavigate()
+  const [events, setEvents] = useState<MeetupEvent[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    let active = true
+
+    const load = async () => {
+      setIsLoading(true)
+      try {
+        const next = await listPastEvents()
+        if (active) {
+          setEvents(next)
+          setError(null)
+        }
+      } catch {
+        if (active) {
+          setError("Failed to load past events.")
+        }
+      } finally {
+        if (active) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    void load()
+
+    return () => {
+      active = false
+    }
+  }, [])
 
   const openEventDetails = (eventId: string) => {
     runViewTransition(() =>
@@ -48,25 +81,33 @@ export function EventsPage() {
     <div>
       <div className="mb-10">
         <div className="mb-1 text-[10px] text-muted-foreground">
-          ▸ ACTIVE_FEED // {mgr.events.length} NODES DETECTED
+          ▸ ARCHIVE_FEED // {events.length} PAST_NODES (MAX_10)
         </div>
         <h2 className="font-display text-3xl font-bold tracking-tight sm:text-5xl">
-          <span className="text-foreground">EVENT_</span>
-          <span className="text-primary">STREAM</span>
+          <span className="text-foreground">PAST_</span>
+          <span className="text-primary">EVENTS</span>
         </h2>
+        <p className="mt-2 max-w-2xl text-xs text-muted-foreground">
+          Unlisted route — recent concluded events from the app timezone calendar
+          day boundary.
+        </p>
       </div>
 
-      {mgr.isBootstrapping || mgr.isEventsLoading ? (
+      {isLoading ? (
         <div className="rounded-xl border border-border bg-card px-6 py-12 text-center text-xs text-primary">
-          SYNCING_EVENT_FEED...
+          SYNCING_ARCHIVE...
         </div>
-      ) : mgr.events.length === 0 ? (
+      ) : error ? (
+        <div className="rounded-xl border border-border bg-card px-6 py-12 text-center text-xs text-destructive">
+          {error}
+        </div>
+      ) : events.length === 0 ? (
         <div className="rounded-xl border border-border bg-card px-6 py-12 text-center text-xs text-muted-foreground">
-          NO_EVENTS_FOUND
+          NO_PAST_EVENTS_IN_ARCHIVE
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {mgr.events.map((event) => (
+          {events.map((event) => (
             <article
               key={event.id}
               className="group relative flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-border bg-card transition-all duration-300 hover:border-primary/60 hover:shadow-[0_0_24px_color-mix(in_srgb,var(--primary)_14%,transparent)]"
