@@ -8,7 +8,9 @@ Parbin is now split into:
 
 ## Backend features
 
-- `GET /api/events` to list all published events
+- `GET /api/events` to list published events with `starts_at` on or after the current calendar day in `APP_TIMEZONE` (ordered soonest first)
+- `GET /api/events/past` to list up to the 10 most recent past events (before today in `APP_TIMEZONE`, ordered most recent first)
+- `GET /api/events/:id` to fetch a single published event by id (for deep links, including events not on the upcoming feed)
 - `POST /api/events` for admin-only event creation
 - `PUT /api/events/:id` for admin-only event editing
 - `POST /api/event-suggestions` for public event suggestions
@@ -105,5 +107,6 @@ pnpm prepare:all
 
 - The backend auto-runs SQL migrations on startup.
 - A seed admin is auto-provisioned on boot when `SEED_ADMIN_AUTO_PROVISION=true`.
-- Event timestamps are handled using the backend `APP_TIMEZONE` setting, which defaults to `America/Panama`.
+- Event timestamps and the upcoming/past day boundary use the backend `APP_TIMEZONE` setting, which defaults to `America/Panama`.
+- The hidden frontend route `/past-events` loads the past archive (not linked from the main navigation).
 - Helpful local command: `pnpm db:down`

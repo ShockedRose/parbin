@@ -34,8 +34,33 @@ func NewEventService(events *store.EventStore, suggestions *store.EventSuggestio
 	}
 }
 
+func startOfTodayInAppTimezone(loc *time.Location) time.Time {
+	now := time.Now().In(loc)
+	return time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, loc)
+}
+
 func (s *EventService) ListEvents(ctx context.Context) ([]store.Event, error) {
-	return s.events.List(ctx)
+	from := startOfTodayInAppTimezone(s.location)
+	return s.events.ListUpcoming(ctx, from)
+}
+
+func (s *EventService) ListPastEvents(ctx context.Context) ([]store.Event, error) {
+	before := startOfTodayInAppTimezone(s.location)
+	return s.events.ListPastRecent(ctx, before, 10)
+}
+
+func (s *EventService) GetEvent(ctx context.Context, id string) (store.Event, error) {
+	id = strings.TrimSpace(id)
+	if id == "" {
+		return store.Event{}, fmt.Errorf("%w: event id is required", ErrValidation)
+	}
+
+	event, err := s.events.Get(ctx, id)
+	if err != nil {
+		return store.Event{}, err
+	}
+
+	return event, nil
 }
 
 func (s *EventService) UpdateEvent(ctx context.Context, id string, payload EventPayload) (store.Event, error) {

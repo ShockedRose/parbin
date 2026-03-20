@@ -86,6 +86,8 @@ func NewRouter(cfg config.Config, authService *service.AuthService, eventService
 
 	api := router.Group("/api")
 	api.GET("/events", server.listEvents)
+	api.GET("/events/past", server.listPastEvents)
+	api.GET("/events/:id", server.getEvent)
 	api.POST("/event-suggestions", server.createSuggestion)
 	api.POST("/auth/login", server.login)
 	api.POST("/auth/logout", server.logout)
@@ -115,6 +117,31 @@ func (s *Server) listEvents(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"events": response})
+}
+
+func (s *Server) listPastEvents(c *gin.Context) {
+	events, err := s.eventService.ListPastEvents(c.Request.Context())
+	if err != nil {
+		respondError(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	response := make([]eventResponse, 0, len(events))
+	for _, event := range events {
+		response = append(response, s.toEventResponse(event))
+	}
+
+	c.JSON(http.StatusOK, gin.H{"events": response})
+}
+
+func (s *Server) getEvent(c *gin.Context) {
+	event, err := s.eventService.GetEvent(c.Request.Context(), c.Param("id"))
+	if err != nil {
+		handleServiceError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"event": s.toEventResponse(event)})
 }
 
 func (s *Server) createEvent(c *gin.Context) {

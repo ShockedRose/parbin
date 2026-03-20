@@ -8,6 +8,7 @@ import { AppShell } from "@/main-page.tsx"
 import { AdminPage } from "@/pages/admin-page"
 import { EventDetailsPage } from "@/pages/event-details-page"
 import { EventsPage } from "@/pages/events-page"
+import { PastEventsPage } from "@/pages/past-events-page"
 import { SuggestPage } from "@/pages/suggest-page"
 
 const rootRoute = createRootRoute({
@@ -38,6 +39,12 @@ const adminRoute = createRoute({
   component: AdminPage,
 })
 
+const pastEventsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "past-events",
+  component: PastEventsPage,
+})
+
 function EventDetailsRoute() {
   const { eventId } = eventDetailsRoute.useParams()
 
@@ -49,6 +56,7 @@ const routeTree = rootRoute.addChildren([
   eventDetailsRoute,
   suggestRoute,
   adminRoute,
+  pastEventsRoute,
 ])
 
 export const router = createRouter({
