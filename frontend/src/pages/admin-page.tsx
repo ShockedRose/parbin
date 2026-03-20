@@ -205,7 +205,14 @@ export function AdminPage() {
                         </Badge>
                       </div>
 
-                      <p className="mb-3 text-xs leading-relaxed text-muted-foreground">
+                      <p
+                        className="mb-3 line-clamp-2 text-xs leading-relaxed text-muted-foreground"
+                        title={
+                          suggestion.description?.trim()
+                            ? suggestion.description
+                            : undefined
+                        }
+                      >
                         {suggestion.description || "No description provided."}
                       </p>
 
