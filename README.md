@@ -108,5 +108,4 @@ pnpm prepare:all
 - The backend auto-runs SQL migrations on startup.
 - A seed admin is auto-provisioned on boot when `SEED_ADMIN_AUTO_PROVISION=true`.
 - Event timestamps and the upcoming/past day boundary use the backend `APP_TIMEZONE` setting, which defaults to `America/Panama`.
-- The hidden frontend route `/past-events` loads the past archive (not linked from the main navigation).
 - Helpful local command: `pnpm db:down`
