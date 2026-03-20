@@ -11,5 +11,5 @@
 
 ## Build, Test, and Development Commands
 Frontend (Bun + Vite):
-- `pnpm dev:all`: run the Vite dev and backend server. Do not run this command as there is another dev server going already
-- `pnpm build`: Make a production build, don't run this command, just suggest it if you made a change that could impact the build process
+- `pnpm run dev:all`: run the Vite dev and backend server. Do not run this command as there is another dev server going already
+- `pnpm run build`: Make a production build, don't run this command
