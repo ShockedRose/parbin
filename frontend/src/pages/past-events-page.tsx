@@ -1,9 +1,10 @@
+import { useQuery } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
-import { useEffect, useState } from "react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { listPastEvents } from "@/lib/api"
+import { queryKeys } from "@/lib/query-keys"
 import {
   downloadICS,
   formatDateRange,
@@ -13,44 +14,21 @@ import {
   getEventImageTransitionName,
   runViewTransition,
 } from "@/lib/view-transitions"
-import type { MeetupEvent } from "@/types/event"
 import { Calendar, Download, MapPin } from "lucide-react"
 import type { KeyboardEvent, MouseEvent } from "react"
 
 export function PastEventsPage() {
   const navigate = useNavigate()
-  const [events, setEvents] = useState<MeetupEvent[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const {
+    data: events = [],
+    isPending,
+    isError,
+  } = useQuery({
+    queryKey: queryKeys.pastEvents,
+    queryFn: listPastEvents,
+  })
 
-  useEffect(() => {
-    let active = true
-
-    const load = async () => {
-      setIsLoading(true)
-      try {
-        const next = await listPastEvents()
-        if (active) {
-          setEvents(next)
-          setError(null)
-        }
-      } catch {
-        if (active) {
-          setError("Failed to load past events.")
-        }
-      } finally {
-        if (active) {
-          setIsLoading(false)
-        }
-      }
-    }
-
-    void load()
-
-    return () => {
-      active = false
-    }
-  }, [])
+  const error = isError ? "Failed to load past events." : null
 
   const openEventDetails = (eventId: string) => {
     runViewTransition(() =>
@@ -93,7 +71,7 @@ export function PastEventsPage() {
         </p>
       </div>
 
-      {isLoading ? (
+      {isPending ? (
         <div className="rounded-xl border border-border bg-card px-6 py-12 text-center text-xs text-primary">
           SYNCING_ARCHIVE...
         </div>

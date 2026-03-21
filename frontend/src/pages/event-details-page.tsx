@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
+import { useState } from "react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -9,6 +10,7 @@ import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
 import { useEventManagerContext } from "@/event-manager-context"
 import { getEvent } from "@/lib/api"
+import { queryKeys } from "@/lib/query-keys"
 import {
   downloadICS,
   formatDateRange,
@@ -52,9 +54,15 @@ function eventToEditForm(event: MeetupEvent): EditFormState {
 export function EventDetailsPage({ eventId }: { eventId: string }) {
   const mgr = useEventManagerContext()
   const fromFeed = mgr.events.find((item) => item.id === eventId)
-  const [fetchedEvent, setFetchedEvent] = useState<MeetupEvent | null>(null)
-  const [isFetchingEvent, setIsFetchingEvent] = useState(false)
-  const fetchDoneRef = useRef<{ id: string } | null>(null)
+  const needsRemoteEvent =
+    !fromFeed && !mgr.isBootstrapping && !mgr.isEventsLoading
+
+  const eventDetailQuery = useQuery({
+    queryKey: queryKeys.event(eventId),
+    queryFn: () => getEvent(eventId),
+    enabled: needsRemoteEvent,
+  })
+
   const [isEditing, setIsEditing] = useState(false)
   const [editForm, setEditForm] = useState<EditFormState>({
     title: "",
@@ -66,52 +74,7 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
     tags: "",
   })
 
-  const event = fromFeed ?? fetchedEvent
-
-  useEffect(() => {
-    if (fromFeed) {
-      fetchDoneRef.current = null
-      setFetchedEvent(null)
-      setIsFetchingEvent(false)
-      return
-    }
-
-    if (mgr.isBootstrapping || mgr.isEventsLoading) {
-      return
-    }
-
-    if (fetchDoneRef.current?.id === eventId) {
-      return
-    }
-
-    let cancelled = false
-    fetchDoneRef.current = null
-    setFetchedEvent(null)
-    setIsFetchingEvent(true)
-
-    void getEvent(eventId)
-      .then((next) => {
-        if (!cancelled) {
-          fetchDoneRef.current = { id: eventId }
-          setFetchedEvent(next)
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          fetchDoneRef.current = { id: eventId }
-          setFetchedEvent(null)
-        }
-      })
-      .finally(() => {
-        if (!cancelled) {
-          setIsFetchingEvent(false)
-        }
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [eventId, fromFeed, mgr.isBootstrapping, mgr.isEventsLoading])
+  const event = fromFeed ?? eventDetailQuery.data ?? null
 
   const isAdmin = !!mgr.admin
 
@@ -155,7 +118,11 @@ export function EventDetailsPage({ eventId }: { eventId: string }) {
     editForm.date !== "" &&
     editForm.endDate !== ""
 
-  if (mgr.isBootstrapping || mgr.isEventsLoading || isFetchingEvent) {
+  if (
+    mgr.isBootstrapping ||
+    mgr.isEventsLoading ||
+    (needsRemoteEvent && eventDetailQuery.isLoading)
+  ) {
     return (
       <div className="rounded-xl border border-border bg-card px-6 py-12 text-center text-xs text-primary">
         LOADING_EVENT_PAYLOAD...

@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useState } from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import {
+  useCallback,
+  useMemo,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react"
 
 import {
   approveSuggestion as approveSuggestionRequest,
@@ -13,6 +20,7 @@ import {
   logout as logoutRequest,
   rejectSuggestion as rejectSuggestionRequest,
 } from "@/lib/api"
+import { queryKeys } from "@/lib/query-keys"
 import type {
   AdminSession,
   EventPayload,
@@ -76,111 +84,204 @@ function getErrorMessage(error: unknown): string {
   return "Something went wrong."
 }
 
+async function fetchSession(): Promise<AdminSession | null> {
+  try {
+    return await getCurrentAdmin()
+  } catch (err) {
+    if (isApiError(err, 401)) {
+      return null
+    }
+    throw err
+  }
+}
+
 export function useEventManager() {
-  const [events, setEvents] = useState<MeetupEvent[]>([])
-  const [suggestions, setSuggestions] = useState<EventSuggestion[]>([])
-  const [admin, setAdmin] = useState<AdminSession | null>(null)
+  const queryClient = useQueryClient()
   const [eventForm, setEventForm] = useState<EventFormState>(emptyEventForm)
   const [suggestionForm, setSuggestionForm] =
     useState<EventFormState>(emptyEventForm)
   const [loginForm, setLoginForm] = useState<LoginFormState>(emptyLoginForm)
-  const [isBootstrapping, setIsBootstrapping] = useState(true)
-  const [isEventsLoading, setIsEventsLoading] = useState(false)
-  const [isSuggestionsLoading, setIsSuggestionsLoading] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isAuthenticating, setIsAuthenticating] = useState(false)
-  const [activeSuggestionId, setActiveSuggestionId] = useState<string | null>(
-    null
-  )
-  const [error, setError] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
+
+  const eventsQuery = useQuery({
+    queryKey: queryKeys.events,
+    queryFn: listEvents,
+  })
+
+  const sessionQuery = useQuery({
+    queryKey: queryKeys.session,
+    queryFn: fetchSession,
+  })
+
+  const admin = sessionQuery.data ?? null
+
+  const suggestionsQuery = useQuery({
+    queryKey: queryKeys.suggestions,
+    queryFn: listSuggestionsRequest,
+    enabled: sessionQuery.isSuccess && admin !== null,
+  })
+
+  const isBootstrapping =
+    eventsQuery.isPending ||
+    sessionQuery.isPending ||
+    (sessionQuery.isSuccess && admin !== null && suggestionsQuery.isPending)
+
+  const events: MeetupEvent[] = eventsQuery.data ?? []
+  const suggestions: EventSuggestion[] = suggestionsQuery.data ?? []
+
+  const createEventMutation = useMutation({
+    mutationFn: () => createEventRequest(toPayload(eventForm)),
+    onSuccess: () => {
+      setEventForm(emptyEventForm)
+      setNotice("Event deployed.")
+      void queryClient.invalidateQueries({ queryKey: queryKeys.events })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.suggestions })
+    },
+  })
+
+  const createSuggestionMutation = useMutation({
+    mutationFn: () => createSuggestionRequest(toPayload(suggestionForm)),
+    onSuccess: () => {
+      setSuggestionForm(emptyEventForm)
+      setNotice("Suggestion submitted for review.")
+    },
+  })
+
+  const loginMutation = useMutation({
+    mutationFn: () => loginRequest(loginForm.email, loginForm.password),
+    onSuccess: (nextAdmin) => {
+      setLoginForm(emptyLoginForm)
+      setNotice("Admin session active.")
+      queryClient.setQueryData(queryKeys.session, nextAdmin)
+      void queryClient.invalidateQueries({ queryKey: queryKeys.suggestions })
+    },
+  })
+
+  const logoutMutation = useMutation({
+    mutationFn: logoutRequest,
+    onSuccess: () => {
+      setNotice("Session closed.")
+      queryClient.setQueryData(queryKeys.session, null)
+      queryClient.removeQueries({ queryKey: queryKeys.suggestions })
+    },
+  })
+
+  const approveSuggestionMutation = useMutation({
+    mutationFn: approveSuggestionRequest,
+    onSuccess: () => {
+      setNotice("Suggestion converted into an event.")
+      void queryClient.invalidateQueries({ queryKey: queryKeys.events })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.suggestions })
+    },
+  })
+
+  const rejectSuggestionMutation = useMutation({
+    mutationFn: rejectSuggestionRequest,
+    onSuccess: () => {
+      setNotice("Suggestion rejected.")
+      void queryClient.invalidateQueries({ queryKey: queryKeys.suggestions })
+    },
+  })
+
+  const updateEventMutation = useMutation({
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string
+      payload: EventPayload
+    }) => updateEventRequest(id, payload),
+    onSuccess: (_data, { id }) => {
+      setNotice("Event updated.")
+      void queryClient.invalidateQueries({ queryKey: queryKeys.events })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.event(id) })
+    },
+  })
+
+  const queryErrorMessage = useMemo(() => {
+    for (const q of [eventsQuery, sessionQuery, suggestionsQuery]) {
+      if (q.error) {
+        return getErrorMessage(q.error)
+      }
+    }
+    return null
+  }, [eventsQuery.error, sessionQuery.error, suggestionsQuery.error])
+
+  const mutationErrorMessage = useMemo(() => {
+    for (const m of [
+      createEventMutation,
+      createSuggestionMutation,
+      loginMutation,
+      logoutMutation,
+      approveSuggestionMutation,
+      rejectSuggestionMutation,
+      updateEventMutation,
+    ]) {
+      if (m.error) {
+        return getErrorMessage(m.error)
+      }
+    }
+    return null
+  }, [
+    createEventMutation.error,
+    createSuggestionMutation.error,
+    loginMutation.error,
+    logoutMutation.error,
+    approveSuggestionMutation.error,
+    rejectSuggestionMutation.error,
+    updateEventMutation.error,
+  ])
+
+  const error = mutationErrorMessage ?? queryErrorMessage
+
+  const resetMutationErrors = useCallback(() => {
+    createEventMutation.reset()
+    createSuggestionMutation.reset()
+    loginMutation.reset()
+    logoutMutation.reset()
+    approveSuggestionMutation.reset()
+    rejectSuggestionMutation.reset()
+    updateEventMutation.reset()
+  }, [
+    createEventMutation,
+    createSuggestionMutation,
+    loginMutation,
+    logoutMutation,
+    approveSuggestionMutation,
+    rejectSuggestionMutation,
+    updateEventMutation,
+  ])
+
+  const setError = useCallback<Dispatch<SetStateAction<string | null>>>(
+    (value) => {
+      const next = typeof value === "function" ? value(error) : value
+      if (next !== null) {
+        return
+      }
+      resetMutationErrors()
+    },
+    [error, resetMutationErrors]
+  )
 
   const eventImagePreview = eventForm.image.trim() || null
   const suggestionImagePreview = suggestionForm.image.trim() || null
 
-  const loadEvents = useCallback(async () => {
-    setIsEventsLoading(true)
+  const isSubmitting =
+    createEventMutation.isPending ||
+    createSuggestionMutation.isPending ||
+    updateEventMutation.isPending
 
-    try {
-      const nextEvents = await listEvents()
-      setEvents(nextEvents)
-      setError(null)
-    } catch (err) {
-      setError(getErrorMessage(err))
-    } finally {
-      setIsEventsLoading(false)
-    }
-  }, [])
+  const isAuthenticating =
+    loginMutation.isPending || logoutMutation.isPending
 
-  const loadSuggestions = useCallback(async () => {
-    if (!admin) {
-      setSuggestions([])
-      return
-    }
-
-    setIsSuggestionsLoading(true)
-
-    try {
-      const nextSuggestions = await listSuggestionsRequest()
-      setSuggestions(nextSuggestions)
-      setError(null)
-    } catch (err) {
-      setError(getErrorMessage(err))
-    } finally {
-      setIsSuggestionsLoading(false)
-    }
-  }, [admin])
-
-  const restoreSession = useCallback(async () => {
-    try {
-      const currentAdmin = await getCurrentAdmin()
-      setAdmin(currentAdmin)
-      setError(null)
-      return currentAdmin
-    } catch (err) {
-      if (isApiError(err, 401)) {
-        setAdmin(null)
-        setSuggestions([])
-        return null
-      }
-
-      setError(getErrorMessage(err))
-      return null
-    }
-  }, [])
-
-  useEffect(() => {
-    let active = true
-
-    const bootstrap = async () => {
-      setIsBootstrapping(true)
-
-      try {
-        await loadEvents()
-        const currentAdmin = await restoreSession()
-        if (active && currentAdmin) {
-          const nextSuggestions = await listSuggestionsRequest()
-          if (active) {
-            setSuggestions(nextSuggestions)
-          }
-        }
-      } catch (err) {
-        if (active) {
-          setError(getErrorMessage(err))
-        }
-      } finally {
-        if (active) {
-          setIsBootstrapping(false)
-        }
-      }
-    }
-
-    void bootstrap()
-
-    return () => {
-      active = false
-    }
-  }, [loadEvents, restoreSession])
+  const activeSuggestionId =
+    approveSuggestionMutation.isPending &&
+    approveSuggestionMutation.variables != null
+      ? approveSuggestionMutation.variables
+      : rejectSuggestionMutation.isPending &&
+          rejectSuggestionMutation.variables != null
+        ? rejectSuggestionMutation.variables
+        : null
 
   const updateEventField = (field: keyof EventFormState, value: string) => {
     setEventForm((prev) => ({ ...prev, [field]: value }))
@@ -198,120 +299,61 @@ export function useEventManager() {
   }
 
   const addEvent = async () => {
-    setIsSubmitting(true)
-
     try {
-      await createEventRequest(toPayload(eventForm))
-      setEventForm(emptyEventForm)
-      setNotice("Event deployed.")
-      setError(null)
-      await loadEvents()
-      await loadSuggestions()
+      await createEventMutation.mutateAsync()
       return true
-    } catch (err) {
-      setError(getErrorMessage(err))
+    } catch {
       return false
-    } finally {
-      setIsSubmitting(false)
     }
   }
 
   const submitSuggestion = async () => {
-    setIsSubmitting(true)
-
     try {
-      await createSuggestionRequest(toPayload(suggestionForm))
-      setSuggestionForm(emptyEventForm)
-      setNotice("Suggestion submitted for review.")
-      setError(null)
+      await createSuggestionMutation.mutateAsync()
       return true
-    } catch (err) {
-      setError(getErrorMessage(err))
+    } catch {
       return false
-    } finally {
-      setIsSubmitting(false)
     }
   }
 
   const login = async () => {
-    setIsAuthenticating(true)
-
     try {
-      const nextAdmin = await loginRequest(loginForm.email, loginForm.password)
-      setAdmin(nextAdmin)
-      setLoginForm(emptyLoginForm)
-      setNotice("Admin session active.")
-      setError(null)
-      const nextSuggestions = await listSuggestionsRequest()
-      setSuggestions(nextSuggestions)
-    } catch (err) {
-      setError(getErrorMessage(err))
-    } finally {
-      setIsAuthenticating(false)
+      await loginMutation.mutateAsync()
+    } catch {
+      /* surfaced via mutation error */
     }
   }
 
   const logout = async () => {
-    setIsAuthenticating(true)
-
     try {
-      await logoutRequest()
-      setAdmin(null)
-      setSuggestions([])
-      setNotice("Session closed.")
-      setError(null)
-    } catch (err) {
-      setError(getErrorMessage(err))
-    } finally {
-      setIsAuthenticating(false)
+      await logoutMutation.mutateAsync()
+    } catch {
+      /* surfaced via mutation error */
     }
   }
 
   const approveSuggestion = async (id: string) => {
-    setActiveSuggestionId(id)
-
     try {
-      await approveSuggestionRequest(id)
-      setNotice("Suggestion converted into an event.")
-      setError(null)
-      await loadEvents()
-      await loadSuggestions()
-    } catch (err) {
-      setError(getErrorMessage(err))
-    } finally {
-      setActiveSuggestionId(null)
+      await approveSuggestionMutation.mutateAsync(id)
+    } catch {
+      /* surfaced via mutation error */
     }
   }
 
   const rejectSuggestion = async (id: string) => {
-    setActiveSuggestionId(id)
-
     try {
-      await rejectSuggestionRequest(id)
-      setNotice("Suggestion rejected.")
-      setError(null)
-      await loadSuggestions()
-    } catch (err) {
-      setError(getErrorMessage(err))
-    } finally {
-      setActiveSuggestionId(null)
+      await rejectSuggestionMutation.mutateAsync(id)
+    } catch {
+      /* surfaced via mutation error */
     }
   }
 
   const editEvent = async (id: string, payload: EventPayload) => {
-    setIsSubmitting(true)
-
     try {
-      await updateEventRequest(id, payload)
-      setNotice("Event updated.")
-      setError(null)
-      await loadEvents()
+      await updateEventMutation.mutateAsync({ id, payload })
       return true
-    } catch (err) {
-      setError(getErrorMessage(err))
+    } catch {
       return false
-    } finally {
-      setIsSubmitting(false)
     }
   }
 
@@ -329,8 +371,9 @@ export function useEventManager() {
     setError,
     setNotice,
     isBootstrapping,
-    isEventsLoading,
-    isSuggestionsLoading,
+    isEventsLoading:
+      eventsQuery.isFetching && eventsQuery.data === undefined,
+    isSuggestionsLoading: suggestionsQuery.isFetching,
     isSubmitting,
     isAuthenticating,
     activeSuggestionId,
