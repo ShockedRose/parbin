@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { Link } from "@tanstack/react-router"
+import { getRouteApi, Link } from "@tanstack/react-router"
 import { useState } from "react"
 
 import { Badge } from "@/components/ui/badge"
@@ -51,7 +51,10 @@ function eventToEditForm(event: MeetupEvent): EditFormState {
   }
 }
 
-export function EventDetailsPage({ eventId }: { eventId: string }) {
+const eventDetailsRouteApi = getRouteApi("/events/$eventId")
+
+export function EventDetailsPage() {
+  const { eventId } = eventDetailsRouteApi.useParams()
   const mgr = useEventManagerContext()
   const fromFeed = mgr.events.find((item) => item.id === eventId)
   const needsRemoteEvent =

@@ -24,7 +24,7 @@ const eventsRoute = createRoute({
 const eventDetailsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "events/$eventId",
-  component: EventDetailsRoute,
+  component: EventDetailsPage,
 })
 
 const suggestRoute = createRoute({
@@ -44,12 +44,6 @@ const pastEventsRoute = createRoute({
   path: "past-events",
   component: PastEventsPage,
 })
-
-function EventDetailsRoute() {
-  const { eventId } = eventDetailsRoute.useParams()
-
-  return <EventDetailsPage eventId={eventId} />
-}
 
 const routeTree = rootRoute.addChildren([
   eventsRoute,

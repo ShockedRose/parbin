@@ -1,6 +1,10 @@
 # Parbin
 
-Parbin is now split into:
+Parbin is an events listing app with public suggestions and admin moderation
+
+**License:** [MIT](./LICENSE) · **Contributing:** [CONTRIBUTING.md](./CONTRIBUTING.md) · **Security:** [SECURITY.md](./SECURITY.md) · **Docs:** [`docs/`](./docs/README.md)
+
+Parbin is split into:
 
 - a Vite + React frontend in `frontend/`
 - a Go + Gin backend in `backend/`

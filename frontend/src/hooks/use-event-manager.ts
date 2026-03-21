@@ -205,7 +205,7 @@ export function useEventManager() {
       }
     }
     return null
-  }, [eventsQuery.error, sessionQuery.error, suggestionsQuery.error])
+  }, [eventsQuery, sessionQuery, suggestionsQuery])
 
   const mutationErrorMessage = useMemo(() => {
     for (const m of [
@@ -223,13 +223,13 @@ export function useEventManager() {
     }
     return null
   }, [
-    createEventMutation.error,
-    createSuggestionMutation.error,
-    loginMutation.error,
-    logoutMutation.error,
-    approveSuggestionMutation.error,
-    rejectSuggestionMutation.error,
-    updateEventMutation.error,
+    createEventMutation,
+    createSuggestionMutation,
+    loginMutation,
+    logoutMutation,
+    approveSuggestionMutation,
+    rejectSuggestionMutation,
+    updateEventMutation,
   ])
 
   const error = mutationErrorMessage ?? queryErrorMessage
