@@ -6,9 +6,9 @@ Parbin is an events listing app with public suggestions and admin moderation
 
 Parbin is split into:
 
-- a Vite + React frontend in `frontend/`
-- a Go + Gin backend in `backend/`
-- a Postgres database for local development via `backend/docker-compose.yml`
+- A Vite + React frontend in `frontend/`
+- A Go + Gin backend in `backend/`
+- A Postgres database for local development via `backend/docker-compose.yml`
 
 ## Backend features
 
@@ -22,6 +22,15 @@ Parbin is split into:
 - `POST /api/admin/event-suggestions/:id/approve` to convert a suggestion into an event
 - `POST /api/admin/event-suggestions/:id/reject` to reject a suggestion
 - `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me` for cookie-based admin auth
+
+## Roadmap
+
+The roadmap for Parbin represents the high level goals for the application. There'll be improvements to be made to user experience, optimization, deployment capabilities, and many more; however the latter ones will be handled as issues separated from these main goals:  
+
+- [ ] Introduce a cron job to scrape external event pages and suggest candidates for the main listing (admin moderation)
+  - [ ] Add sources for the scraper (allowlist, config, per-site rules)
+  - [ ] Implement the scraper (fetch, parse, normalize into suggestion-ready records)
+  - [ ] Deploy the scraper (scheduled runner in the target environment)
 
 ## Local development
 
