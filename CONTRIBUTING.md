@@ -25,6 +25,23 @@ pnpm dev:all
 
 More detail: [README.md](./README.md).
 
+## Fork and branch naming
+
+1. **Fork** this repository on GitHub and push your changes from **a branch on your fork** 
+2. **Open pull requests** from that branch into this upstream repository.
+
+**Branch name format:** `scope/descriptive-summary`
+
+Use a short, kebab-case slug after the scope (for example, `fix/login-redirect-loop`, `docs/contributing-branch-names`). Pick **scope** from the list below so it matches the kind of issue you are addressing.
+
+| Scope | Use when |
+| ----- | -------- |
+| `feature` | Adding new functionality tracked as a **FEAT** issue labeled **`Roadmap`**. |
+| `task` | Improvements that are not a roadmap-level goal: UX, optimization, tests, or development/build/deployment changes. May also be a **FEAT** issue **without** the **`Roadmap`** label. |
+| `fix` | Fixing a bug described by a **BUG** issue. |
+| `docs` | Documentation-only changes. |
+| `sec` | Security-related changes (see also [SECURITY.md](./SECURITY.md) for sensitive reports). |
+
 ## Pull request checklist
 
 Use this template in your PR description (copy and fill in):
