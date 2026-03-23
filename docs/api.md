@@ -34,6 +34,7 @@ Responses use the following fields (Go struct tags in `internal/httpapi/router.g
 | `location` | string | |
 | `image` | string | Image URL |
 | `tags` | string[] | |
+| `sourceEventPage` | string \| null | Canonical URL of the external event page (optional) |
 
 **Create / update / suggestion body** (same keys for POST/PUT bodies):
 
@@ -45,9 +46,12 @@ Responses use the following fields (Go struct tags in `internal/httpapi/router.g
   "endDate": "string",
   "location": "string",
   "image": "string",
-  "tags": ["string"]
+  "tags": ["string"],
+  "sourceEventPage": "string"
 }
 ```
+
+`sourceEventPage` is optional on create/update bodies. Deduplication by URL is left to callers (e.g. the scraper uses `GET /api/event-suggestions/source-urls`); the API does not enforce uniqueness on this field.
 
 List endpoints return `{ "events": [ ... ] }`. Single event returns `{ "event": { ... } }`.
 
@@ -55,6 +59,7 @@ List endpoints return `{ "events": [ ... ] }`. Single event returns `{ "event": 
 
 | Method | Path | Auth | Description |
 | ------ | ---- | ---- | ----------- |
+| GET | `/api/event-suggestions/source-urls` | No | Distinct non-null `source_event_page` values from events and suggestions. **200** `{ "urls": [ "https://..." ] }` |
 | POST | `/api/event-suggestions` | No | Submit a suggestion. **201** `{ "suggestion": { ... } }` |
 | GET | `/api/admin/event-suggestions` | Admin | List suggestions. **200** `{ "suggestions": [ ... ] }` |
 | POST | `/api/admin/event-suggestions/:id/approve` | Admin | Approve: creates/links event. **200** `{ "suggestion": { ... }, "event": { ... } }` |
@@ -68,6 +73,7 @@ Extends event-like fields with:
 | ----- | ---- | ----- |
 | `status` | string | `pending`, `approved`, or `rejected` |
 | `sourceEventId` | string \| null | Present when tied to an existing event |
+| `sourceEventPage` | string \| null | External event URL when set |
 | `createdAt` | string | Datetime in app timezone format |
 | `reviewedAt` | string \| null | |
 | `reviewedBy` | string \| null | Admin id |

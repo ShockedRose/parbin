@@ -23,13 +23,14 @@ type Server struct {
 }
 
 type eventRequest struct {
-	Title       string   `json:"title"`
-	Description string   `json:"description"`
-	Date        string   `json:"date"`
-	EndDate     string   `json:"endDate"`
-	Location    string   `json:"location"`
-	Image       string   `json:"image"`
-	Tags        []string `json:"tags"`
+	Title           string   `json:"title"`
+	Description     string   `json:"description"`
+	Date            string   `json:"date"`
+	EndDate         string   `json:"endDate"`
+	Location        string   `json:"location"`
+	Image           string   `json:"image"`
+	Tags            []string `json:"tags"`
+	SourceEventPage string   `json:"sourceEventPage"`
 }
 
 type loginRequest struct {
@@ -38,30 +39,32 @@ type loginRequest struct {
 }
 
 type eventResponse struct {
-	ID          string   `json:"id"`
-	Title       string   `json:"title"`
-	Description string   `json:"description"`
-	Date        string   `json:"date"`
-	EndDate     string   `json:"endDate"`
-	Location    string   `json:"location"`
-	Image       string   `json:"image"`
-	Tags        []string `json:"tags"`
+	ID              string   `json:"id"`
+	Title           string   `json:"title"`
+	Description     string   `json:"description"`
+	Date            string   `json:"date"`
+	EndDate         string   `json:"endDate"`
+	Location        string   `json:"location"`
+	Image           string   `json:"image"`
+	Tags            []string `json:"tags"`
+	SourceEventPage *string  `json:"sourceEventPage"`
 }
 
 type suggestionResponse struct {
-	ID            string   `json:"id"`
-	Title         string   `json:"title"`
-	Description   string   `json:"description"`
-	Date          string   `json:"date"`
-	EndDate       string   `json:"endDate"`
-	Location      string   `json:"location"`
-	Image         string   `json:"image"`
-	Tags          []string `json:"tags"`
-	Status        string   `json:"status"`
-	SourceEventID *string  `json:"sourceEventId"`
-	CreatedAt     string   `json:"createdAt"`
-	ReviewedAt    *string  `json:"reviewedAt"`
-	ReviewedBy    *string  `json:"reviewedBy"`
+	ID              string   `json:"id"`
+	Title           string   `json:"title"`
+	Description     string   `json:"description"`
+	Date            string   `json:"date"`
+	EndDate         string   `json:"endDate"`
+	Location        string   `json:"location"`
+	Image           string   `json:"image"`
+	Tags            []string `json:"tags"`
+	Status          string   `json:"status"`
+	SourceEventID   *string  `json:"sourceEventId"`
+	SourceEventPage *string  `json:"sourceEventPage"`
+	CreatedAt       string   `json:"createdAt"`
+	ReviewedAt      *string  `json:"reviewedAt"`
+	ReviewedBy      *string  `json:"reviewedBy"`
 }
 
 func NewRouter(cfg config.Config, authService *service.AuthService, eventService *service.EventService) *gin.Engine {
@@ -88,6 +91,7 @@ func NewRouter(cfg config.Config, authService *service.AuthService, eventService
 	api.GET("/events", server.listEvents)
 	api.GET("/events/past", server.listPastEvents)
 	api.GET("/events/:id", server.getEvent)
+	api.GET("/event-suggestions/source-urls", server.listSourceEventPages)
 	api.POST("/event-suggestions", server.createSuggestion)
 	api.POST("/auth/login", server.login)
 	api.POST("/auth/logout", server.logout)
@@ -174,6 +178,16 @@ func (s *Server) updateEvent(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"event": s.toEventResponse(event)})
+}
+
+func (s *Server) listSourceEventPages(c *gin.Context) {
+	urls, err := s.eventService.ListDistinctSourceEventPages(c.Request.Context())
+	if err != nil {
+		respondError(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"urls": urls})
 }
 
 func (s *Server) createSuggestion(c *gin.Context) {
@@ -309,14 +323,15 @@ func sanitizeAdmin(admin store.Admin) gin.H {
 
 func (s *Server) toEventResponse(event store.Event) eventResponse {
 	return eventResponse{
-		ID:          event.ID,
-		Title:       event.Title,
-		Description: event.Description,
-		Date:        formatLocalDateTime(event.StartsAt, s.cfg.Location),
-		EndDate:     formatLocalDateTime(event.EndsAt, s.cfg.Location),
-		Location:    event.Location,
-		Image:       event.ImageURL,
-		Tags:        event.Tags,
+		ID:              event.ID,
+		Title:           event.Title,
+		Description:     event.Description,
+		Date:            formatLocalDateTime(event.StartsAt, s.cfg.Location),
+		EndDate:         formatLocalDateTime(event.EndsAt, s.cfg.Location),
+		Location:        event.Location,
+		Image:           event.ImageURL,
+		Tags:            event.Tags,
+		SourceEventPage: event.SourceEventPage,
 	}
 }
 
@@ -328,19 +343,20 @@ func (s *Server) toSuggestionResponse(suggestion store.EventSuggestion) suggesti
 	}
 
 	return suggestionResponse{
-		ID:            suggestion.ID,
-		Title:         suggestion.Title,
-		Description:   suggestion.Description,
-		Date:          formatLocalDateTime(suggestion.StartsAt, s.cfg.Location),
-		EndDate:       formatLocalDateTime(suggestion.EndsAt, s.cfg.Location),
-		Location:      suggestion.Location,
-		Image:         suggestion.ImageURL,
-		Tags:          suggestion.Tags,
-		Status:        suggestion.Status,
-		SourceEventID: suggestion.SourceEventID,
-		CreatedAt:     formatLocalDateTime(suggestion.CreatedAt, s.cfg.Location),
-		ReviewedAt:    reviewedAt,
-		ReviewedBy:    suggestion.ReviewedBy,
+		ID:              suggestion.ID,
+		Title:           suggestion.Title,
+		Description:     suggestion.Description,
+		Date:            formatLocalDateTime(suggestion.StartsAt, s.cfg.Location),
+		EndDate:         formatLocalDateTime(suggestion.EndsAt, s.cfg.Location),
+		Location:        suggestion.Location,
+		Image:           suggestion.ImageURL,
+		Tags:            suggestion.Tags,
+		Status:          suggestion.Status,
+		SourceEventID:   suggestion.SourceEventID,
+		SourceEventPage: suggestion.SourceEventPage,
+		CreatedAt:       formatLocalDateTime(suggestion.CreatedAt, s.cfg.Location),
+		ReviewedAt:      reviewedAt,
+		ReviewedBy:      suggestion.ReviewedBy,
 	}
 }
 

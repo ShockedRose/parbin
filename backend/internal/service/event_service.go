@@ -11,13 +11,14 @@ import (
 )
 
 type EventPayload struct {
-	Title       string
-	Description string
-	Date        string
-	EndDate     string
-	Location    string
-	Image       string
-	Tags        []string
+	Title           string
+	Description     string
+	Date            string
+	EndDate         string
+	Location        string
+	Image           string
+	Tags            []string
+	SourceEventPage string
 }
 
 type EventService struct {
@@ -95,6 +96,10 @@ func (s *EventService) CreateSuggestion(ctx context.Context, payload EventPayloa
 	return s.suggestions.Create(ctx, input)
 }
 
+func (s *EventService) ListDistinctSourceEventPages(ctx context.Context) ([]string, error) {
+	return s.suggestions.ListDistinctSourceEventPages(ctx)
+}
+
 func (s *EventService) ListSuggestions(ctx context.Context) ([]store.EventSuggestion, error) {
 	return s.suggestions.List(ctx)
 }
@@ -162,13 +167,14 @@ func buildEventInput(payload EventPayload, location *time.Location) (store.Event
 	}
 
 	return store.EventInput{
-		Title:       title,
-		Description: strings.TrimSpace(payload.Description),
-		StartsAt:    startsAt,
-		EndsAt:      endsAt,
-		Location:    strings.TrimSpace(payload.Location),
-		ImageURL:    strings.TrimSpace(payload.Image),
-		Tags:        cleanTags(payload.Tags),
+		Title:           title,
+		Description:     strings.TrimSpace(payload.Description),
+		StartsAt:        startsAt,
+		EndsAt:          endsAt,
+		Location:        strings.TrimSpace(payload.Location),
+		ImageURL:        strings.TrimSpace(payload.Image),
+		Tags:            cleanTags(payload.Tags),
+		SourceEventPage: strings.TrimSpace(payload.SourceEventPage),
 	}, nil
 }
 

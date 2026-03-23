@@ -11,7 +11,7 @@ export function getEventImageTransitionName(eventId: string): string {
 export function runViewTransition(
   updateCallback: () => Promise<void> | void
 ): void {
-  const transitionDocument = document as ViewTransitionDocument
+  const transitionDocument = document satisfies ViewTransitionDocument
 
   if (typeof transitionDocument.startViewTransition === "function") {
     void transitionDocument
