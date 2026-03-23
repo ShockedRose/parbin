@@ -7,6 +7,8 @@ export interface MeetupEvent {
   location: string
   image: string
   tags: string[]
+  /** Canonical URL of the external event page (when set by scraper or admin). */
+  sourceEventPage?: string | null
 }
 
 export interface EventPayload {
@@ -17,6 +19,7 @@ export interface EventPayload {
   location: string
   image: string
   tags: string[]
+  sourceEventPage?: string
 }
 
 export interface EventSuggestion extends MeetupEvent {
