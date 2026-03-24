@@ -10,6 +10,7 @@ import { formatDateRange } from "@/lib/calendar"
 import {
   Calendar,
   Check,
+  ExternalLink,
   LogIn,
   LogOut,
   MapPin,
@@ -188,6 +189,19 @@ export function AdminPage() {
                               <MapPin className="h-3 w-3 text-accent" />
                               {suggestion.location || "No location provided"}
                             </div>
+                            {suggestion.sourceEventPage ? (
+                              <div className="flex min-w-0 items-start gap-1.5">
+                                <ExternalLink className="mt-0.5 h-3 w-3 shrink-0 text-primary" />
+                                <a
+                                  href={suggestion.sourceEventPage}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="min-w-0 break-all text-primary underline-offset-2 hover:underline"
+                                >
+                                  {suggestion.sourceEventPage}
+                                </a>
+                              </div>
+                            ) : null}
                           </div>
                         </div>
 
