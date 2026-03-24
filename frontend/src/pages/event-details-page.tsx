@@ -35,6 +35,7 @@ interface EditFormState {
   date: string
   endDate: string
   location: string
+  sourceEventPage: string
   image: string
   tags: string
 }
@@ -46,6 +47,7 @@ function eventToEditForm(event: MeetupEvent): EditFormState {
     date: event.date,
     endDate: event.endDate,
     location: event.location,
+    sourceEventPage: event.sourceEventPage ?? "",
     image: event.image,
     tags: event.tags.join(", "),
   }
@@ -73,6 +75,7 @@ export function EventDetailsPage() {
     date: "",
     endDate: "",
     location: "",
+    sourceEventPage: "",
     image: "",
     tags: "",
   })
@@ -109,6 +112,7 @@ export function EventDetailsPage() {
         .split(",")
         .map((t) => t.trim())
         .filter(Boolean),
+      sourceEventPage: editForm.sourceEventPage.trim(),
     })
 
     if (success) {
@@ -273,6 +277,20 @@ export function EventDetailsPage() {
 
             <div className="space-y-2">
               <Label className="text-[11px] text-primary uppercase">
+                event.source_event_page
+              </Label>
+              <Input
+                type="url"
+                inputMode="url"
+                value={editForm.sourceEventPage}
+                onChange={(e) => updateField("sourceEventPage", e.target.value)}
+                placeholder=">> https://… (optional)"
+                className="border-border bg-background"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-[11px] text-primary uppercase">
                 event.tags[]
               </Label>
               <Input
@@ -334,6 +352,19 @@ export function EventDetailsPage() {
                 <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />
                 <span className="min-w-0 break-words">{event.location}</span>
               </div>
+              {event.sourceEventPage ? (
+                <div className="flex min-w-0 max-w-full items-start gap-2 border border-border bg-background px-3 py-2">
+                  <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                  <a
+                    href={event.sourceEventPage}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="min-w-0 break-all text-sm text-primary underline-offset-2 hover:underline"
+                  >
+                    {event.sourceEventPage}
+                  </a>
+                </div>
+              ) : null}
             </div>
 
             <div className="grid min-w-0 grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4">

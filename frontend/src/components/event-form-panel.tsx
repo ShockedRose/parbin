@@ -12,6 +12,7 @@ type EventFormModel = {
   date: string
   endDate: string
   location: string
+  sourceEventPage: string
   image: string
   tags: string
 }
@@ -116,6 +117,23 @@ export function EventFormPanel({
             placeholder=">> Venue, City, State"
             className="border-border bg-background"
           />
+        </div>
+
+        <div className="space-y-2">
+          <Label className="text-[11px] text-primary uppercase">
+            event.source_event_page
+          </Label>
+          <Input
+            type="url"
+            inputMode="url"
+            value={form.sourceEventPage}
+            onChange={(e) => onFieldChange("sourceEventPage", e.target.value)}
+            placeholder=">> https://… (optional external listing)"
+            className="border-border bg-background"
+          />
+          <p className="text-[10px] text-muted-foreground">
+            Optional link to the original event page (e.g. Meetup, Eventbrite).
+          </p>
         </div>
 
         <div className="space-y-2">
