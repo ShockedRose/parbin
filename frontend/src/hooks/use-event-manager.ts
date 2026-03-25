@@ -34,6 +34,7 @@ interface EventFormState {
   date: string
   endDate: string
   location: string
+  sourceEventPage: string
   image: string
   tags: string
 }
@@ -49,6 +50,7 @@ const emptyEventForm: EventFormState = {
   date: "",
   endDate: "",
   location: "",
+  sourceEventPage: "",
   image: "",
   tags: "",
 }
@@ -62,6 +64,7 @@ const fallbackImage =
   "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=400&fit=crop"
 
 function toPayload(form: EventFormState): EventPayload {
+  const sourceEventPage = form.sourceEventPage.trim()
   return {
     title: form.title.trim(),
     description: form.description.trim(),
@@ -73,6 +76,7 @@ function toPayload(form: EventFormState): EventPayload {
       .split(",")
       .map((tag) => tag.trim())
       .filter(Boolean),
+    ...(sourceEventPage ? { sourceEventPage } : {}),
   }
 }
 
@@ -168,18 +172,30 @@ export function useEventManager() {
 
   const approveSuggestionMutation = useMutation({
     mutationFn: approveSuggestionRequest,
-    onSuccess: () => {
+    onSuccess: (updated) => {
       setNotice("Suggestion converted into an event.")
       void queryClient.invalidateQueries({ queryKey: queryKeys.events })
-      void queryClient.invalidateQueries({ queryKey: queryKeys.suggestions })
+      queryClient.setQueryData<EventSuggestion[]>(
+        queryKeys.suggestions,
+        (old) => {
+          if (!old) return old
+          return old.map((s) => (s.id === updated.id ? updated : s))
+        }
+      )
     },
   })
 
   const rejectSuggestionMutation = useMutation({
     mutationFn: rejectSuggestionRequest,
-    onSuccess: () => {
+    onSuccess: (updated) => {
       setNotice("Suggestion rejected.")
-      void queryClient.invalidateQueries({ queryKey: queryKeys.suggestions })
+      queryClient.setQueryData<EventSuggestion[]>(
+        queryKeys.suggestions,
+        (old) => {
+          if (!old) return old
+          return old.map((s) => (s.id === updated.id ? updated : s))
+        }
+      )
     },
   })
 
@@ -348,6 +364,10 @@ export function useEventManager() {
     }
   }
 
+  const refreshSuggestions = useCallback(() => {
+    void queryClient.invalidateQueries({ queryKey: queryKeys.suggestions })
+  }, [queryClient])
+
   const editEvent = async (id: string, payload: EventPayload) => {
     try {
       await updateEventMutation.mutateAsync({ id, payload })
@@ -373,7 +393,9 @@ export function useEventManager() {
     isBootstrapping,
     isEventsLoading:
       eventsQuery.isFetching && eventsQuery.data === undefined,
-    isSuggestionsLoading: suggestionsQuery.isFetching,
+    isSuggestionsLoading: suggestionsQuery.isLoading,
+    isSuggestionsRefreshing:
+      suggestionsQuery.isFetching && !suggestionsQuery.isLoading,
     isSubmitting,
     isAuthenticating,
     activeSuggestionId,
@@ -387,5 +409,6 @@ export function useEventManager() {
     logout,
     approveSuggestion,
     rejectSuggestion,
+    refreshSuggestions,
   }
 }

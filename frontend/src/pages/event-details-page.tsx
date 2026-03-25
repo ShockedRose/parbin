@@ -201,9 +201,9 @@ export function EventDetailsPage() {
             placeholder=">> Event title"
           />
         ) : (
-          <h1 className="max-w-full break-words font-display text-[1.625rem] font-bold leading-tight text-foreground sm:max-w-3xl sm:text-2xl sm:leading-snug">
+          <h2 className="max-w-full break-words font-display text-[1.625rem] font-bold leading-tight text-foreground sm:max-w-3xl sm:text-2xl sm:leading-snug">
             {event.title}
-          </h1>
+          </h2>
         )}
       </div>
 

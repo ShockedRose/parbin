@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useEventManagerContext } from "@/event-manager-context"
 import { formatDateRange } from "@/lib/calendar"
+import { cn } from "@/lib/utils"
 import {
   Calendar,
   Check,
@@ -15,6 +16,7 @@ import {
   LogOut,
   MapPin,
   Plus,
+  RefreshCw,
   Shield,
   X,
 } from "lucide-react"
@@ -139,7 +141,7 @@ export function AdminPage() {
           </div>
 
           <div className="rounded-xl border border-border bg-card p-6">
-            <div className="mb-6 flex items-center justify-between gap-4">
+            <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
               <div>
                 <div className="text-[10px] text-accent">
                   REVIEW_QUEUE
@@ -148,8 +150,30 @@ export function AdminPage() {
                   Pending suggestions can be converted directly into events.
                 </div>
               </div>
-              <div className="text-[10px] text-primary">
-                {mgr.suggestions.length} ITEMS
+              <div className="flex flex-wrap items-center justify-end gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    mgr.refreshSuggestions()
+                  }}
+                  disabled={
+                    mgr.isSuggestionsLoading || mgr.isSuggestionsRefreshing
+                  }
+                  className="text-[10px] uppercase"
+                >
+                  <RefreshCw
+                    className={cn(
+                      "mr-1 h-3 w-3",
+                      mgr.isSuggestionsRefreshing && "animate-spin"
+                    )}
+                  />
+                  REFRESH_QUEUE
+                </Button>
+                <div className="text-[10px] text-primary">
+                  {mgr.suggestions.length} ITEMS
+                </div>
               </div>
             </div>
 
