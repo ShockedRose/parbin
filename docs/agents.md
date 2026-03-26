@@ -28,6 +28,7 @@ Keep **CONTRIBUTING.md** accurate if contribution or review steps change.
 - Full stack: `pnpm dev:all` (frontend + backend). Database: `pnpm db:up` using `backend/docker-compose.yml`.
 - Frontend quality: `pnpm lint:frontend`, `pnpm typecheck:frontend`.
 - Backend: `cd backend && go build ./...` (or `go test ./...` when tests exist).
+- Event scraper: `pnpm scraper:run` (after `pnpm prepare:scraper` and `pnpm --dir jobs/event-scraper run install:browsers` locally).
 
 ## Conventions
 

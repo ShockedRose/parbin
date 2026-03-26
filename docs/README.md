@@ -8,6 +8,7 @@ Onboarding and reference material for humans and automation working on this repo
 | [API](./api.md) | HTTP endpoints, JSON shapes, auth, errors |
 | [Frontend & styling](./frontend-and-styling.md) | React stack, Tailwind/shadcn, tokens, where UI code lives |
 | [Agents](./agents.md) | Notes for AI assistants and scripted tooling |
+| [Plans](./plans/) | Implementation plans (e.g. event scraper) |
 
 Project setup and environment variables: [README.md](../README.md).
 

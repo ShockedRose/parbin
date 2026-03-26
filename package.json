@@ -6,7 +6,8 @@
     "prepare:root": "pnpm install",
     "prepare:frontend": "pnpm install --dir frontend",
     "prepare:backend": "cd backend && go mod download",
-    "prepare:all": "pnpm prepare:root && pnpm prepare:frontend && pnpm prepare:backend",
+    "prepare:all": "pnpm prepare:root && pnpm prepare:frontend && pnpm prepare:backend && pnpm prepare:scraper",
+    "prepare:scraper": "pnpm install --dir jobs/event-scraper",
     "dev": "pnpm dev:all",
     "dev:all": "concurrently \"pnpm dev:frontend\" \"pnpm dev:backend\"",
     "dev:frontend": "pnpm --dir frontend dev",
@@ -17,7 +18,9 @@
     "lint:frontend": "pnpm --dir frontend lint",
     "format:frontend": "pnpm --dir frontend format",
     "typecheck:frontend": "pnpm --dir frontend typecheck",
-    "preview:frontend": "pnpm --dir frontend preview"
+    "preview:frontend": "pnpm --dir frontend preview",
+    "scraper:install": "pnpm install --dir jobs/event-scraper",
+    "scraper:run": "pnpm --dir jobs/event-scraper start"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"
