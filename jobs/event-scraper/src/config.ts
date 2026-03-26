@@ -1,7 +1,12 @@
+import { existsSync } from "node:fs"
+import { join } from "node:path"
 import { loadEnvFile } from "node:process"
 import { z } from "zod"
 
-loadEnvFile()
+const envFilePath = join(process.cwd(), ".env")
+if (existsSync(envFilePath)) {
+  loadEnvFile(envFilePath)
+}
 
 const envSchema = z.object({
   PARBIN_API_URL: z.string().url().optional(),
