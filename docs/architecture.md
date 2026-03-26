@@ -44,6 +44,8 @@ parbin/
 │       ├── hooks/        # e.g. use-event-manager
 │       ├── lib/          # api.ts, utils, calendar helpers
 │       └── types/        # Shared TS types (events, admin)
+├── jobs/
+│   └── event-scraper/    # TypeScript + Playwright; POST suggestions + dedupe via API
 └── backend/              # Go module: parbin/backend
     ├── cmd/api/main.go   # Process entry: env, DB, migrations, HTTP server
     ├── docker-compose.yml # Local Postgres
@@ -85,8 +87,8 @@ Defined in `backend/internal/database/migrations/001_init.sql`:
 
 - **admins** — email + password hash.
 - **sessions** — hashed tokens, expiry, FK to admin.
-- **events** — published events (`starts_at`, `ends_at`, tags, image URL, etc.).
-- **event_suggestions** — public proposals with `pending` / `approved` / `rejected`, optional `source_event_id`, reviewer metadata.
+- **events** — published events (`starts_at`, `ends_at`, tags, image URL, optional `source_event_page`, etc.).
+- **event_suggestions** — public proposals with `pending` / `approved` / `rejected`, optional `source_event_id`, optional `source_event_page`, reviewer metadata.
 
 ## Cross-cutting concerns
 

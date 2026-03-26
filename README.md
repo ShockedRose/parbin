@@ -9,6 +9,7 @@ Parbin is split into:
 - A Vite + React frontend in `frontend/`
 - A Go + Gin backend in `backend/`
 - A Postgres database for local development via `backend/docker-compose.yml`
+- A scheduled TypeScript scraper in `jobs/event-scraper/`
 
 ## Backend features
 
@@ -17,7 +18,8 @@ Parbin is split into:
 - `GET /api/events/:id` to fetch a single published event by id (for deep links, including events not on the upcoming feed)
 - `POST /api/events` for admin-only event creation
 - `PUT /api/events/:id` for admin-only event editing
-- `POST /api/event-suggestions` for public event suggestions
+- `POST /api/event-suggestions` for public event suggestions (optional `sourceEventPage` for deduplication)
+- `GET /api/event-suggestions/source-urls` to list URLs already stored on events or suggestions (for scraper deduplication)
 - `GET /api/admin/event-suggestions` to review suggestions
 - `POST /api/admin/event-suggestions/:id/approve` to convert a suggestion into an event
 - `POST /api/admin/event-suggestions/:id/reject` to reject a suggestion
@@ -28,9 +30,9 @@ Parbin is split into:
 The roadmap for Parbin represents the high level goals for the application. There'll be improvements to be made to user experience, optimization, deployment capabilities, and many more; however the latter ones will be handled as issues separated from these main goals:  
 
 - [ ] Introduce a cron job to scrape external event pages and suggest candidates for the main listing (admin moderation)
-  - [ ] Add sources for the scraper (allowlist, config, per-site rules)
-  - [ ] Implement the scraper (fetch, parse, normalize into suggestion-ready records)
-  - [ ] Deploy the scraper (scheduled runner in the target environment)
+  - [x] Add sources for the scraper (allowlist, config, per-site rules) — see `jobs/event-scraper/sources.json`
+  - [x] Implement the scraper (fetch, parse, normalize into suggestion-ready records) — see `jobs/event-scraper/`
+  - [ ] Deploy the scraper (scheduled runner in the target environment) — e.g. Railway cron + `jobs/event-scraper/Dockerfile`
 
 ## Local development
 
@@ -64,6 +66,14 @@ pnpm db:up
 | `SEED_ADMIN_AUTO_PROVISION` | No | `true` | Automatically creates the seed admin account on boot. |
 | `SEED_ADMIN_EMAIL` | No | `admin@parbin.local` | Email for the seed admin account. |
 | `SEED_ADMIN_PASSWORD` | No | `change-me-123` | Password for the seed admin account. |
+
+### Event scraper (`jobs/event-scraper/`)
+
+| Variable | Required | Default | Description |
+| --- | --- | --- | --- |
+| `PARBIN_API_URL` | No | `http://localhost:8080` | Backend base URL for API calls. |
+| `SCRAPER_HEADLESS` | No | `true` | Run Playwright in headless mode. |
+| `SCRAPER_TIMEOUT_MS` | No | `30000` | Default navigation timeout per page (ms). |
 
 ### 2. Configure the backend
 
@@ -110,10 +120,16 @@ VITE_API_URL=http://localhost:8080
 pnpm dev:frontend
 ```
 
-To prepare the root utility package, frontend, and backend from the repo root:
+To prepare the root utility package, frontend, backend, and scraper from the repo root:
 
 ```bash
 pnpm prepare:all
+```
+
+Run the event scraper once (requires backend reachable and Playwright browsers installed):
+
+```bash
+pnpm scraper:run
 ```
 
 ## Notes
