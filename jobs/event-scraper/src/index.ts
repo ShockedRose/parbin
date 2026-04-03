@@ -7,6 +7,7 @@ import { config } from "./config.js"
 import { logger } from "./logger.js"
 import { strategyForSourceDomain } from "./strategies/registry.js"
 import { sourcesFileSchema } from "./types.js"
+import { shuffle } from "./util/shuffle.js"
 import { canonicalEventUrl } from "./util/url.js"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -22,7 +23,11 @@ async function main(): Promise<void> {
   const known = await fetchKnownSourceUrls()
   logger.info({ count: known.size }, "loaded known source URLs")
 
-  const sources = loadSources()
+  const sources = shuffle(loadSources())
+  logger.info(
+    { order: sources.map((s) => s.url) },
+    "source order (randomized per run)",
+  )
   const browser = await getBrowser()
   const context = await browser.newContext({
     userAgent:
