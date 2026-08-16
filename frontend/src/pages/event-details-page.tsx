@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { getRouteApi, Link } from "@tanstack/react-router"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -11,10 +11,12 @@ import { Textarea } from "@/components/ui/textarea"
 import { useEventManagerContext } from "@/event-manager-context"
 import { getEvent } from "@/lib/api"
 import { queryKeys } from "@/lib/query-keys"
+import { AnalyticsEvent, trackEvent } from "@/lib/analytics"
 import {
   downloadICS,
   formatDateRange,
   getGoogleCalendarUrl,
+  trackGoogleCalendarOpen,
 } from "@/lib/calendar"
 import { getEventImageTransitionName } from "@/lib/view-transitions"
 import type { MeetupEvent } from "@/types/event"
@@ -81,6 +83,16 @@ export function EventDetailsPage() {
   })
 
   const event = fromFeed ?? eventDetailQuery.data ?? null
+  const viewedEventId = event?.id
+  const viewedEventTitle = event?.title
+
+  useEffect(() => {
+    if (!viewedEventId || !viewedEventTitle) return
+    trackEvent(AnalyticsEvent.EventViewed, {
+      event_id: viewedEventId,
+      title: viewedEventTitle,
+    })
+  }, [viewedEventId, viewedEventTitle])
 
   const isAdmin = !!mgr.admin
 
@@ -378,6 +390,7 @@ export function EventDetailsPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex w-full min-w-0 flex-col gap-1.5 sm:flex-row sm:items-start sm:gap-3"
+                  onClick={() => trackGoogleCalendarOpen(event)}
                 >
                   <ExternalLink className="mt-0.5 h-4 w-4 shrink-0" />
                   <span className="min-w-0 flex-1">

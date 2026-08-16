@@ -7,6 +7,7 @@ import {
   downloadICS,
   formatDateRange,
   getGoogleCalendarUrl,
+  trackGoogleCalendarOpen,
 } from "@/lib/calendar"
 import {
   getEventImageTransitionName,
@@ -135,7 +136,10 @@ export function EventsPage() {
                       href={getGoogleCalendarUrl(event)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      onClick={stopCardNavigation}
+                      onClick={(clickedEvent) => {
+                        stopCardNavigation(clickedEvent)
+                        trackGoogleCalendarOpen(event)
+                      }}
                     >
                       <Calendar className="mr-1.5 h-3.5 w-3.5" />
                       ADD TO CALENDAR

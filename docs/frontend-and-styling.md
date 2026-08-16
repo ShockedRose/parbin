@@ -10,6 +10,7 @@ The UI is a **React 19** single-page app built with **Vite 7**, **TypeScript**, 
 | Routing | TanStack Router (`src/router.tsx`), `defaultPreload: "intent"` |
 | Server state / caching | TanStack Query (`@tanstack/react-query`) |
 | HTTP | Native `fetch` in `src/lib/api.ts` with `credentials: "include"` for cookies |
+| Analytics | PostHog (`posthog-js` + `@posthog/react`) via `src/lib/posthog.ts` |
 | Styling | **Tailwind CSS v4** via `@tailwindcss/vite` |
 | Component primitives | **shadcn/ui** (style `radix-nova`), **Radix UI**, **lucide-react** icons |
 | Class merging | `clsx`, `tailwind-merge`, **CVA** (`class-variance-authority`) for variants |
@@ -50,6 +51,7 @@ Dark mode variant: `@custom-variant dark (&:is(.dark *));` — components can us
 | `src/pages/` | Route screens: `events-page`, `event-details-page`, `suggest-page`, `admin-page`, `past-events-page` |
 | `src/hooks/` | e.g. `use-event-manager.ts` — session, queries, mutations |
 | `src/lib/utils.ts` | `cn()` helper (clsx + tailwind-merge) |
+| `src/lib/posthog.ts` / `analytics.ts` | PostHog init (optional) and typed product-event helpers |
 
 Global event/admin state is provided via **`EventManagerContext`** from `event-manager-context.ts`, populated by `useEventManager()`.
 
@@ -68,5 +70,7 @@ Prettier includes **prettier-plugin-tailwindcss** for class sorting.
 | Variable | Default | Purpose |
 | -------- | ------- | ------- |
 | `VITE_API_URL` | `http://localhost:8080` | Backend base URL for `lib/api.ts` |
+| `VITE_POSTHOG_PROJECT_TOKEN` | _(empty)_ | PostHog project token; omit locally to disable analytics |
+| `VITE_POSTHOG_HOST` | `https://us.i.posthog.com` | PostHog ingestion host |
 
 Copy `frontend/.env.example` to `frontend/.env` when overriding.
