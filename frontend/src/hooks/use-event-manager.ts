@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
   useCallback,
+  useEffect,
   useMemo,
   useState,
   type Dispatch,
@@ -20,6 +21,12 @@ import {
   logout as logoutRequest,
   rejectSuggestion as rejectSuggestionRequest,
 } from "@/lib/api"
+import {
+  AnalyticsEvent,
+  identifyAdmin,
+  resetAnalytics,
+  trackEvent,
+} from "@/lib/analytics"
 import { queryKeys } from "@/lib/query-keys"
 import type {
   AdminSession,
@@ -119,6 +126,12 @@ export function useEventManager() {
 
   const admin = sessionQuery.data ?? null
 
+  useEffect(() => {
+    if (admin) {
+      identifyAdmin(admin)
+    }
+  }, [admin])
+
   const suggestionsQuery = useQuery({
     queryKey: queryKeys.suggestions,
     queryFn: listSuggestionsRequest,
@@ -135,9 +148,13 @@ export function useEventManager() {
 
   const createEventMutation = useMutation({
     mutationFn: () => createEventRequest(toPayload(eventForm)),
-    onSuccess: () => {
+    onSuccess: (created) => {
       setEventForm(emptyEventForm)
       setNotice("Event deployed.")
+      trackEvent(AnalyticsEvent.EventCreated, {
+        event_id: created.id,
+        title: created.title,
+      })
       void queryClient.invalidateQueries({ queryKey: queryKeys.events })
       void queryClient.invalidateQueries({ queryKey: queryKeys.suggestions })
     },
@@ -145,9 +162,13 @@ export function useEventManager() {
 
   const createSuggestionMutation = useMutation({
     mutationFn: () => createSuggestionRequest(toPayload(suggestionForm)),
-    onSuccess: () => {
+    onSuccess: (created) => {
       setSuggestionForm(emptyEventForm)
       setNotice("Suggestion submitted for review.")
+      trackEvent(AnalyticsEvent.SuggestionSubmitted, {
+        suggestion_id: created.id,
+        title: created.title,
+      })
     },
   })
 
@@ -156,6 +177,8 @@ export function useEventManager() {
     onSuccess: (nextAdmin) => {
       setLoginForm(emptyLoginForm)
       setNotice("Admin session active.")
+      identifyAdmin(nextAdmin)
+      trackEvent(AnalyticsEvent.AdminLoggedIn, { admin_id: nextAdmin.id })
       queryClient.setQueryData(queryKeys.session, nextAdmin)
       void queryClient.invalidateQueries({ queryKey: queryKeys.suggestions })
     },
@@ -165,6 +188,8 @@ export function useEventManager() {
     mutationFn: logoutRequest,
     onSuccess: () => {
       setNotice("Session closed.")
+      trackEvent(AnalyticsEvent.AdminLoggedOut)
+      resetAnalytics()
       queryClient.setQueryData(queryKeys.session, null)
       queryClient.removeQueries({ queryKey: queryKeys.suggestions })
     },
@@ -174,6 +199,10 @@ export function useEventManager() {
     mutationFn: approveSuggestionRequest,
     onSuccess: (updated) => {
       setNotice("Suggestion converted into an event.")
+      trackEvent(AnalyticsEvent.SuggestionApproved, {
+        suggestion_id: updated.id,
+        title: updated.title,
+      })
       void queryClient.invalidateQueries({ queryKey: queryKeys.events })
       queryClient.setQueryData<EventSuggestion[]>(
         queryKeys.suggestions,
@@ -189,6 +218,10 @@ export function useEventManager() {
     mutationFn: rejectSuggestionRequest,
     onSuccess: (updated) => {
       setNotice("Suggestion rejected.")
+      trackEvent(AnalyticsEvent.SuggestionRejected, {
+        suggestion_id: updated.id,
+        title: updated.title,
+      })
       queryClient.setQueryData<EventSuggestion[]>(
         queryKeys.suggestions,
         (old) => {
@@ -207,8 +240,12 @@ export function useEventManager() {
       id: string
       payload: EventPayload
     }) => updateEventRequest(id, payload),
-    onSuccess: (_data, { id }) => {
+    onSuccess: (updated, { id }) => {
       setNotice("Event updated.")
+      trackEvent(AnalyticsEvent.EventUpdated, {
+        event_id: id,
+        title: updated.title,
+      })
       void queryClient.invalidateQueries({ queryKey: queryKeys.events })
       void queryClient.invalidateQueries({ queryKey: queryKeys.event(id) })
     },

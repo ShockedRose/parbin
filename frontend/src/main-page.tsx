@@ -2,6 +2,7 @@ import { Outlet } from "@tanstack/react-router"
 
 import { AppFooter } from "@/components/app-footer"
 import { AppHeader } from "@/components/app-header"
+import { PostHogPageviewTracker } from "@/components/posthog-pageview-tracker"
 import { StatusBanner } from "@/components/status-banner"
 import { EventManagerContext } from "@/event-manager-context"
 import { useEventManager } from "@/hooks/use-event-manager"
@@ -11,6 +12,7 @@ export function AppShell() {
 
   return (
     <EventManagerContext.Provider value={mgr}>
+      <PostHogPageviewTracker />
       <div className="relative min-h-screen bg-background font-sans text-foreground">
         <div className="parbin-shell-edges" aria-hidden />
         <div className="parbin-shell-grid" aria-hidden />

@@ -1,3 +1,4 @@
+import { AnalyticsEvent, trackEvent } from "@/lib/analytics"
 import type { MeetupEvent } from "@/types/event"
 
 function toICSDate(dateStr: string): string {
@@ -20,7 +21,19 @@ export function getGoogleCalendarUrl(event: MeetupEvent): string {
   return `https://calendar.google.com/calendar/render?${params.toString()}`
 }
 
+export function trackGoogleCalendarOpen(event: MeetupEvent): void {
+  trackEvent(AnalyticsEvent.CalendarGoogleOpened, {
+    event_id: event.id,
+    title: event.title,
+  })
+}
+
 export function downloadICS(event: MeetupEvent): void {
+  trackEvent(AnalyticsEvent.CalendarIcsDownloaded, {
+    event_id: event.id,
+    title: event.title,
+  })
+
   const start = toICSDate(event.date)
   const end = toICSDate(event.endDate)
   const ics = [

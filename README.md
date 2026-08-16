@@ -49,6 +49,8 @@ pnpm db:up
 | Variable | Required | Default | Description |
 | --- | --- | --- | --- |
 | `VITE_API_URL` | No | `http://localhost:8080` | Base URL used by the frontend when calling the backend API. |
+| `VITE_POSTHOG_PROJECT_TOKEN` | No | None | PostHog project token. When unset, analytics is disabled. |
+| `VITE_POSTHOG_HOST` | No | `https://us.i.posthog.com` | PostHog API host (`https://eu.i.posthog.com` for EU cloud). |
 
 ### Backend
 
@@ -106,13 +108,17 @@ Install frontend dependencies from the repo root:
 pnpm prepare:frontend
 ```
 
-Create `frontend/.env` from `frontend/.env.example` if you need to override the backend URL.
+Create `frontend/.env` from `frontend/.env.example` if you need to override the backend URL or enable PostHog analytics.
 
-Default frontend API target:
+Default frontend env:
 
 ```bash
 VITE_API_URL=http://localhost:8080
+VITE_POSTHOG_PROJECT_TOKEN=
+VITE_POSTHOG_HOST=https://us.i.posthog.com
 ```
+
+PostHog tracks pageviews and product events (suggestions, calendar actions, admin auth/moderation) when `VITE_POSTHOG_PROJECT_TOKEN` is set.
 
 ### 5. Run the frontend
 

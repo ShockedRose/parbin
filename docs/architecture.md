@@ -78,6 +78,7 @@ parbin/
 | `main-page.tsx` | Layout shell: decorative background layers, `AppHeader`, `Outlet`, `AppFooter`, global banners. |
 | `hooks/use-event-manager.ts` | Central client state: admin session, events, mutations, talks to `lib/api.ts`. |
 | `lib/api.ts` | `fetch` wrapper with `credentials: "include"`, base URL `VITE_API_URL`, typed API functions. |
+| `lib/posthog.ts` / `lib/analytics.ts` | Optional PostHog init + product event helpers; no-ops when token unset. |
 | `components/ui/*` | shadcn/Radix primitives (buttons, dialogs, etc.). |
 | `pages/*` | Screen-level composition for each route. |
 
