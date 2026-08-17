@@ -24,14 +24,24 @@ type EventPayload struct {
 type EventService struct {
 	events      *store.EventStore
 	suggestions *store.EventSuggestionStore
+	dashboard   *store.DashboardStore
 	location    *time.Location
+	timezone    string
 }
 
-func NewEventService(events *store.EventStore, suggestions *store.EventSuggestionStore, location *time.Location) *EventService {
+func NewEventService(
+	events *store.EventStore,
+	suggestions *store.EventSuggestionStore,
+	dashboard *store.DashboardStore,
+	location *time.Location,
+	timezone string,
+) *EventService {
 	return &EventService{
 		events:      events,
 		suggestions: suggestions,
+		dashboard:   dashboard,
 		location:    location,
+		timezone:    timezone,
 	}
 }
 

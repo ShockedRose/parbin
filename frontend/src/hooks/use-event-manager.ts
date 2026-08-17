@@ -157,6 +157,7 @@ export function useEventManager() {
       })
       void queryClient.invalidateQueries({ queryKey: queryKeys.events })
       void queryClient.invalidateQueries({ queryKey: queryKeys.suggestions })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.dashboard })
     },
   })
 
@@ -169,6 +170,7 @@ export function useEventManager() {
         suggestion_id: created.id,
         title: created.title,
       })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.dashboard })
     },
   })
 
@@ -181,6 +183,7 @@ export function useEventManager() {
       trackEvent(AnalyticsEvent.AdminLoggedIn, { admin_id: nextAdmin.id })
       queryClient.setQueryData(queryKeys.session, nextAdmin)
       void queryClient.invalidateQueries({ queryKey: queryKeys.suggestions })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.dashboard })
     },
   })
 
@@ -192,6 +195,7 @@ export function useEventManager() {
       resetAnalytics()
       queryClient.setQueryData(queryKeys.session, null)
       queryClient.removeQueries({ queryKey: queryKeys.suggestions })
+      queryClient.removeQueries({ queryKey: queryKeys.dashboard })
     },
   })
 
@@ -204,6 +208,7 @@ export function useEventManager() {
         title: updated.title,
       })
       void queryClient.invalidateQueries({ queryKey: queryKeys.events })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.dashboard })
       queryClient.setQueryData<EventSuggestion[]>(
         queryKeys.suggestions,
         (old) => {
@@ -222,6 +227,7 @@ export function useEventManager() {
         suggestion_id: updated.id,
         title: updated.title,
       })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.dashboard })
       queryClient.setQueryData<EventSuggestion[]>(
         queryKeys.suggestions,
         (old) => {
@@ -233,13 +239,8 @@ export function useEventManager() {
   })
 
   const updateEventMutation = useMutation({
-    mutationFn: ({
-      id,
-      payload,
-    }: {
-      id: string
-      payload: EventPayload
-    }) => updateEventRequest(id, payload),
+    mutationFn: ({ id, payload }: { id: string; payload: EventPayload }) =>
+      updateEventRequest(id, payload),
     onSuccess: (updated, { id }) => {
       setNotice("Event updated.")
       trackEvent(AnalyticsEvent.EventUpdated, {
@@ -248,6 +249,7 @@ export function useEventManager() {
       })
       void queryClient.invalidateQueries({ queryKey: queryKeys.events })
       void queryClient.invalidateQueries({ queryKey: queryKeys.event(id) })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.dashboard })
     },
   })
 
@@ -324,8 +326,7 @@ export function useEventManager() {
     createSuggestionMutation.isPending ||
     updateEventMutation.isPending
 
-  const isAuthenticating =
-    loginMutation.isPending || logoutMutation.isPending
+  const isAuthenticating = loginMutation.isPending || logoutMutation.isPending
 
   const activeSuggestionId =
     approveSuggestionMutation.isPending &&
@@ -428,8 +429,7 @@ export function useEventManager() {
     setError,
     setNotice,
     isBootstrapping,
-    isEventsLoading:
-      eventsQuery.isFetching && eventsQuery.data === undefined,
+    isEventsLoading: eventsQuery.isFetching && eventsQuery.data === undefined,
     isSuggestionsLoading: suggestionsQuery.isLoading,
     isSuggestionsRefreshing:
       suggestionsQuery.isFetching && !suggestionsQuery.isLoading,

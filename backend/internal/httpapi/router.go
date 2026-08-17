@@ -101,6 +101,7 @@ func NewRouter(cfg config.Config, authService *service.AuthService, eventService
 	admin.Use(server.requireAdmin())
 	admin.POST("/events", server.createEvent)
 	admin.PUT("/events/:id", server.updateEvent)
+	admin.GET("/admin/dashboard", server.getDashboard)
 	admin.GET("/admin/event-suggestions", server.listSuggestions)
 	admin.POST("/admin/event-suggestions/:id/approve", server.approveSuggestion)
 	admin.POST("/admin/event-suggestions/:id/reject", server.rejectSuggestion)
@@ -204,6 +205,16 @@ func (s *Server) createSuggestion(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"suggestion": s.toSuggestionResponse(suggestion)})
+}
+
+func (s *Server) getDashboard(c *gin.Context) {
+	stats, err := s.eventService.GetDashboard(c.Request.Context())
+	if err != nil {
+		respondError(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, stats)
 }
 
 func (s *Server) listSuggestions(c *gin.Context) {

@@ -1,3 +1,4 @@
+import type { AdminDashboard } from "@/types/dashboard"
 import type {
   AdminSession,
   EventPayload,
@@ -124,6 +125,10 @@ export async function logout(): Promise<void> {
 export async function getCurrentAdmin(): Promise<AdminSession> {
   const response = await request<{ admin: AdminSession }>("/api/auth/me")
   return response.admin
+}
+
+export async function getAdminDashboard(): Promise<AdminDashboard> {
+  return request<AdminDashboard>("/api/admin/dashboard")
 }
 
 export async function listSuggestions(): Promise<EventSuggestion[]> {

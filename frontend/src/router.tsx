@@ -5,6 +5,7 @@ import {
 } from "@tanstack/react-router"
 
 import { AppShell } from "@/main-page.tsx"
+import { AdminDashboardPage } from "@/pages/admin-dashboard-page"
 import { AdminPage } from "@/pages/admin-page"
 import { EventDetailsPage } from "@/pages/event-details-page"
 import { EventsPage } from "@/pages/events-page"
@@ -39,6 +40,12 @@ const adminRoute = createRoute({
   component: AdminPage,
 })
 
+const adminDashboardRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "admin/dashboard",
+  component: AdminDashboardPage,
+})
+
 const pastEventsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "past-events",
@@ -50,6 +57,7 @@ const routeTree = rootRoute.addChildren([
   eventDetailsRoute,
   suggestRoute,
   adminRoute,
+  adminDashboardRoute,
   pastEventsRoute,
 ])
 

@@ -45,9 +45,10 @@ func main() {
 	sessionStore := store.NewSessionStore(pool)
 	eventStore := store.NewEventStore(pool)
 	suggestionStore := store.NewEventSuggestionStore(pool)
+	dashboardStore := store.NewDashboardStore(pool)
 
 	authService := service.NewAuthService(adminStore, sessionStore, cfg.SessionSecret, cfg.SessionTTL)
-	eventService := service.NewEventService(eventStore, suggestionStore, cfg.Location)
+	eventService := service.NewEventService(eventStore, suggestionStore, dashboardStore, cfg.Location, cfg.AppTimezone)
 
 	if err := authService.CleanupExpiredSessions(ctx); err != nil {
 		log.Printf("cleanup sessions: %v", err)
