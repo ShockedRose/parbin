@@ -54,7 +54,7 @@ parbin/
         ├── database/     # Migrations runner + SQL files
         ├── httpapi/      # Gin router, handlers, DTOs
         ├── service/      # AuthService, EventService, domain errors
-        ├── store/        # pgx pool, CRUD for admins, sessions, events, suggestions
+        ├── store/        # pgx pool, CRUD for admins, sessions, tags, events, suggestions
         └── auth/         # Password hashing, session token helpers
 ```
 
@@ -67,7 +67,7 @@ parbin/
 | `internal/database` | Applies SQL migrations from `internal/database/migrations/` on startup. |
 | `internal/httpapi` | Defines routes under `/api`, CORS for `FRONTEND_ORIGIN`, JSON request/response types, maps service errors to HTTP status. |
 | `internal/service` | Business logic: login/logout, event CRUD, suggestion workflow, timezone-aware “today” for feeds. |
-| `internal/store` | PostgreSQL access via `pgx` pool; models in `models.go`; dashboard aggregations in `dashboard_store.go`; `ErrNotFound`, `ErrConflict` for HTTP mapping. |
+| `internal/store` | PostgreSQL access via `pgx` pool; models in `models.go`; tags, events, suggestions, dashboard aggregations; `ErrNotFound`, `ErrConflict` for HTTP mapping. |
 | `internal/auth` | Password verification and session token handling used by `AuthService`. |
 
 ## Frontend modules
@@ -85,12 +85,15 @@ parbin/
 
 ## Data model (PostgreSQL)
 
-Defined in `backend/internal/database/migrations/001_init.sql`:
+Defined in `backend/internal/database/migrations/` (`001_init.sql` plus later files):
 
 - **admins** — email + password hash.
 - **sessions** — hashed tokens, expiry, FK to admin.
-- **events** — published events (`starts_at`, `ends_at`, tags, image URL, optional `source_event_page`, etc.).
+- **tags** — catalog of tag names (`name` unique, case-sensitive). Existing variants are not merged.
+- **events** — published events (`starts_at`, `ends_at`, image URL, optional `source_event_page`, etc.).
+- **event_tags** — many-to-many between events and tags (`sort_order` preserved).
 - **event_suggestions** — public proposals with `pending` / `approved` / `rejected`, optional `source_event_id`, optional `source_event_page`, reviewer metadata.
+- **event_suggestion_tags** — many-to-many between suggestions and tags.
 
 ## Cross-cutting concerns
 

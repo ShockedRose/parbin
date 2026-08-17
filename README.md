@@ -13,6 +13,7 @@ Parbin is split into:
 
 ## Backend features
 
+- `GET /api/tags` to list catalog tags (`{ id, name }`) used by events and suggestions
 - `GET /api/events` to list published events with `starts_at` on or after the current calendar day in `APP_TIMEZONE` (ordered soonest first)
 - `GET /api/events/past` to list up to the 10 most recent past events (before today in `APP_TIMEZONE`, ordered most recent first)
 - `GET /api/events/:id` to fetch a single published event by id (for deep links, including events not on the upcoming feed)
