@@ -8,35 +8,41 @@ const (
 	SuggestionStatusRejected = "rejected"
 )
 
+type Tag struct {
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"-"`
+}
+
 type Event struct {
-	ID               string    `json:"id"`
-	Title            string    `json:"title"`
-	Description      string    `json:"description"`
-	StartsAt         time.Time `json:"-"`
-	EndsAt           time.Time `json:"-"`
-	Location         string    `json:"location"`
-	ImageURL         string    `json:"image"`
-	Tags             []string  `json:"tags"`
-	SourceEventPage  *string   `json:"sourceEventPage"`
-	CreatedAt        time.Time `json:"-"`
-	UpdatedAt        time.Time `json:"-"`
+	ID              string    `json:"id"`
+	Title           string    `json:"title"`
+	Description     string    `json:"description"`
+	StartsAt        time.Time `json:"-"`
+	EndsAt          time.Time `json:"-"`
+	Location        string    `json:"location"`
+	ImageURL        string    `json:"image"`
+	Tags            []string  `json:"tags"`
+	SourceEventPage *string   `json:"sourceEventPage"`
+	CreatedAt       time.Time `json:"-"`
+	UpdatedAt       time.Time `json:"-"`
 }
 
 type EventSuggestion struct {
-	ID               string     `json:"id"`
-	Title            string     `json:"title"`
-	Description      string     `json:"description"`
-	StartsAt         time.Time  `json:"-"`
-	EndsAt           time.Time  `json:"-"`
-	Location         string     `json:"location"`
-	ImageURL         string     `json:"image"`
-	Tags             []string   `json:"tags"`
-	Status           string     `json:"status"`
-	SourceEventID    *string    `json:"sourceEventId"`
-	SourceEventPage  *string    `json:"sourceEventPage"`
-	CreatedAt        time.Time  `json:"createdAt"`
-	ReviewedAt       *time.Time `json:"reviewedAt"`
-	ReviewedBy       *string    `json:"reviewedBy"`
+	ID              string     `json:"id"`
+	Title           string     `json:"title"`
+	Description     string     `json:"description"`
+	StartsAt        time.Time  `json:"-"`
+	EndsAt          time.Time  `json:"-"`
+	Location        string     `json:"location"`
+	ImageURL        string     `json:"image"`
+	Tags            []string   `json:"tags"`
+	Status          string     `json:"status"`
+	SourceEventID   *string    `json:"sourceEventId"`
+	SourceEventPage *string    `json:"sourceEventPage"`
+	CreatedAt       time.Time  `json:"createdAt"`
+	ReviewedAt      *time.Time `json:"reviewedAt"`
+	ReviewedBy      *string    `json:"reviewedBy"`
 }
 
 type Admin struct {

@@ -38,6 +38,11 @@ type loginRequest struct {
 	Password string `json:"password"`
 }
 
+type tagResponse struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
 type eventResponse struct {
 	ID              string   `json:"id"`
 	Title           string   `json:"title"`
@@ -88,6 +93,7 @@ func NewRouter(cfg config.Config, authService *service.AuthService, eventService
 	})
 
 	api := router.Group("/api")
+	api.GET("/tags", server.listTags)
 	api.GET("/events", server.listEvents)
 	api.GET("/events/past", server.listPastEvents)
 	api.GET("/events/:id", server.getEvent)
@@ -107,6 +113,21 @@ func NewRouter(cfg config.Config, authService *service.AuthService, eventService
 	admin.POST("/admin/event-suggestions/:id/reject", server.rejectSuggestion)
 
 	return router
+}
+
+func (s *Server) listTags(c *gin.Context) {
+	tags, err := s.eventService.ListTags(c.Request.Context())
+	if err != nil {
+		respondError(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	response := make([]tagResponse, 0, len(tags))
+	for _, tag := range tags {
+		response = append(response, tagResponse{ID: tag.ID, Name: tag.Name})
+	}
+
+	c.JSON(http.StatusOK, gin.H{"tags": response})
 }
 
 func (s *Server) listEvents(c *gin.Context) {
@@ -341,7 +362,7 @@ func (s *Server) toEventResponse(event store.Event) eventResponse {
 		EndDate:         formatLocalDateTime(event.EndsAt, s.cfg.Location),
 		Location:        event.Location,
 		Image:           event.ImageURL,
-		Tags:            event.Tags,
+		Tags:            nonNilTags(event.Tags),
 		SourceEventPage: event.SourceEventPage,
 	}
 }
@@ -361,7 +382,7 @@ func (s *Server) toSuggestionResponse(suggestion store.EventSuggestion) suggesti
 		EndDate:         formatLocalDateTime(suggestion.EndsAt, s.cfg.Location),
 		Location:        suggestion.Location,
 		Image:           suggestion.ImageURL,
-		Tags:            suggestion.Tags,
+		Tags:            nonNilTags(suggestion.Tags),
 		Status:          suggestion.Status,
 		SourceEventID:   suggestion.SourceEventID,
 		SourceEventPage: suggestion.SourceEventPage,
@@ -369,6 +390,13 @@ func (s *Server) toSuggestionResponse(suggestion store.EventSuggestion) suggesti
 		ReviewedAt:      reviewedAt,
 		ReviewedBy:      suggestion.ReviewedBy,
 	}
+}
+
+func nonNilTags(tags []string) []string {
+	if tags == nil {
+		return []string{}
+	}
+	return tags
 }
 
 func formatLocalDateTime(value time.Time, location *time.Location) string {

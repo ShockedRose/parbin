@@ -1,3 +1,8 @@
+export interface CatalogTag {
+  id: string
+  name: string
+}
+
 export interface MeetupEvent {
   id: string
   title: string

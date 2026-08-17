@@ -25,6 +25,7 @@ type EventService struct {
 	events      *store.EventStore
 	suggestions *store.EventSuggestionStore
 	dashboard   *store.DashboardStore
+	tags        *store.TagStore
 	location    *time.Location
 	timezone    string
 }
@@ -33,6 +34,7 @@ func NewEventService(
 	events *store.EventStore,
 	suggestions *store.EventSuggestionStore,
 	dashboard *store.DashboardStore,
+	tags *store.TagStore,
 	location *time.Location,
 	timezone string,
 ) *EventService {
@@ -40,6 +42,7 @@ func NewEventService(
 		events:      events,
 		suggestions: suggestions,
 		dashboard:   dashboard,
+		tags:        tags,
 		location:    location,
 		timezone:    timezone,
 	}
@@ -48,6 +51,10 @@ func NewEventService(
 func startOfTodayInAppTimezone(loc *time.Location) time.Time {
 	now := time.Now().In(loc)
 	return time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, loc)
+}
+
+func (s *EventService) ListTags(ctx context.Context) ([]store.Tag, error) {
+	return s.tags.List(ctx)
 }
 
 func (s *EventService) ListEvents(ctx context.Context) ([]store.Event, error) {
@@ -212,6 +219,8 @@ func cleanTags(tags []string) []string {
 		if normalized == "" {
 			continue
 		}
+		// Dedup only within this payload. Existing catalog rows keep their
+		// exact names, including case and spelling variants.
 		key := strings.ToLower(normalized)
 		if _, ok := seen[key]; ok {
 			continue

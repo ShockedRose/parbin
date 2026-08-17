@@ -225,11 +225,10 @@ func (s *DashboardStore) suggestionsByMonth(ctx context.Context, timezone string
 
 func (s *DashboardStore) topTags(ctx context.Context) ([]LabeledCount, error) {
 	const query = `
-		SELECT BTRIM(tag) AS label, COUNT(*)::int AS count
-		FROM events
-		CROSS JOIN LATERAL unnest(tags) AS tag
-		WHERE BTRIM(tag) <> ''
-		GROUP BY 1
+		SELECT t.name AS label, COUNT(*)::int AS count
+		FROM event_tags et
+		JOIN tags t ON t.id = et.tag_id
+		GROUP BY t.name
 		ORDER BY count DESC, label ASC
 		LIMIT 10
 	`

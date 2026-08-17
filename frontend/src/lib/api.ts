@@ -1,6 +1,7 @@
 import type { AdminDashboard } from "@/types/dashboard"
 import type {
   AdminSession,
+  CatalogTag,
   EventPayload,
   EventSuggestion,
   MeetupEvent,
@@ -56,6 +57,11 @@ export function isApiError(error: unknown, status?: number): error is ApiError {
   }
 
   return status === undefined ? true : error.status === status
+}
+
+export async function listTags(): Promise<CatalogTag[]> {
+  const response = await request<{ tags: CatalogTag[] }>("/api/tags")
+  return response.tags
 }
 
 export async function listEvents(): Promise<MeetupEvent[]> {
