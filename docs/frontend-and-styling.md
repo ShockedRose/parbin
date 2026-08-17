@@ -15,7 +15,7 @@ The UI is a **React 19** single-page app built with **Vite 7**, **TypeScript**, 
 | Component primitives | **shadcn/ui** (style `radix-nova`), **Radix UI**, **lucide-react** icons |
 | Class merging | `clsx`, `tailwind-merge`, **CVA** (`class-variance-authority`) for variants |
 | Dates | `date-fns`, `react-day-picker` (forms) |
-| Charts | **Recharts** on the admin dashboard (`/admin/dashboard`) |
+| Charts | **TanStack Charts** for events-by-tag and events-by-month; **Recharts** for the other admin dashboard charts |
 | Fonts | **Inter** and **Syne** from Google Fonts |
 | Local HTTPS (dev) | `vite-plugin-mkcert` in `vite.config.ts` |
 

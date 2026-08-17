@@ -13,6 +13,10 @@ import {
   YAxis,
 } from "recharts"
 
+import {
+  EventsByMonthChart,
+  EventsByTagChart,
+} from "@/components/tanstack-charts"
 import { cn } from "@/lib/utils"
 import type { AdminDashboard, LabeledCount } from "@/types/dashboard"
 
@@ -232,10 +236,6 @@ function HorizontalBars({ data }: { data: LabeledCount[] }) {
 }
 
 export function DashboardCharts({ data }: { data: AdminDashboard }) {
-  const eventsByMonth = data.eventsByMonth.map((row) => ({
-    ...row,
-    label: formatMonthLabel(row.month),
-  }))
   const suggestionsByMonth = data.suggestionsByMonth.map((row) => ({
     ...row,
     label: formatMonthLabel(row.month),
@@ -266,41 +266,7 @@ export function DashboardCharts({ data }: { data: AdminDashboard }) {
         title="Events by start month"
         description={`Meetup volume over the last 12 months in ${data.timezone}.`}
       >
-        <div className="h-[280px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={eventsByMonth} margin={CHART_MARGIN}>
-              <CartesianGrid
-                stroke="var(--border)"
-                strokeDasharray="3 3"
-                vertical={false}
-              />
-              <XAxis
-                dataKey="label"
-                tick={{ fill: "var(--muted-foreground)", fontSize: 10 }}
-                axisLine={{ stroke: "var(--border)" }}
-                tickLine={false}
-              />
-              <YAxis
-                allowDecimals={false}
-                tick={{ fill: "var(--muted-foreground)", fontSize: 10 }}
-                axisLine={false}
-                tickLine={false}
-                width={32}
-              />
-              <Tooltip
-                content={<ChartTooltip />}
-                cursor={{ fill: "var(--muted)" }}
-              />
-              <Bar
-                dataKey="count"
-                name="Events"
-                fill="var(--primary)"
-                radius={[4, 4, 0, 0]}
-                maxBarSize={28}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+        <EventsByMonthChart rows={data.eventsByMonth} />
       </ChartCard>
 
       <ChartCard
@@ -364,10 +330,10 @@ export function DashboardCharts({ data }: { data: AdminDashboard }) {
       <div className="grid gap-6 xl:grid-cols-2">
         <ChartCard
           eyebrow="TOPIC_SIGNAL"
-          title="Top event tags"
+          title="Events by tag"
           description="Most common tags on published meetups."
         >
-          <HorizontalBars data={data.topTags} />
+          <EventsByTagChart rows={data.topTags} />
         </ChartCard>
 
         <ChartCard
