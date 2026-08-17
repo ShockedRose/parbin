@@ -127,6 +127,17 @@
     --color-accent-300: hsl(from var(--accent) h s calc(l * 0.7));
 }
 
+.parbin-ts-chart {
+    color: var(--foreground);
+    --ts-chart-1: var(--primary);
+    --ts-chart-tooltip-background: var(--card);
+    --ts-chart-tooltip-color: var(--foreground);
+    --ts-chart-tooltip-border: 1px solid var(--border);
+    --ts-chart-tooltip-border-radius: 0.5rem;
+    --ts-chart-tooltip-font: 11px Inter, sans-serif;
+    --ts-chart-tooltip-padding: 0.5rem 0.75rem;
+}
+
 @layer components {
   .parbin-shell-grid {
     pointer-events: none;

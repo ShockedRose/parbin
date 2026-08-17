@@ -80,6 +80,7 @@ parbin/
 | `lib/api.ts` | `fetch` wrapper with `credentials: "include"`, base URL `VITE_API_URL`, typed API functions. |
 | `lib/posthog.ts` / `lib/analytics.ts` | Optional PostHog init + product event helpers; no-ops when token unset. |
 | `components/ui/*` | shadcn/Radix primitives (buttons, dialogs, etc.). |
+| `components/tanstack-charts.tsx` | TanStack Charts bars for events-by-tag and events-by-month on the admin dashboard. |
 | `pages/*` | Screen-level composition for each route. |
 
 ## Data model (PostgreSQL)
