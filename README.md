@@ -20,6 +20,7 @@ Parbin is split into:
 - `PUT /api/events/:id` for admin-only event editing
 - `POST /api/event-suggestions` for public event suggestions (optional `sourceEventPage` for deduplication)
 - `GET /api/event-suggestions/source-urls` to list URLs already stored on events or suggestions (for scraper deduplication)
+- `GET /api/admin/dashboard` for admin-only catalog and moderation charts
 - `GET /api/admin/event-suggestions` to review suggestions
 - `POST /api/admin/event-suggestions/:id/approve` to convert a suggestion into an event
 - `POST /api/admin/event-suggestions/:id/reject` to reject a suggestion

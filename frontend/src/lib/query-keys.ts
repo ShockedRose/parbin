@@ -4,4 +4,5 @@ export const queryKeys = {
   event: (id: string) => ["events", "detail", id] as const,
   session: ["auth", "session"] as const,
   suggestions: ["suggestions"] as const,
+  dashboard: ["admin", "dashboard"] as const,
 }

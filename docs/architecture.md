@@ -43,7 +43,7 @@ parbin/
 │       ├── pages/        # Route-level screens
 │       ├── hooks/        # e.g. use-event-manager
 │       ├── lib/          # api.ts, utils, calendar helpers
-│       └── types/        # Shared TS types (events, admin)
+│       └── types/        # Shared TS types (events, admin, dashboard)
 ├── jobs/
 │   └── event-scraper/    # TypeScript + Playwright; POST suggestions + dedupe via API
 └── backend/              # Go module: parbin/backend
@@ -67,14 +67,14 @@ parbin/
 | `internal/database` | Applies SQL migrations from `internal/database/migrations/` on startup. |
 | `internal/httpapi` | Defines routes under `/api`, CORS for `FRONTEND_ORIGIN`, JSON request/response types, maps service errors to HTTP status. |
 | `internal/service` | Business logic: login/logout, event CRUD, suggestion workflow, timezone-aware “today” for feeds. |
-| `internal/store` | PostgreSQL access via `pgx` pool; models in `models.go`; `ErrNotFound`, `ErrConflict` for HTTP mapping. |
+| `internal/store` | PostgreSQL access via `pgx` pool; models in `models.go`; dashboard aggregations in `dashboard_store.go`; `ErrNotFound`, `ErrConflict` for HTTP mapping. |
 | `internal/auth` | Password verification and session token handling used by `AuthService`. |
 
 ## Frontend modules
 
 | Area | Role |
 | ---- | ---- |
-| `router.tsx` | Declares routes: `/`, `events/$eventId`, `suggest`, `admin`, `past-events`; root component is `AppShell`. |
+| `router.tsx` | Declares routes: `/`, `events/$eventId`, `suggest`, `admin`, `admin/dashboard`, `past-events`; root component is `AppShell`. |
 | `main-page.tsx` | Layout shell: decorative background layers, `AppHeader`, `Outlet`, `AppFooter`, global banners. |
 | `hooks/use-event-manager.ts` | Central client state: admin session, events, mutations, talks to `lib/api.ts`. |
 | `lib/api.ts` | `fetch` wrapper with `credentials: "include"`, base URL `VITE_API_URL`, typed API functions. |

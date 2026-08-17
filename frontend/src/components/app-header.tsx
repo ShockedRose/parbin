@@ -10,13 +10,21 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
-import { PanelLeft, Send, Terminal, type LucideIcon, Zap } from "lucide-react"
+import {
+  BarChart3,
+  PanelLeft,
+  Send,
+  Terminal,
+  type LucideIcon,
+  Zap,
+} from "lucide-react"
 
 type NavigationItem = {
-  to: "/" | "/suggest" | "/admin"
+  to: "/" | "/suggest" | "/admin" | "/admin/dashboard"
   label: string
   description: string
   icon: LucideIcon
+  adminOnly?: boolean
 }
 
 const navigationItems: NavigationItem[] = [
@@ -38,12 +46,23 @@ const navigationItems: NavigationItem[] = [
     description: "Manage sessions and approvals",
     icon: Terminal,
   },
+  {
+    to: "/admin/dashboard",
+    label: "Dashboard",
+    description: "Catalog and moderation charts",
+    icon: BarChart3,
+    adminOnly: true,
+  },
 ]
 
 function useCurrentPathname() {
   return useRouterState({
     select: (state) => state.location.pathname,
   })
+}
+
+function visibleNavigationItems(isAdmin: boolean) {
+  return navigationItems.filter((item) => !item.adminOnly || isAdmin)
 }
 
 function getNavigationItem(pathname: string) {
@@ -83,7 +102,7 @@ function NavigationLink({
         "group rounded-xl border transition-all",
         mobile
           ? "flex items-start gap-3 px-4 py-3"
-          : "flex h-[4.25rem] w-44 shrink-0 items-center gap-2.5 px-3 py-2 lg:h-[5.5rem] lg:w-60 lg:gap-3 lg:px-4 lg:py-3",
+          : "flex h-[4.25rem] w-40 shrink-0 items-center gap-2.5 px-3 py-2 lg:h-[5.5rem] lg:w-52 lg:gap-3 lg:px-4 lg:py-3",
         isActive ? activeClasses : inactiveClasses
       )}
     >
@@ -112,6 +131,8 @@ function NavigationLink({
 
 export function AppHeader({ adminEmail }: { adminEmail?: string | null }) {
   const pathname = useCurrentPathname()
+  const isAdmin = Boolean(adminEmail)
+  const navItems = visibleNavigationItems(isAdmin)
   const activeItem = getNavigationItem(pathname)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
@@ -167,7 +188,7 @@ export function AppHeader({ adminEmail }: { adminEmail?: string | null }) {
           </div>
 
           <nav className="hidden w-full flex-nowrap justify-center gap-2 sm:flex lg:gap-3">
-            {navigationItems.map((item) => (
+            {navItems.map((item) => (
               <NavigationLink key={item.to} item={item} />
             ))}
           </nav>
@@ -181,12 +202,12 @@ export function AppHeader({ adminEmail }: { adminEmail?: string | null }) {
               Menu
             </SheetTitle>
             <SheetDescription className="text-[10px] uppercase">
-              Switch between feed, suggestion form, and admin.
+              Switch between feed, suggestion form, admin, and dashboard.
             </SheetDescription>
           </SheetHeader>
 
           <div className="flex flex-col gap-3 p-5">
-            {navigationItems.map((item) => (
+            {navItems.map((item) => (
               <NavigationLink
                 key={item.to}
                 item={item}

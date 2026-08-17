@@ -1,23 +1,21 @@
-import { useNavigate } from "@tanstack/react-router"
+import { Link, useNavigate } from "@tanstack/react-router"
 
+import { AdminLoginCard } from "@/components/admin-login-card"
 import { EventFormPanel } from "@/components/event-form-panel"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { useEventManagerContext } from "@/event-manager-context"
 import { formatDateRange } from "@/lib/calendar"
 import { cn } from "@/lib/utils"
 import {
+  BarChart3,
   Calendar,
   Check,
   ExternalLink,
-  LogIn,
   LogOut,
   MapPin,
   Plus,
   RefreshCw,
-  Shield,
   X,
 } from "lucide-react"
 
@@ -46,58 +44,7 @@ export function AdminPage() {
       </div>
 
       {!mgr.admin ? (
-        <div className="mx-auto max-w-xl rounded-xl border border-border bg-card p-8">
-          <div className="mb-6 flex items-center gap-2 text-[11px] text-accent uppercase">
-            <Shield className="h-4 w-4" />
-            AUTH_REQUIRED
-          </div>
-
-          <div className="space-y-5">
-            <div className="space-y-2">
-              <Label className="text-[11px]  text-primary uppercase">
-                admin.email
-              </Label>
-              <Input
-                type="email"
-                value={mgr.loginForm.email}
-                onChange={(e) => mgr.updateLoginField("email", e.target.value)}
-                placeholder=">> admin@parbin.local"
-                className="border-border bg-background"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-[11px]  text-primary uppercase">
-                admin.password
-              </Label>
-              <Input
-                type="password"
-                value={mgr.loginForm.password}
-                onChange={(e) =>
-                  mgr.updateLoginField("password", e.target.value)
-                }
-                placeholder=">> Enter password"
-                className="border-border bg-background"
-              />
-            </div>
-
-            <Button
-              onClick={() => {
-                void mgr.login()
-              }}
-              className="w-full text-[11px] uppercase"
-              size="lg"
-              disabled={
-                mgr.isAuthenticating ||
-                !mgr.loginForm.email ||
-                !mgr.loginForm.password
-              }
-            >
-              <LogIn className="mr-2 h-4 w-4" />
-              {mgr.isAuthenticating ? "AUTHENTICATING..." : "LOGIN_ADMIN"}
-            </Button>
-          </div>
-        </div>
+        <AdminLoginCard />
       ) : (
         <div className="grid gap-8 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
           <div className="space-y-6">
@@ -111,17 +58,29 @@ export function AdminPage() {
                 </div>
               </div>
 
-              <Button
-                variant="outline"
-                onClick={() => {
-                  void mgr.logout()
-                }}
-                disabled={mgr.isAuthenticating}
-                className="text-[10px] uppercase"
-              >
-                <LogOut className="mr-2 h-3 w-3" />
-                {mgr.isAuthenticating ? "CLOSING..." : "LOGOUT"}
-              </Button>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant="outline"
+                  className="text-[10px] uppercase"
+                  asChild
+                >
+                  <Link to="/admin/dashboard">
+                    <BarChart3 className="mr-2 h-3 w-3" />
+                    DASHBOARD
+                  </Link>
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    void mgr.logout()
+                  }}
+                  disabled={mgr.isAuthenticating}
+                  className="text-[10px] uppercase"
+                >
+                  <LogOut className="mr-2 h-3 w-3" />
+                  {mgr.isAuthenticating ? "CLOSING..." : "LOGOUT"}
+                </Button>
+              </div>
             </div>
 
             <EventFormPanel
@@ -143,9 +102,7 @@ export function AdminPage() {
           <div className="rounded-xl border border-border bg-card p-6">
             <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
               <div>
-                <div className="text-[10px] text-accent">
-                  REVIEW_QUEUE
-                </div>
+                <div className="text-[10px] text-accent">REVIEW_QUEUE</div>
                 <div className="mt-1 text-xs text-muted-foreground">
                   Pending suggestions can be converted directly into events.
                 </div>

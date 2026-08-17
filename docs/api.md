@@ -55,6 +55,43 @@ Responses use the following fields (Go struct tags in `internal/httpapi/router.g
 
 List endpoints return `{ "events": [ ... ] }`. Single event returns `{ "event": { ... } }`.
 
+## Admin dashboard
+
+| Method | Path | Auth | Description |
+| ------ | ---- | ---- | ----------- |
+| GET | `/api/admin/dashboard` | Admin | Timezone-aware aggregations over `events` and `event_suggestions`. |
+
+### Dashboard JSON shape
+
+Top-level object (not wrapped):
+
+| Field | Type | Notes |
+| ----- | ---- | ----- |
+| `timezone` | string | `APP_TIMEZONE` used for month/weekday buckets |
+| `summary` | object | Totals, queue size, approval rate, average review hours |
+| `eventsByMonth` | `{ month, count }[]` | Last 12 months of published events by `starts_at` (`YYYY-MM`, zero-filled) |
+| `suggestionsByMonth` | `{ month, pending, approved, rejected }[]` | Last 12 months of suggestions by `created_at` |
+| `topTags` | `{ label, count }[]` | Up to 10 tags on published events |
+| `topLocations` | `{ label, count }[]` | Up to 8 event locations (`Unspecified` when empty) |
+| `eventsByWeekday` | `{ label, count }[]` | Sun–Sat start-day counts |
+| `eventSourceMix` | `{ label, count }[]` | `Sourced` (has `sourceEventPage`) vs `Manual` |
+| `suggestionSourceMix` | `{ label, count }[]` | `Sourced` vs `Community` |
+| `suggestionStatusMix` | `{ label, count }[]` | `Pending` / `Approved` / `Rejected` |
+
+`summary` fields:
+
+| Field | Type | Notes |
+| ----- | ---- | ----- |
+| `totalEvents` | number | All published events |
+| `upcomingEvents` | number | `starts_at` on or after today in `APP_TIMEZONE` |
+| `pastEvents` | number | Before today |
+| `eventsWithSourcePage` / `eventsWithoutSourcePage` | number | Catalog origin |
+| `totalSuggestions` | number | All suggestion rows |
+| `pendingSuggestions` / `approvedSuggestions` / `rejectedSuggestions` | number | Pipeline counts |
+| `sourcedSuggestions` / `communitySuggestions` | number | Suggestion origin |
+| `approvalRate` | number \| null | Approved / (approved + rejected); `null` if none reviewed |
+| `avgReviewHours` | number \| null | Mean hours from `created_at` to `reviewed_at`; `null` if none reviewed |
+
 ## Event suggestions (public create; admin review)
 
 | Method | Path | Auth | Description |

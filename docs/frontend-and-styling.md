@@ -15,6 +15,7 @@ The UI is a **React 19** single-page app built with **Vite 7**, **TypeScript**, 
 | Component primitives | **shadcn/ui** (style `radix-nova`), **Radix UI**, **lucide-react** icons |
 | Class merging | `clsx`, `tailwind-merge`, **CVA** (`class-variance-authority`) for variants |
 | Dates | `date-fns`, `react-day-picker` (forms) |
+| Charts | **Recharts** on the admin dashboard (`/admin/dashboard`) |
 | Fonts | **Inter** and **Syne** from Google Fonts |
 | Local HTTPS (dev) | `vite-plugin-mkcert` in `vite.config.ts` |
 
@@ -48,7 +49,7 @@ Dark mode variant: `@custom-variant dark (&:is(.dark *));` — components can us
 | ---- | -------- |
 | `src/components/ui/` | Reusable primitives: button, card, dialog, select, tabs, etc. |
 | `src/components/` | App chrome and features: `app-header`, `app-footer`, `event-form-panel`, `status-banner`, … |
-| `src/pages/` | Route screens: `events-page`, `event-details-page`, `suggest-page`, `admin-page`, `past-events-page` |
+| `src/pages/` | Route screens: `events-page`, `event-details-page`, `suggest-page`, `admin-page`, `admin-dashboard-page`, `past-events-page` |
 | `src/hooks/` | e.g. `use-event-manager.ts` — session, queries, mutations |
 | `src/lib/utils.ts` | `cn()` helper (clsx + tailwind-merge) |
 | `src/lib/posthog.ts` / `analytics.ts` | PostHog init (optional) and typed product-event helpers |
