@@ -31,7 +31,7 @@ FROM (
 WHERE BTRIM(tag) <> '';
 
 INSERT INTO event_tags (event_id, tag_id, sort_order)
-SELECT DISTINCT ON (e.id, t.id) e.id, t.id, u.ord::int
+SELECT DISTINCT ON (e.id, t.id) e.id, t.id, (u.ord - 1)::int
 FROM events e
 CROSS JOIN LATERAL UNNEST(e.tags) WITH ORDINALITY AS u(tag, ord)
 JOIN tags t ON t.name = BTRIM(u.tag)
@@ -39,7 +39,7 @@ WHERE BTRIM(u.tag) <> ''
 ORDER BY e.id, t.id, u.ord;
 
 INSERT INTO event_suggestion_tags (suggestion_id, tag_id, sort_order)
-SELECT DISTINCT ON (s.id, t.id) s.id, t.id, u.ord::int
+SELECT DISTINCT ON (s.id, t.id) s.id, t.id, (u.ord - 1)::int
 FROM event_suggestions s
 CROSS JOIN LATERAL UNNEST(s.tags) WITH ORDINALITY AS u(tag, ord)
 JOIN tags t ON t.name = BTRIM(u.tag)
