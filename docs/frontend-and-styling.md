@@ -48,7 +48,7 @@ Dark mode variant: `@custom-variant dark (&:is(.dark *));` — components can us
 | Path | Contents |
 | ---- | -------- |
 | `src/components/ui/` | Reusable primitives: button, card, dialog, select, tabs, etc. |
-| `src/components/` | App chrome and features: `app-header`, `app-footer`, `event-form-panel`, `status-banner`, … |
+| `src/components/` | App chrome and features: `app-header`, `app-footer`, `event-form-panel`, `tag-input`, `status-banner`, … |
 | `src/pages/` | Route screens: `events-page`, `event-details-page`, `suggest-page`, `admin-page`, `admin-dashboard-page`, `past-events-page` |
 | `src/hooks/` | e.g. `use-event-manager.ts` — session, queries, mutations |
 | `src/lib/utils.ts` | `cn()` helper (clsx + tailwind-merge) |

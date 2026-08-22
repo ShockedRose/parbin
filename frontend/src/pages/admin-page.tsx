@@ -96,6 +96,7 @@ export function AdminPage() {
               onSubmit={() => {
                 void handleAddEvent()
               }}
+              allowCreateTags
             />
           </div>
 

@@ -1,32 +1,27 @@
 import type { ReactNode } from "react"
 
+import { TagInput } from "@/components/tag-input"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
-
-type EventFormModel = {
-  title: string
-  description: string
-  date: string
-  endDate: string
-  location: string
-  sourceEventPage: string
-  image: string
-  tags: string
-}
+import type { EventFormFields } from "@/types/event"
 
 interface EventFormPanelProps {
   title: string
   accent: string
-  form: EventFormModel
+  form: EventFormFields
   preview: string | null
   submitLabel: string
   submitIcon: ReactNode
   disabled?: boolean
   busy?: boolean
-  onFieldChange: (field: keyof EventFormModel, value: string) => void
+  allowCreateTags?: boolean
+  onFieldChange: <K extends keyof EventFormFields>(
+    field: K,
+    value: EventFormFields[K]
+  ) => void
   onSubmit: () => void
 }
 
@@ -39,6 +34,7 @@ export function EventFormPanel({
   submitIcon,
   disabled = false,
   busy = false,
+  allowCreateTags = false,
   onFieldChange,
   onSubmit,
 }: EventFormPanelProps) {
@@ -140,11 +136,11 @@ export function EventFormPanel({
           <Label className="text-[11px] text-primary uppercase">
             event.tags[]
           </Label>
-          <Input
+          <TagInput
             value={form.tags}
-            onChange={(e) => onFieldChange("tags", e.target.value)}
-            placeholder=">> AI, Workshop, Community"
-            className="border-border bg-background"
+            onChange={(tags) => onFieldChange("tags", tags)}
+            allowCreate={allowCreateTags}
+            disabled={disabled}
           />
         </div>
 
@@ -179,7 +175,7 @@ export function EventFormPanel({
 
         <Button
           onClick={onSubmit}
-          className="w-full text-[11px] uppercase parbin-glow-primary-sm"
+          className="parbin-glow-primary-sm w-full text-[11px] uppercase"
           size="lg"
           disabled={disabled || !form.title || !form.date || !form.endDate}
         >

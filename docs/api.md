@@ -16,7 +16,7 @@ Public reads generally omit cookies. **Admin** routes require a valid session co
 | ------ | ---- | ---- | ----------- |
 | GET | `/api/tags` | No | All catalog tags, ordered by `name`. **200** `{ "tags": [ { "id", "name" } ] }` |
 
-Tags are a first-class table. Event and suggestion create/update bodies still send `tags` as string names; the API finds or creates a row for each exact name (after trim). Existing case or spelling variants are kept as separate rows.
+Tags are a first-class table. Event and suggestion create/update bodies still send `tags` as string names; the API finds or creates a row for each exact name (after trim). Existing case or spelling variants are kept as separate rows. At most **6** tags are accepted per event or suggestion.
 
 ## Events (public read; admin write)
 
@@ -41,7 +41,7 @@ Responses use the following fields (Go struct tags in `internal/httpapi/router.g
 | `endDate` | string | End, same format |
 | `location` | string | |
 | `image` | string | Image URL |
-| `tags` | string[] | Tag names resolved from the `tags` table |
+| `tags` | string[] | Tag names resolved from the `tags` table; max 6 |
 | `sourceEventPage` | string \| null | Canonical URL of the external event page (optional) |
 
 **Create / update / suggestion body** (same keys for POST/PUT bodies):

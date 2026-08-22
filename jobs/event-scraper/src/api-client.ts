@@ -41,7 +41,10 @@ function mergeTags(tags: string[]): string[] {
     seen.add(k)
     out.push(t.trim())
   }
-  return out
+
+  const scraped = out.filter((t) => t.toLowerCase() === SCRAPED_TAG.toLowerCase())
+  const rest = out.filter((t) => t.toLowerCase() !== SCRAPED_TAG.toLowerCase())
+  return [...rest.slice(0, 5), ...scraped]
 }
 
 export async function submitSuggestion(payload: SuggestionPayload): Promise<void> {

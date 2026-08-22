@@ -183,6 +183,11 @@ func buildEventInput(payload EventPayload, location *time.Location) (store.Event
 		return store.EventInput{}, fmt.Errorf("%w: endDate must be after date", ErrValidation)
 	}
 
+	tags, err := cleanTags(payload.Tags)
+	if err != nil {
+		return store.EventInput{}, err
+	}
+
 	return store.EventInput{
 		Title:           title,
 		Description:     strings.TrimSpace(payload.Description),
@@ -190,7 +195,7 @@ func buildEventInput(payload EventPayload, location *time.Location) (store.Event
 		EndsAt:          endsAt,
 		Location:        strings.TrimSpace(payload.Location),
 		ImageURL:        strings.TrimSpace(payload.Image),
-		Tags:            cleanTags(payload.Tags),
+		Tags:            tags,
 		SourceEventPage: strings.TrimSpace(payload.SourceEventPage),
 	}, nil
 }
@@ -210,7 +215,9 @@ func parseDateTime(value string, location *time.Location) (time.Time, error) {
 	return time.Time{}, fmt.Errorf("unsupported datetime format")
 }
 
-func cleanTags(tags []string) []string {
+const maxEventTags = 6
+
+func cleanTags(tags []string) ([]string, error) {
 	cleaned := make([]string, 0, len(tags))
 	seen := make(map[string]struct{}, len(tags))
 
@@ -229,5 +236,9 @@ func cleanTags(tags []string) []string {
 		cleaned = append(cleaned, normalized)
 	}
 
-	return cleaned
+	if len(cleaned) > maxEventTags {
+		return nil, fmt.Errorf("%w: at most %d tags are allowed", ErrValidation, maxEventTags)
+	}
+
+	return cleaned, nil
 }

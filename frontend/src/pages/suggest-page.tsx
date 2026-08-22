@@ -42,6 +42,7 @@ export function SuggestPage() {
           onSubmit={() => {
             void handleSubmit()
           }}
+          allowCreateTags={false}
         />
       </div>
     </div>
