@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import { getRouteApi, Link } from "@tanstack/react-router"
 import { useEffect, useState } from "react"
 
+import { TagInput } from "@/components/tag-input"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -19,7 +20,7 @@ import {
   trackGoogleCalendarOpen,
 } from "@/lib/calendar"
 import { getEventImageTransitionName } from "@/lib/view-transitions"
-import type { MeetupEvent } from "@/types/event"
+import type { EventFormFields, MeetupEvent } from "@/types/event"
 import {
   ArrowLeft,
   Calendar,
@@ -31,18 +32,7 @@ import {
   X,
 } from "lucide-react"
 
-interface EditFormState {
-  title: string
-  description: string
-  date: string
-  endDate: string
-  location: string
-  sourceEventPage: string
-  image: string
-  tags: string
-}
-
-function eventToEditForm(event: MeetupEvent): EditFormState {
+function eventToEditForm(event: MeetupEvent): EventFormFields {
   return {
     title: event.title,
     description: event.description,
@@ -51,7 +41,7 @@ function eventToEditForm(event: MeetupEvent): EditFormState {
     location: event.location,
     sourceEventPage: event.sourceEventPage ?? "",
     image: event.image,
-    tags: event.tags.join(", "),
+    tags: [...event.tags],
   }
 }
 
@@ -71,7 +61,7 @@ export function EventDetailsPage() {
   })
 
   const [isEditing, setIsEditing] = useState(false)
-  const [editForm, setEditForm] = useState<EditFormState>({
+  const [editForm, setEditForm] = useState<EventFormFields>({
     title: "",
     description: "",
     date: "",
@@ -79,7 +69,7 @@ export function EventDetailsPage() {
     location: "",
     sourceEventPage: "",
     image: "",
-    tags: "",
+    tags: [],
   })
 
   const event = fromFeed ?? eventDetailQuery.data ?? null
@@ -106,7 +96,10 @@ export function EventDetailsPage() {
     setIsEditing(false)
   }
 
-  const updateField = (field: keyof EditFormState, value: string) => {
+  const updateField = <K extends keyof EventFormFields>(
+    field: K,
+    value: EventFormFields[K]
+  ) => {
     setEditForm((prev) => ({ ...prev, [field]: value }))
   }
 
@@ -120,10 +113,7 @@ export function EventDetailsPage() {
       endDate: editForm.endDate,
       location: editForm.location.trim(),
       image: editForm.image.trim(),
-      tags: editForm.tags
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean),
+      tags: editForm.tags,
       sourceEventPage: editForm.sourceEventPage.trim(),
     })
 
@@ -162,10 +152,7 @@ export function EventDetailsPage() {
           This event could not be found in the current feed. It may have been
           removed or the link is no longer valid.
         </p>
-        <Button
-          asChild
-          className="mt-6 text-[11px] uppercase"
-        >
+        <Button asChild className="mt-6 text-[11px] uppercase">
           <Link to="/">
             <ArrowLeft className="h-4 w-4" />
             Back To Event Stream
@@ -176,7 +163,7 @@ export function EventDetailsPage() {
   }
 
   return (
-    <article className="mx-auto w-full min-w-0 max-w-4xl overflow-hidden rounded-xl border border-border bg-card">
+    <article className="mx-auto w-full max-w-4xl min-w-0 overflow-hidden rounded-xl border border-border bg-card">
       <div className="h-72 overflow-hidden border-b border-border sm:h-96">
         <img
           src={
@@ -213,7 +200,7 @@ export function EventDetailsPage() {
             placeholder=">> Event title"
           />
         ) : (
-          <h2 className="max-w-full break-words font-display text-[1.625rem] font-bold leading-tight text-foreground sm:max-w-3xl sm:text-2xl sm:leading-snug">
+          <h2 className="max-w-full font-display text-[1.625rem] leading-tight font-bold break-words text-foreground sm:max-w-3xl sm:text-2xl sm:leading-snug">
             {event.title}
           </h2>
         )}
@@ -305,11 +292,11 @@ export function EventDetailsPage() {
               <Label className="text-[11px] text-primary uppercase">
                 event.tags[]
               </Label>
-              <Input
+              <TagInput
                 value={editForm.tags}
-                onChange={(e) => updateField("tags", e.target.value)}
-                placeholder=">> AI, Workshop, Community"
-                className="border-border bg-background"
+                onChange={(tags) => updateField("tags", tags)}
+                allowCreate
+                disabled={mgr.isSubmitting}
               />
             </div>
 
@@ -331,7 +318,7 @@ export function EventDetailsPage() {
               <Button
                 onClick={saveChanges}
                 disabled={!canSave || mgr.isSubmitting}
-                className="w-full py-3 sm:py-0 flex-1 text-[11px] uppercase parbin-glow-primary-sm sm:w-auto"
+                className="parbin-glow-primary-sm w-full flex-1 py-3 text-[11px] uppercase sm:w-auto sm:py-0"
                 size="lg"
               >
                 <Save className="h-4 w-4" />
@@ -354,24 +341,24 @@ export function EventDetailsPage() {
         {!isEditing && (
           <>
             <div className="flex min-w-0 flex-wrap gap-3 text-xs text-muted-foreground">
-              <div className="flex min-w-0 max-w-full items-start gap-2 border border-border bg-background px-3 py-2">
+              <div className="flex max-w-full min-w-0 items-start gap-2 border border-border bg-background px-3 py-2">
                 <Calendar className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
                 <span className="min-w-0 break-words">
                   {formatDateRange(event.date, event.endDate)}
                 </span>
               </div>
-              <div className="flex min-w-0 max-w-full items-start gap-2 border border-border bg-background/60 px-3 py-2">
+              <div className="flex max-w-full min-w-0 items-start gap-2 border border-border bg-background/60 px-3 py-2">
                 <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />
                 <span className="min-w-0 break-words">{event.location}</span>
               </div>
               {event.sourceEventPage ? (
-                <div className="flex min-w-0 max-w-full items-start gap-2 border border-border bg-background px-3 py-2">
+                <div className="flex max-w-full min-w-0 items-start gap-2 border border-border bg-background px-3 py-2">
                   <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
                   <a
                     href={event.sourceEventPage}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="min-w-0 break-all text-sm text-primary underline-offset-2 hover:underline"
+                    className="min-w-0 text-sm break-all text-primary underline-offset-2 hover:underline"
                   >
                     {event.sourceEventPage}
                   </a>
@@ -383,7 +370,7 @@ export function EventDetailsPage() {
               <Button
                 asChild
                 size="lg"
-                className="h-auto w-full min-w-0 max-w-full shrink !whitespace-normal flex-col items-start justify-start gap-2 px-4 py-3.5 text-left parbin-glow-primary-sm sm:flex-row sm:gap-3 sm:px-5 sm:py-4 lg:min-h-16"
+                className="parbin-glow-primary-sm h-auto w-full max-w-full min-w-0 shrink flex-col items-start justify-start gap-2 px-4 py-3.5 text-left !whitespace-normal sm:flex-row sm:gap-3 sm:px-5 sm:py-4 lg:min-h-16"
               >
                 <a
                   href={getGoogleCalendarUrl(event)}
@@ -397,7 +384,7 @@ export function EventDetailsPage() {
                     <span className="block text-[11px] uppercase">
                       Add To Google Calendar
                     </span>
-                    <span className="mt-0.5 block break-words text-[10px] leading-snug text-primary-foreground/75 sm:uppercase">
+                    <span className="mt-0.5 block text-[10px] leading-snug break-words text-primary-foreground/75 sm:uppercase">
                       Open the event with date, time, and location prefilled
                     </span>
                   </span>
@@ -407,7 +394,7 @@ export function EventDetailsPage() {
               <Button
                 size="lg"
                 variant="outline"
-                className="h-auto w-full min-w-0 max-w-full shrink !whitespace-normal flex-col items-start justify-start gap-2 px-4 py-3.5 text-left sm:flex-row sm:gap-3 sm:px-5 sm:py-4 lg:min-h-16"
+                className="h-auto w-full max-w-full min-w-0 shrink flex-col items-start justify-start gap-2 px-4 py-3.5 text-left !whitespace-normal sm:flex-row sm:gap-3 sm:px-5 sm:py-4 lg:min-h-16"
                 onClick={() => downloadICS(event)}
               >
                 <Download className="mt-0.5 h-4 w-4 shrink-0" />
@@ -415,7 +402,7 @@ export function EventDetailsPage() {
                   <span className="block text-[11px] uppercase">
                     Download ICS File
                   </span>
-                  <span className="mt-0.5 block break-words text-[10px] leading-snug text-muted-foreground sm:uppercase">
+                  <span className="mt-0.5 block text-[10px] leading-snug break-words text-muted-foreground sm:uppercase">
                     Save a calendar file for Apple Calendar, Outlook, or any ICS
                     app
                   </span>

@@ -16,6 +16,17 @@ export interface MeetupEvent {
   sourceEventPage?: string | null
 }
 
+export interface EventFormFields {
+  title: string
+  description: string
+  date: string
+  endDate: string
+  location: string
+  sourceEventPage: string
+  image: string
+  tags: string[]
+}
+
 export interface EventPayload {
   title: string
   description: string

@@ -30,28 +30,18 @@ import {
 import { queryKeys } from "@/lib/query-keys"
 import type {
   AdminSession,
+  EventFormFields,
   EventPayload,
   EventSuggestion,
   MeetupEvent,
 } from "@/types/event"
-
-interface EventFormState {
-  title: string
-  description: string
-  date: string
-  endDate: string
-  location: string
-  sourceEventPage: string
-  image: string
-  tags: string
-}
 
 interface LoginFormState {
   email: string
   password: string
 }
 
-const emptyEventForm: EventFormState = {
+const emptyEventForm: EventFormFields = {
   title: "",
   description: "",
   date: "",
@@ -59,7 +49,7 @@ const emptyEventForm: EventFormState = {
   location: "",
   sourceEventPage: "",
   image: "",
-  tags: "",
+  tags: [],
 }
 
 const emptyLoginForm: LoginFormState = {
@@ -70,7 +60,7 @@ const emptyLoginForm: LoginFormState = {
 const fallbackImage =
   "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=400&fit=crop"
 
-function toPayload(form: EventFormState): EventPayload {
+function toPayload(form: EventFormFields): EventPayload {
   const sourceEventPage = form.sourceEventPage.trim()
   return {
     title: form.title.trim(),
@@ -79,10 +69,7 @@ function toPayload(form: EventFormState): EventPayload {
     endDate: form.endDate,
     location: form.location.trim(),
     image: form.image.trim() || fallbackImage,
-    tags: form.tags
-      .split(",")
-      .map((tag) => tag.trim())
-      .filter(Boolean),
+    tags: form.tags,
     ...(sourceEventPage ? { sourceEventPage } : {}),
   }
 }
@@ -108,9 +95,9 @@ async function fetchSession(): Promise<AdminSession | null> {
 
 export function useEventManager() {
   const queryClient = useQueryClient()
-  const [eventForm, setEventForm] = useState<EventFormState>(emptyEventForm)
+  const [eventForm, setEventForm] = useState<EventFormFields>(emptyEventForm)
   const [suggestionForm, setSuggestionForm] =
-    useState<EventFormState>(emptyEventForm)
+    useState<EventFormFields>(emptyEventForm)
   const [loginForm, setLoginForm] = useState<LoginFormState>(emptyLoginForm)
   const [notice, setNotice] = useState<string | null>(null)
 
@@ -156,6 +143,7 @@ export function useEventManager() {
         title: created.title,
       })
       void queryClient.invalidateQueries({ queryKey: queryKeys.events })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.tags })
       void queryClient.invalidateQueries({ queryKey: queryKeys.suggestions })
       void queryClient.invalidateQueries({ queryKey: queryKeys.dashboard })
     },
@@ -249,6 +237,7 @@ export function useEventManager() {
       })
       void queryClient.invalidateQueries({ queryKey: queryKeys.events })
       void queryClient.invalidateQueries({ queryKey: queryKeys.event(id) })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.tags })
       void queryClient.invalidateQueries({ queryKey: queryKeys.dashboard })
     },
   })
@@ -337,13 +326,16 @@ export function useEventManager() {
         ? rejectSuggestionMutation.variables
         : null
 
-  const updateEventField = (field: keyof EventFormState, value: string) => {
+  const updateEventField = <K extends keyof EventFormFields>(
+    field: K,
+    value: EventFormFields[K]
+  ) => {
     setEventForm((prev) => ({ ...prev, [field]: value }))
   }
 
-  const updateSuggestionField = (
-    field: keyof EventFormState,
-    value: string
+  const updateSuggestionField = <K extends keyof EventFormFields>(
+    field: K,
+    value: EventFormFields[K]
   ) => {
     setSuggestionForm((prev) => ({ ...prev, [field]: value }))
   }
