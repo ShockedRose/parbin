@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
-import { fetchKnownSourceUrls, submitSuggestion } from "./api-client.js"
+import { fetchCatalogTags, fetchKnownSourceUrls, submitSuggestion } from "./api-client.js"
 import { getBrowser, closeBrowser } from "./browser.js"
 import { config } from "./config.js"
 import { logger } from "./logger.js"
@@ -22,6 +22,9 @@ function loadSources() {
 async function main(): Promise<void> {
   const known = await fetchKnownSourceUrls()
   logger.info({ count: known.size }, "loaded known source URLs")
+
+  const catalog = await fetchCatalogTags()
+  logger.info({ count: catalog.length }, "loaded tag catalog")
 
   const sources = shuffle(loadSources())
   logger.info(
@@ -66,7 +69,7 @@ async function main(): Promise<void> {
               logger.info({ url: canonical }, "skip non-tech or incomplete event")
               continue
             }
-            await submitSuggestion(payload)
+            await submitSuggestion(payload, catalog)
             known.add(canonical)
             submitted += 1
           } catch (e) {
