@@ -38,6 +38,19 @@ function imageFromLd(img: unknown): string {
   return ""
 }
 
+function keywordsFromLd(value: unknown): string[] {
+  if (typeof value === "string") {
+    return value
+      .split(/[,;|]/)
+      .map((part) => part.trim())
+      .filter(Boolean)
+  }
+  if (Array.isArray(value)) {
+    return value.flatMap((item) => (typeof item === "string" ? [item.trim()] : [])).filter(Boolean)
+  }
+  return []
+}
+
 export async function buildPayloadFromPage(page: Page, eventUrl: string): Promise<SuggestionPayload | null> {
   const canonical = canonicalEventUrl(eventUrl)
   const ldEvents = await extractEventObjectsFromJsonLd(page)
@@ -48,6 +61,7 @@ export async function buildPayloadFromPage(page: Page, eventUrl: string): Promis
   let end: Date | null = null
   let location = ""
   let image = ""
+  let keywords: string[] = []
 
   if (ldEvents.length > 0) {
     const e = ldEvents[0]
@@ -57,6 +71,7 @@ export async function buildPayloadFromPage(page: Page, eventUrl: string): Promis
     image = imageFromLd(e.image)
     start = parseIsoToDate(firstString(e.startDate, e.startTime))
     end = parseIsoToDate(firstString(e.endDate, e.endTime))
+    keywords = keywordsFromLd(e.keywords)
   }
 
   if (!title) {
@@ -96,7 +111,7 @@ export async function buildPayloadFromPage(page: Page, eventUrl: string): Promis
     endDate: formatParbinDateTime(end),
     location: resolvedLocation,
     image: image.slice(0, 2000),
-    tags: [],
+    tags: keywords,
     sourceEventPage: canonical,
   }
 }

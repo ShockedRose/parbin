@@ -1,6 +1,9 @@
 import { config } from "./config.js"
 import { logger } from "./logger.js"
-import { SCRAPED_TAG } from "./types.js"
+import {
+  type CatalogTag,
+  resolveSuggestionTags,
+} from "./util/tags.js"
 
 export type SuggestionPayload = {
   title: string
@@ -31,23 +34,36 @@ export async function fetchKnownSourceUrls(): Promise<Set<string>> {
   return new Set(urls)
 }
 
-function mergeTags(tags: string[]): string[] {
-  const withScraped = [...tags, SCRAPED_TAG]
-  const seen = new Set<string>()
-  const out: string[] = []
-  for (const t of withScraped) {
-    const k = t.trim().toLowerCase()
-    if (!k || seen.has(k)) continue
-    seen.add(k)
-    out.push(t.trim())
+export async function fetchCatalogTags(): Promise<CatalogTag[]> {
+  const res = await fetch(joinUrl("/api/tags"), {
+    headers: { Accept: "application/json" },
+  })
+  if (!res.ok) {
+    const body = await res.text()
+    throw new Error(`tags catalog failed ${res.status}: ${body}`)
   }
-
-  const scraped = out.filter((t) => t.toLowerCase() === SCRAPED_TAG.toLowerCase())
-  const rest = out.filter((t) => t.toLowerCase() !== SCRAPED_TAG.toLowerCase())
-  return [...rest.slice(0, 5), ...scraped]
+  const data = (await res.json()) as { tags?: CatalogTag[] }
+  const tags = Array.isArray(data.tags) ? data.tags : []
+  return tags.filter(
+    (tag): tag is CatalogTag =>
+      !!tag &&
+      typeof tag.id === "string" &&
+      typeof tag.name === "string" &&
+      tag.name.trim() !== "",
+  )
 }
 
-export async function submitSuggestion(payload: SuggestionPayload): Promise<void> {
+export async function submitSuggestion(
+  payload: SuggestionPayload,
+  catalog: CatalogTag[],
+): Promise<void> {
+  const tags = resolveSuggestionTags(
+    catalog,
+    payload.tags,
+    payload.title,
+    payload.description,
+  )
+
   const body = {
     title: payload.title,
     description: payload.description,
@@ -55,7 +71,7 @@ export async function submitSuggestion(payload: SuggestionPayload): Promise<void
     endDate: payload.endDate,
     location: payload.location,
     image: payload.image,
-    tags: mergeTags(payload.tags),
+    tags,
     sourceEventPage: payload.sourceEventPage,
   }
 
@@ -70,5 +86,8 @@ export async function submitSuggestion(payload: SuggestionPayload): Promise<void
     throw new Error(`create suggestion failed ${res.status}: ${text}`)
   }
 
-  logger.info({ url: payload.sourceEventPage, title: payload.title }, "submitted suggestion")
+  logger.info(
+    { url: payload.sourceEventPage, title: payload.title, tags },
+    "submitted suggestion",
+  )
 }

@@ -1,6 +1,8 @@
 # Parbin event scraper
 
-TypeScript job that uses Playwright to discover tech-related events and submits them to Parbin via `POST /api/event-suggestions` with `sourceEventPage` for deduplication. Every submission includes the `scraped` tag.
+TypeScript job that uses Playwright to discover tech-related events and submits them to Parbin via `POST /api/event-suggestions` with `sourceEventPage` for deduplication.
+
+Tags are catalog names from `GET /api/tags` (same string-name body the API expects). The job matches JSON-LD keywords and title/description text to existing catalog rows (exact catalog spelling, max 6). Names that are not in the catalog are dropped. Every submission also includes `scraped`; if that name already exists, the catalog spelling is reused so a variant row is not created.
 
 **Strategies:** Meetup **group** home URLs, CNCF / GDG **chapter** pages on Bevy (`community.cncf.io`, `gdg.community.dev`), Eventbrite listings, Luma.
 
