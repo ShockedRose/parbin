@@ -24,6 +24,20 @@ pnpm start
 
 From repo root: `pnpm scraper:run`
 
+## GitHub Actions
+
+`.github/workflows/event-scraper.yml` runs this job every Monday and Friday at 12:00 America/Panama (17:00 UTC). GitHub cron is UTC.
+
+Set these repository variables (Settings → Secrets and variables → Actions → Variables):
+
+| Variable | Scheduled job |
+| --- | --- |
+| `PARBIN_API_URL` | Required. Backend base URL. |
+| `SCRAPER_TIMEOUT_MS` | Optional. Defaults to `45000` when unset. |
+| `LOG_LEVEL` | Optional. Defaults to `info` when unset. |
+
+`SCRAPER_HEADLESS` is always `true` in the workflow. The runner has no display.
+
 ## Docker
 
 Build from this directory (includes browsers):

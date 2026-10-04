@@ -31,10 +31,10 @@ Parbin is split into:
 
 The roadmap for Parbin represents the high level goals for the application. There'll be improvements to be made to user experience, optimization, deployment capabilities, and many more; however the latter ones will be handled as issues separated from these main goals:  
 
-- [ ] Introduce a cron job to scrape external event pages and suggest candidates for the main listing (admin moderation)
+- [x] Introduce a cron job to scrape external event pages and suggest candidates for the main listing (admin moderation)
   - [x] Add sources for the scraper (allowlist, config, per-site rules) — see `jobs/event-scraper/sources.json`
   - [x] Implement the scraper (fetch, parse, normalize into suggestion-ready records) — see `jobs/event-scraper/`
-  - [ ] Deploy the scraper (scheduled runner in the target environment) — e.g. Railway cron + `jobs/event-scraper/Dockerfile`
+  - [x] Deploy the scraper (scheduled runner in the target environment) — GitHub Actions cron in `.github/workflows/event-scraper.yml` (Monday and Friday at 12:00 America/Panama)
 
 ## Local development
 
@@ -75,9 +75,10 @@ pnpm db:up
 
 | Variable | Required | Default | Description |
 | --- | --- | --- | --- |
-| `PARBIN_API_URL` | No | `http://localhost:8080` | Backend base URL for API calls. |
-| `SCRAPER_HEADLESS` | No | `true` | Run Playwright in headless mode. |
-| `SCRAPER_TIMEOUT_MS` | No | `30000` | Default navigation timeout per page (ms). |
+| `PARBIN_API_URL` | No | `http://localhost:8080` | Backend base URL for API calls. Required as a GitHub Actions repository variable for the scheduled job. |
+| `SCRAPER_HEADLESS` | No | `true` | Run Playwright in headless mode. The scheduled job always sets this to `true`. |
+| `SCRAPER_TIMEOUT_MS` | No | `45000` | Default navigation timeout per page (ms). |
+| `LOG_LEVEL` | No | `info` | Pino log level. |
 
 ### 2. Configure the backend
 
@@ -142,6 +143,7 @@ pnpm scraper:run
 
 ## Notes
 
+- The event scraper runs on GitHub Actions every Monday and Friday at 12:00 America/Panama (17:00 UTC). Set repository variables `PARBIN_API_URL`, and optionally `SCRAPER_TIMEOUT_MS` and `LOG_LEVEL`, under Settings → Secrets and variables → Actions → Variables. `SCRAPER_HEADLESS` is forced to `true` in that workflow.
 - The backend auto-runs SQL migrations on startup.
 - A seed admin is auto-provisioned on boot when `SEED_ADMIN_AUTO_PROVISION=true`.
 - Event timestamps and the upcoming/past day boundary use the backend `APP_TIMEZONE` setting, which defaults to `America/Panama`.
