@@ -19,7 +19,7 @@ jobs:
       run:
         working-directory: jobs/event-scraper
     env:
-      PARBIN_API_URL: ${{ vars.PARBIN_API_URL }}
+      PARBIN_API_URL: ${{ secrets.PARBIN_API_URL }}
       # Headless must stay on. GitHub-hosted runners have no display.
       SCRAPER_HEADLESS: "true"
       SCRAPER_TIMEOUT_MS: ${{ vars.SCRAPER_TIMEOUT_MS || '45000' }}
@@ -49,7 +49,7 @@ jobs:
       - name: Require scraper configuration
         run: |
           if [ -z "$PARBIN_API_URL" ]; then
-            echo "Set the PARBIN_API_URL repository variable (Settings → Secrets and variables → Actions → Variables)."
+            echo "Set the PARBIN_API_URL repository secret (Settings → Secrets and variables → Actions → Secrets)."
             exit 1
           fi
 

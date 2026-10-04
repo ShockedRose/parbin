@@ -75,7 +75,7 @@ pnpm db:up
 
 | Variable | Required | Default | Description |
 | --- | --- | --- | --- |
-| `PARBIN_API_URL` | No | `http://localhost:8080` | Backend base URL for API calls. Required as a GitHub Actions repository variable for the scheduled job. |
+| `PARBIN_API_URL` | No | `http://localhost:8080` | Backend base URL for API calls. Required as a GitHub Actions repository secret for the scheduled job. |
 | `SCRAPER_HEADLESS` | No | `true` | Run Playwright in headless mode. The scheduled job always sets this to `true`. |
 | `SCRAPER_TIMEOUT_MS` | No | `45000` | Default navigation timeout per page (ms). |
 | `LOG_LEVEL` | No | `info` | Pino log level. |
@@ -143,7 +143,7 @@ pnpm scraper:run
 
 ## Notes
 
-- The event scraper runs on GitHub Actions every Monday and Friday at 12:00 America/Panama (17:00 UTC). Set repository variables `PARBIN_API_URL`, and optionally `SCRAPER_TIMEOUT_MS` and `LOG_LEVEL`, under Settings → Secrets and variables → Actions → Variables. `SCRAPER_HEADLESS` is forced to `true` in that workflow.
+- The event scraper runs on GitHub Actions every Monday and Friday at 12:00 America/Panama (17:00 UTC). Set the `PARBIN_API_URL` repository secret, and optionally the `SCRAPER_TIMEOUT_MS` and `LOG_LEVEL` repository variables, under Settings → Secrets and variables → Actions. `SCRAPER_HEADLESS` is forced to `true` in that workflow.
 - The backend auto-runs SQL migrations on startup.
 - A seed admin is auto-provisioned on boot when `SEED_ADMIN_AUTO_PROVISION=true`.
 - Event timestamps and the upcoming/past day boundary use the backend `APP_TIMEZONE` setting, which defaults to `America/Panama`.
