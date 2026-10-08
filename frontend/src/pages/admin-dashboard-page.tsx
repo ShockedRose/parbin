@@ -1,9 +1,11 @@
 import { useQuery } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
-import { BarChart3, RefreshCw, Terminal } from "lucide-react"
+import { RefreshCw, Settings } from "lucide-react"
 
 import { AdminLoginCard } from "@/components/admin-login-card"
 import { DashboardCharts } from "@/components/dashboard-charts"
+import { PageHeader } from "@/components/page-header"
+import { StatePanel } from "@/components/state-panel"
 import { Button } from "@/components/ui/button"
 import { useEventManagerContext } from "@/event-manager-context"
 import { getAdminDashboard } from "@/lib/api"
@@ -34,12 +36,12 @@ function StatCard({
   hint: string
 }) {
   return (
-    <div className="rounded-xl border border-border bg-card px-4 py-4">
-      <div className="text-[10px] text-primary uppercase">{label}</div>
-      <div className="mt-1 font-display text-2xl font-bold tracking-tight">
+    <div className="rounded-2xl border border-border bg-card px-5 py-4">
+      <div className="text-sm text-muted-foreground">{label}</div>
+      <div className="mt-1 font-serif text-3xl font-semibold tracking-tight">
         {value}
       </div>
-      <div className="mt-1 text-[10px] text-muted-foreground">{hint}</div>
+      <div className="mt-1 text-xs text-muted-foreground">{hint}</div>
     </div>
   )
 }
@@ -53,89 +55,81 @@ export function AdminDashboardPage() {
   })
 
   return (
-    <div className="space-y-8">
-      <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <div className="mb-1 text-[10px] text-muted-foreground">
-            ▸ ADMIN_CONSOLE // TELEMETRY
-          </div>
-          <h2 className="font-display text-3xl font-bold tracking-tight sm:text-5xl">
-            <span className="text-foreground">DATA_</span>
-            <span className="text-primary">DASHBOARD</span>
-          </h2>
-        </div>
-
-        {mgr.admin ? (
-          <div className="flex flex-wrap gap-2">
-            <Button variant="outline" className="text-[10px] uppercase" asChild>
-              <Link to="/admin">
-                <Terminal className="mr-2 h-3 w-3" />
-                CONTROL_PANEL
-              </Link>
-            </Button>
-            <Button
-              variant="outline"
-              className="text-[10px] uppercase"
-              onClick={() => {
-                void dashboardQuery.refetch()
-              }}
-              disabled={dashboardQuery.isFetching}
-            >
-              <RefreshCw
-                className={cn(
-                  "mr-2 h-3 w-3",
-                  dashboardQuery.isFetching && "animate-spin"
-                )}
-              />
-              REFRESH
-            </Button>
-          </div>
-        ) : null}
-      </div>
+    <div>
+      <PageHeader
+        title="Dashboard"
+        description={
+          dashboardQuery.data
+            ? `Catalog and moderation at a glance · ${dashboardQuery.data.timezone}`
+            : "Catalog and moderation at a glance."
+        }
+        actions={
+          mgr.admin ? (
+            <>
+              <Button
+                variant="outline"
+                size="lg"
+                className="rounded-xl px-4"
+                asChild
+              >
+                <Link to="/admin">
+                  <Settings />
+                  Admin
+                </Link>
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="rounded-xl px-4"
+                onClick={() => {
+                  void dashboardQuery.refetch()
+                }}
+                disabled={dashboardQuery.isFetching}
+              >
+                <RefreshCw
+                  className={cn(dashboardQuery.isFetching && "animate-spin")}
+                />
+                Refresh
+              </Button>
+            </>
+          ) : undefined
+        }
+      />
 
       {!mgr.admin ? (
         <AdminLoginCard />
       ) : dashboardQuery.isPending ? (
-        <div className="rounded-xl border border-border bg-card px-6 py-12 text-center text-xs text-primary">
-          LOADING_DASHBOARD...
-        </div>
+        <StatePanel>Loading dashboard…</StatePanel>
       ) : dashboardQuery.isError ? (
-        <div className="rounded-xl border border-border bg-card px-6 py-12 text-center text-xs text-accent">
-          DASHBOARD_UNAVAILABLE
-        </div>
+        <StatePanel tone="error">The dashboard is unavailable.</StatePanel>
       ) : dashboardQuery.data ? (
         <div className="space-y-6">
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
             <StatCard
-              label="PUBLISHED_EVENTS"
+              label="Published events"
               value={dashboardQuery.data.summary.totalEvents}
               hint={`${dashboardQuery.data.summary.upcomingEvents} upcoming · ${dashboardQuery.data.summary.pastEvents} past`}
             />
             <StatCard
-              label="PENDING_QUEUE"
+              label="Pending review"
               value={dashboardQuery.data.summary.pendingSuggestions}
               hint={`${dashboardQuery.data.summary.totalSuggestions} total suggestions`}
             />
             <StatCard
-              label="APPROVAL_RATE"
+              label="Approval rate"
               value={formatPercent(dashboardQuery.data.summary.approvalRate)}
               hint={`${dashboardQuery.data.summary.approvedSuggestions} approved · ${dashboardQuery.data.summary.rejectedSuggestions} rejected`}
             />
             <StatCard
-              label="AVG_REVIEW_TIME"
+              label="Avg. review time"
               value={formatHours(dashboardQuery.data.summary.avgReviewHours)}
-              hint="Hours from suggestion to approve/reject"
+              hint="From suggestion to decision"
             />
             <StatCard
-              label="SOURCED_CATALOG"
+              label="With a source link"
               value={dashboardQuery.data.summary.eventsWithSourcePage}
-              hint={`${dashboardQuery.data.summary.eventsWithoutSourcePage} manual entries`}
+              hint={`${dashboardQuery.data.summary.eventsWithoutSourcePage} added manually`}
             />
-          </div>
-
-          <div className="flex items-center gap-2 text-[10px] text-muted-foreground uppercase">
-            <BarChart3 className="h-3.5 w-3.5 text-primary" />
-            Timezone {dashboardQuery.data.timezone}
           </div>
 
           <DashboardCharts data={dashboardQuery.data} />

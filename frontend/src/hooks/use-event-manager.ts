@@ -137,7 +137,7 @@ export function useEventManager() {
     mutationFn: () => createEventRequest(toPayload(eventForm)),
     onSuccess: (created) => {
       setEventForm(emptyEventForm)
-      setNotice("Event deployed.")
+      setNotice("Event published.")
       trackEvent(AnalyticsEvent.EventCreated, {
         event_id: created.id,
         title: created.title,
@@ -166,7 +166,7 @@ export function useEventManager() {
     mutationFn: () => loginRequest(loginForm.email, loginForm.password),
     onSuccess: (nextAdmin) => {
       setLoginForm(emptyLoginForm)
-      setNotice("Admin session active.")
+      setNotice("Signed in.")
       identifyAdmin(nextAdmin)
       trackEvent(AnalyticsEvent.AdminLoggedIn, { admin_id: nextAdmin.id })
       queryClient.setQueryData(queryKeys.session, nextAdmin)
@@ -178,7 +178,7 @@ export function useEventManager() {
   const logoutMutation = useMutation({
     mutationFn: logoutRequest,
     onSuccess: () => {
-      setNotice("Session closed.")
+      setNotice("Signed out.")
       trackEvent(AnalyticsEvent.AdminLoggedOut)
       resetAnalytics()
       queryClient.setQueryData(queryKeys.session, null)

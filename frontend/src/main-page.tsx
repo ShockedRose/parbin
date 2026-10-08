@@ -13,13 +13,12 @@ export function AppShell() {
   return (
     <EventManagerContext.Provider value={mgr}>
       <PostHogPageviewTracker />
-      <div className="relative min-h-screen bg-background font-sans text-foreground">
-        <div className="parbin-shell-edges" aria-hidden />
-        <div className="parbin-shell-grid" aria-hidden />
+      <div className="relative flex min-h-screen flex-col bg-background font-sans text-foreground">
+        <div className="parbin-backdrop" aria-hidden />
 
         <AppHeader adminEmail={mgr.admin?.email} />
 
-        <main className="relative mx-auto min-w-0 max-w-7xl px-6 py-10">
+        <main className="relative mx-auto w-full max-w-7xl min-w-0 flex-1 px-6 py-10">
           {mgr.error && <StatusBanner message={mgr.error} variant="error" />}
           {mgr.notice && <StatusBanner message={mgr.notice} variant="notice" />}
           <Outlet />

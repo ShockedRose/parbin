@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>01 · Community Bulletin — Parbin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --paper: #f1f5fb;
+      --white: #ffffff;
+      --ink: #0a0e14;
+      --ink-soft: #4a5d75;
+      --line: #d5deea;
+      --steel: #8ba3c0;
+      --rose: #e11d48;
+      --rose-soft: #fde4ea;
+      --blue: #0095ff;
+      --blue-soft: #e0f1ff;
+      --navy: #101922;
+      --serif: "Young Serif", Georgia, serif;
+      --sans: "Figtree", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--paper); color: var(--ink); font: 400 16px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; }
+    .wrap { max-width: 1160px; margin: 0 auto; padding: 0 28px; }
+
+    header { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 26px 0; }
+    .logo { font: 400 30px/1 var(--serif); display: flex; align-items: baseline; gap: 4px; }
+    .logo i { width: 10px; height: 10px; border-radius: 50%; background: var(--rose); display: inline-block; }
+    nav { display: flex; gap: 6px; }
+    nav a { padding: 8px 16px; border-radius: 999px; font-weight: 500; color: var(--ink-soft); transition: background .2s, color .2s; }
+    nav a:hover { background: var(--white); color: var(--ink); }
+    nav a.active { background: var(--ink); color: var(--white); }
+    .cta { padding: 11px 20px; border-radius: 999px; background: var(--rose); color: #fff; font-weight: 600; transition: transform .2s, box-shadow .2s; }
+    .cta:hover { transform: translateY(-1px); box-shadow: 0 8px 20px -8px var(--rose); }
+
+    .hero { display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; align-items: end; padding: 48px 0 56px; }
+    .hero .hi { display: inline-block; font-weight: 600; color: var(--rose); background: var(--rose-soft); padding: 5px 12px; border-radius: 999px; font-size: 14px; margin-bottom: 20px; }
+    .hero h1 { font: 400 clamp(42px, 5.6vw, 72px)/1.04 var(--serif); letter-spacing: -.015em; }
+    .hero h1 u { text-decoration: none; background: linear-gradient(transparent 62%, var(--blue-soft) 62%); }
+    .hero p { color: var(--ink-soft); font-size: 18px; margin-top: 20px; max-width: 46ch; }
+    .soon {
+      background: var(--white); border-radius: 22px; padding: 22px; box-shadow: 0 1px 0 var(--line), 0 20px 40px -28px rgba(10,14,20,.35);
+      transform: rotate(1.5deg); transition: transform .4s ease;
+    }
+    .soon:hover { transform: rotate(0); }
+    .soon small { font-weight: 600; font-size: 13px; color: var(--blue); }
+    .soon h3 { font: 400 24px/1.2 var(--serif); margin: 6px 0 8px; }
+    .soon p { color: var(--ink-soft); font-size: 15px; margin: 0 0 16px; }
+    .soon .when { display: flex; gap: 10px; font-size: 14px; font-weight: 500; }
+    .soon .when span { background: var(--paper); padding: 6px 12px; border-radius: 10px; }
+
+    .bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding-bottom: 22px; border-bottom: 1px solid var(--line); margin-bottom: 28px; }
+    .bar h2 { font: 400 30px var(--serif); }
+    .months { display: flex; gap: 6px; background: var(--white); padding: 5px; border-radius: 999px; box-shadow: 0 1px 0 var(--line); }
+    .months button { border: 0; background: none; padding: 8px 16px; border-radius: 999px; font-weight: 500; color: var(--ink-soft); transition: all .2s; }
+    .months button.on { background: var(--blue); color: #fff; }
+
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .card {
+      background: var(--white); border-radius: 22px; padding: 22px; display: flex; flex-direction: column; gap: 14px;
+      box-shadow: 0 1px 0 var(--line); transition: transform .3s ease, box-shadow .3s ease; cursor: pointer;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 1px 0 var(--line), 0 24px 40px -26px rgba(10,14,20,.4); }
+    .card.hidden { display: none; }
+    .top { display: flex; justify-content: space-between; align-items: flex-start; }
+    .stamp { width: 64px; text-align: center; border-radius: 14px; overflow: hidden; border: 1.5px solid var(--rose); }
+    .stamp b { display: block; background: var(--rose); color: #fff; font-size: 12px; font-weight: 700; letter-spacing: .08em; padding: 3px 0; }
+    .stamp span { display: block; font: 400 28px/1.3 var(--serif); padding: 2px 0 4px; }
+    .save { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: var(--white); display: grid; place-items: center; transition: all .2s; }
+    .save svg { width: 18px; height: 18px; fill: none; stroke: var(--ink-soft); stroke-width: 2; transition: all .2s; }
+    .save:hover { border-color: var(--rose); }
+    .save.on { background: var(--rose-soft); border-color: var(--rose); }
+    .save.on svg { fill: var(--rose); stroke: var(--rose); animation: pop .35s ease; }
+    @keyframes pop { 50% { transform: scale(1.3); } }
+    .card h3 { font: 400 22px/1.2 var(--serif); }
+    .place { font-size: 14px; color: var(--ink-soft); font-weight: 500; }
+    .card p { font-size: 15px; color: var(--ink-soft); }
+    .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tags span { font-size: 13px; font-weight: 600; color: #0072c4; background: var(--blue-soft); padding: 3px 10px; border-radius: 999px; }
+    .foot { margin-top: auto; padding-top: 14px; border-top: 1px dashed var(--line); display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+    .foot a { font-weight: 600; color: var(--rose); }
+    .foot a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    .foot span { color: var(--steel); }
+
+    .band { margin: 72px 0 0; background: var(--navy); color: #fff; border-radius: 28px; padding: 48px; display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+    .band h2 { font: 400 36px/1.15 var(--serif); max-width: 20ch; }
+    .band h2 em { color: #ff7a96; font-style: normal; }
+    .band p { color: var(--steel); margin-top: 8px; }
+    .band a { padding: 14px 24px; border-radius: 999px; background: #fff; color: var(--ink); font-weight: 600; transition: background .2s, color .2s; }
+    .band a:hover { background: var(--rose); color: #fff; }
+
+    footer { display: flex; justify-content: space-between; padding: 32px 0 100px; color: var(--ink-soft); font-size: 14px; }
+
+    .fade { opacity: 0; transform: translateY(14px); animation: in .7s ease forwards; }
+    @keyframes in { to { opacity: 1; transform: none; } }
+
+    @media (max-width: 920px) {
+      nav { display: none; }
+      .hero { grid-template-columns: 1fr; }
+      .cards { grid-template-columns: 1fr; }
+      .band { padding: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a class="logo" href="#">parbin<i></i></a>
+      <nav>
+        <a href="#" class="active">Upcoming</a>
+        <a href="#">Past events</a>
+        <a href="#">Admin</a>
+      </nav>
+      <a class="cta" href="#">Suggest an event</a>
+    </header>
+
+    <section class="hero">
+      <div class="fade">
+        <span class="hi">Hola, Panamá</span>
+        <h1>Good things are happening in the <u>local tech</u> community.</h1>
+        <p>Meetups, talks, hackathons and breakfasts — all in one place, so you never find out about them the day after.</p>
+      </div>
+      <aside class="soon fade" style="animation-delay:.15s">
+        <small>Coming up next</small>
+        <h3>Panamá JS Meetup #42</h3>
+        <p>Signals in React, a look at Bun 2, and pizza on the terrace.</p>
+        <div class="when"><span>Thu, Oct 15</span><span>6:30 PM</span><span>Clayton</span></div>
+      </aside>
+    </section>
+
+    <div class="bar">
+      <h2>What's on</h2>
+      <div class="months" id="months">
+        <button class="on" data-m="all">All</button>
+        <button data-m="oct">October</button>
+        <button data-m="nov">November</button>
+        <button data-m="dec">December</button>
+      </div>
+    </div>
+
+    <section class="cards" id="cards">
+      <article class="card fade" data-m="oct" style="animation-delay:.2s">
+        <div class="top"><div class="stamp"><b>OCT</b><span>15</span></div><button class="save" aria-label="Save"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.6C1 9 3 5 6.6 5c2 0 3.4 1.2 5.4 3.2C14 6.2 15.4 5 17.4 5 21 5 23 9 21.3 12.4 19 16.6 12 21 12 21z"/></svg></button></div>
+        <h3>Panamá JS Meetup #42</h3>
+        <div class="place">Ciudad del Saber · 6:30 PM</div>
+        <p>Signals in React, a deep dive into Bun 2, and pizza on the terrace. Open to every level.</p>
+        <div class="tags"><span>JavaScript</span><span>Web</span></div>
+        <div class="foot"><a href="#">Add to calendar</a><span>58 going</span></div>
+      </article>
+      <article class="card fade" data-m="oct" style="animation-delay:.27s">
+        <div class="top"><div class="stamp"><b>OCT</b><span>24</span></div><button class="save" aria-label="Save"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.6C1 9 3 5 6.6 5c2 0 3.4 1.2 5.4 3.2C14 6.2 15.4 5 17.4 5 21 5 23 9 21.3 12.4 19 16.6 12 21 12 21z"/></svg></button></div>
+        <h3>AWS Community Day Panamá</h3>
+        <div class="place">Hotel El Panamá · 8:30 AM</div>
+        <p>Three tracks on serverless, platform engineering and cost, with builders from across Central America.</p>
+        <div class="tags"><span>Cloud</span><span>AWS</span></div>
+        <div class="foot"><a href="#">Add to calendar</a><span>230 going</span></div>
+      </article>
+      <article class="card fade" data-m="nov" style="animation-delay:.34s">
+        <div class="top"><div class="stamp"><b>NOV</b><span>02</span></div><button class="save" aria-label="Save"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.6C1 9 3 5 6.6 5c2 0 3.4 1.2 5.4 3.2C14 6.2 15.4 5 17.4 5 21 5 23 9 21.3 12.4 19 16.6 12 21 12 21z"/></svg></button></div>
+        <h3>Python Panamá: Data Night</h3>
+        <div class="place">Casco Viejo · 7:00 PM</div>
+        <p>Polars vs pandas in real projects, then a hands-on session building something small together.</p>
+        <div class="tags"><span>Python</span><span>Data</span></div>
+        <div class="foot"><a href="#">Add to calendar</a><span>41 going</span></div>
+      </article>
+      <article class="card fade" data-m="nov" style="animation-delay:.41s">
+        <div class="top"><div class="stamp"><b>NOV</b><span>14</span></div><button class="save" aria-label="Save"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.6C1 9 3 5 6.6 5c2 0 3.4 1.2 5.4 3.2C14 6.2 15.4 5 17.4 5 21 5 23 9 21.3 12.4 19 16.6 12 21 12 21z"/></svg></button></div>
+        <h3>DevFest Panamá 2026</h3>
+        <div class="place">UTP Campus · 9:00 AM</div>
+        <p>The biggest community conference of the year — a full day of talks and a lightning-talk marathon.</p>
+        <div class="tags"><span>Conference</span><span>Mobile</span></div>
+        <div class="foot"><a href="#">Add to calendar</a><span>412 going</span></div>
+      </article>
+      <article class="card fade" data-m="nov" style="animation-delay:.48s">
+        <div class="top"><div class="stamp"><b>NOV</b><span>21</span></div><button class="save" aria-label="Save"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.6C1 9 3 5 6.6 5c2 0 3.4 1.2 5.4 3.2C14 6.2 15.4 5 17.4 5 21 5 23 9 21.3 12.4 19 16.6 12 21 12 21z"/></svg></button></div>
+        <h3>Hack the Canal</h3>
+        <div class="place">Ciudad del Saber · all weekend</div>
+        <p>Build tools for logistics, maritime data and civic projects. Teams of up to four.</p>
+        <div class="tags"><span>Hackathon</span></div>
+        <div class="foot"><a href="#">Add to calendar</a><span>120 going</span></div>
+      </article>
+      <article class="card fade" data-m="dec" style="animation-delay:.55s">
+        <div class="top"><div class="stamp"><b>DEC</b><span>03</span></div><button class="save" aria-label="Save"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.6C1 9 3 5 6.6 5c2 0 3.4 1.2 5.4 3.2C14 6.2 15.4 5 17.4 5 21 5 23 9 21.3 12.4 19 16.6 12 21 12 21z"/></svg></button></div>
+        <h3>Women in Tech Breakfast</h3>
+        <div class="place">Costa del Este · 7:30 AM</div>
+        <p>Mentorship circles over coffee, and a fireside chat on leading teams in the region.</p>
+        <div class="tags"><span>Community</span><span>Careers</span></div>
+        <div class="foot"><a href="#">Add to calendar</a><span>65 going</span></div>
+      </article>
+    </section>
+
+    <section class="band">
+      <div><h2>Organizing something? <em>Tell us about it.</em></h2><p>We review every suggestion and add it to the list.</p></div>
+      <a href="#">Suggest an event →</a>
+    </section>
+
+    <footer><span>parbin · made in Panamá</span><span>Open source on GitHub</span></footer>
+  </div>
+
+  <script>
+    document.querySelectorAll(".save").forEach((btn) => btn.addEventListener("click", (event) => {
+      event.stopPropagation()
+      btn.classList.toggle("on")
+    }))
+
+    document.getElementById("months").addEventListener("click", (event) => {
+      const btn = event.target.closest("button")
+      if (!btn) return
+      document.querySelectorAll("#months button").forEach((b) => b.classList.toggle("on", b === btn))
+      document.querySelectorAll(".card").forEach((card) => {
+        card.classList.toggle("hidden", btn.dataset.m !== "all" && card.dataset.m !== btn.dataset.m)
+      })
+    })
+  </script>
+  <script src="switcher.js"></script>
+</body>
+</html>

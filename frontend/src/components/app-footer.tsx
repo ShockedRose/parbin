@@ -2,26 +2,21 @@ import { Github } from "lucide-react"
 
 export function AppFooter() {
   return (
-    <footer className="border-t border-border/80 px-6 py-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between">
-        <p className="text-[10px] tracking-wide text-primary/90">
-          PARBIN // PANAMÁ
+    <footer className="relative border-t border-border/70 px-6 py-5">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
+        <p className="text-sm text-muted-foreground">
+          <span className="font-serif text-foreground">Parbin</span> · Tech
+          meetups in Panamá
         </p>
-        <div className="flex items-center gap-3">
-          <a
-            href="https://github.com/ShockedRose/parbin"
-            target="_blank"
-            rel="noreferrer"
-            aria-label="Open the PARBIN GitHub repository"
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-secondary/80 text-foreground/80 transition-all hover:border-primary/45 hover:bg-card hover:text-primary focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
-          >
-            <Github className="h-4 w-4" />
-          </a>
-          <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-primary shadow-[0_0_8px_color-mix(in_srgb,var(--primary)_60%,transparent)]" />
-          <p className="text-[10px] tracking-wide text-primary/90">
-            SYSTEM ONLINE
-          </p>
-        </div>
+        <a
+          href="https://github.com/ShockedRose/parbin"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Open the Parbin GitHub repository"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:outline-none"
+        >
+          <Github className="h-4 w-4" />
+        </a>
       </div>
     </footer>
   )

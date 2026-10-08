@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>03 · Blue Hour — Parbin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,400;0,500;0,700;0,800;0,900;1,800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --blue: #0095ff;
+      --blue-deep: #0078d4;
+      --navy: #101922;
+      --ink: #0a0e14;
+      --paper: #f1f5fb;
+      --steel: #8ba3c0;
+      --line: #d5deea;
+      --rose: #e11d48;
+      --font: "Epilogue", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--blue); color: #fff; font: 400 16px/1.55 var(--font); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; }
+    .wrap { max-width: 1240px; margin: 0 auto; padding: 0 32px; }
+
+    header { display: flex; justify-content: space-between; align-items: center; padding: 26px 0; }
+    .logo { font-weight: 900; font-size: 26px; letter-spacing: -.04em; }
+    .logo i { font-style: normal; color: var(--navy); }
+    nav { display: flex; gap: 4px; background: rgba(16,25,34,.14); padding: 5px; border-radius: 999px; }
+    nav a { padding: 9px 18px; border-radius: 999px; font-weight: 500; transition: background .2s; }
+    nav a:hover { background: rgba(255,255,255,.14); }
+    nav a.active { background: #fff; color: var(--ink); }
+    .suggest { padding: 11px 20px; border-radius: 999px; background: var(--navy); font-weight: 700; transition: background .2s; }
+    .suggest:hover { background: var(--rose); }
+
+    .intro { display: flex; justify-content: space-between; align-items: end; gap: 32px; padding: 60px 0 36px; flex-wrap: wrap; }
+    .intro h1 { font-weight: 900; font-size: clamp(52px, 8vw, 116px); line-height: .9; letter-spacing: -.055em; }
+    .intro h1 em { font-style: italic; font-weight: 800; color: var(--navy); }
+    .intro p { max-width: 34ch; font-size: 18px; color: rgba(255,255,255,.88); margin-top: 22px; }
+    .arrows { display: flex; gap: 10px; }
+    .arrows button {
+      width: 56px; height: 56px; border-radius: 50%; border: 2px solid #fff; background: none; color: #fff; font-size: 22px;
+      transition: background .2s, color .2s, transform .2s;
+    }
+    .arrows button:hover { background: #fff; color: var(--blue); transform: scale(1.05); }
+
+    .rail {
+      display: grid; grid-auto-flow: column; grid-auto-columns: minmax(300px, 380px); gap: 20px;
+      overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth;
+      --edge: max(32px, calc((100vw - 1240px) / 2 + 32px));
+      padding: 8px var(--edge) 40px; scroll-padding-inline: var(--edge); scrollbar-width: none; cursor: grab;
+    }
+    .rail::-webkit-scrollbar { display: none; }
+    .rail.drag { cursor: grabbing; scroll-snap-type: none; scroll-behavior: auto; }
+    .slide {
+      scroll-snap-align: start; background: var(--navy); border-radius: 28px; padding: 26px; min-height: 420px;
+      display: flex; flex-direction: column; position: relative; overflow: hidden; user-select: none;
+      transition: transform .35s ease;
+    }
+    .slide:hover { transform: translateY(-6px); }
+    .slide .day { font-weight: 900; font-size: 96px; line-height: .85; letter-spacing: -.06em; }
+    .slide .mon { font-weight: 700; color: var(--steel); margin-top: 6px; }
+    .slide .blob { position: absolute; right: -40px; top: -40px; width: 180px; height: 180px; border-radius: 50%; background: var(--blue); opacity: .9; transition: transform .5s ease; }
+    .slide:nth-child(3n+2) .blob { background: var(--rose); }
+    .slide:nth-child(3n) .blob { background: transparent; border: 26px solid var(--blue); }
+    .slide:hover .blob { transform: scale(1.15) translate(-10px, 10px); }
+    .slide h3 { font-weight: 800; font-size: 28px; line-height: 1.05; letter-spacing: -.03em; margin-top: auto; }
+    .slide .where { color: var(--steel); margin: 10px 0 20px; }
+    .slide .row { display: flex; gap: 8px; align-items: center; }
+    .pill { font-size: 13px; font-weight: 700; padding: 5px 12px; border-radius: 999px; background: rgba(255,255,255,.08); }
+    .slide .add { margin-left: auto; width: 44px; height: 44px; border-radius: 50%; background: #fff; color: var(--ink); display: grid; place-items: center; font-size: 22px; font-weight: 500; transition: background .2s, color .2s; }
+    .slide .add:hover { background: var(--rose); color: #fff; }
+
+    .sheet { background: var(--paper); color: var(--ink); border-radius: 36px 36px 0 0; margin-top: 30px; padding: 64px 0 110px; }
+    .sheet-head { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
+    .sheet h2 { font-weight: 900; font-size: 44px; letter-spacing: -.04em; }
+    .sheet h2 span { color: var(--rose); }
+    .seg { display: flex; gap: 6px; }
+    .seg button { border: 2px solid var(--ink); background: none; padding: 8px 16px; border-radius: 999px; font-weight: 700; color: var(--ink); transition: all .2s; }
+    .seg button.on, .seg button:hover { background: var(--ink); color: #fff; }
+
+    .list { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .item {
+      display: grid; grid-template-columns: 74px 1fr auto; gap: 18px; align-items: center;
+      background: #fff; border-radius: 20px; padding: 16px 20px 16px 16px; border: 1px solid var(--line);
+      transition: border-color .2s, transform .2s;
+    }
+    .item:hover { border-color: var(--blue); transform: translateX(4px); }
+    .item.hidden { display: none; }
+    .item .d { background: var(--blue); color: #fff; border-radius: 14px; text-align: center; padding: 8px 0; }
+    .item .d b { display: block; font-weight: 900; font-size: 28px; line-height: 1; }
+    .item .d small { font-weight: 700; font-size: 12px; letter-spacing: .06em; }
+    .item.rose .d { background: var(--rose); }
+    .item h4 { font-weight: 800; font-size: 18px; letter-spacing: -.02em; }
+    .item p { font-size: 14px; color: #4a5d75; }
+    .item a { font-weight: 700; font-size: 14px; color: var(--blue-deep); }
+    .item a:hover { color: var(--rose); }
+
+    footer { display: flex; justify-content: space-between; margin-top: 60px; color: #4a5d75; font-size: 14px; }
+
+    @media (max-width: 900px) {
+      nav { display: none; }
+      .list { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a class="logo" href="#">parbin<i>.</i></a>
+      <nav><a href="#" class="active">Upcoming</a><a href="#">Past</a><a href="#">Admin</a></nav>
+      <a class="suggest" href="#">Suggest an event</a>
+    </header>
+    <section class="intro">
+      <div>
+        <h1>Meet the people<br />building <em>Panamá.</em></h1>
+        <p>A friendly list of tech meetups, talks and hackathons around the city.</p>
+      </div>
+      <div class="arrows"><button id="prev" aria-label="Previous">←</button><button id="next" aria-label="Next">→</button></div>
+    </section>
+  </div>
+
+  <div class="rail" id="rail">
+    <article class="slide"><span class="blob"></span><div class="day">15</div><div class="mon">October · Thursday</div><h3>Panamá JS Meetup #42</h3><div class="where">Ciudad del Saber · 6:30 PM</div><div class="row"><span class="pill">JavaScript</span><span class="pill">Web</span><a class="add" href="#" title="Add to calendar">+</a></div></article>
+    <article class="slide"><span class="blob"></span><div class="day">24</div><div class="mon">October · Saturday</div><h3>AWS Community Day Panamá</h3><div class="where">Hotel El Panamá · 8:30 AM</div><div class="row"><span class="pill">Cloud</span><a class="add" href="#" title="Add to calendar">+</a></div></article>
+    <article class="slide"><span class="blob"></span><div class="day">02</div><div class="mon">November · Monday</div><h3>Python Panamá: Data Night</h3><div class="where">Casco Viejo · 7:00 PM</div><div class="row"><span class="pill">Python</span><span class="pill">Data</span><a class="add" href="#" title="Add to calendar">+</a></div></article>
+    <article class="slide"><span class="blob"></span><div class="day">14</div><div class="mon">November · Saturday</div><h3>DevFest Panamá 2026</h3><div class="where">UTP Campus · 9:00 AM</div><div class="row"><span class="pill">Conference</span><a class="add" href="#" title="Add to calendar">+</a></div></article>
+    <article class="slide"><span class="blob"></span><div class="day">21</div><div class="mon">November · Weekend</div><h3>Hack the Canal</h3><div class="where">Ciudad del Saber · 2 days</div><div class="row"><span class="pill">Hackathon</span><a class="add" href="#" title="Add to calendar">+</a></div></article>
+    <article class="slide"><span class="blob"></span><div class="day">03</div><div class="mon">December · Thursday</div><h3>Women in Tech Breakfast</h3><div class="where">Costa del Este · 7:30 AM</div><div class="row"><span class="pill">Community</span><a class="add" href="#" title="Add to calendar">+</a></div></article>
+  </div>
+
+  <section class="sheet">
+    <div class="wrap">
+      <div class="sheet-head">
+        <h2>The full list<span>.</span></h2>
+        <div class="seg" id="seg"><button class="on" data-k="all">All</button><button data-k="talks">Talks</button><button data-k="social">Social</button><button data-k="build">Build</button></div>
+      </div>
+      <div class="list">
+        <div class="item" data-k="talks"><div class="d"><b>15</b><small>OCT</small></div><div><h4>Panamá JS Meetup #42</h4><p>Ciudad del Saber · 6:30 PM</p></div><a href="#">Add →</a></div>
+        <div class="item rose" data-k="talks"><div class="d"><b>24</b><small>OCT</small></div><div><h4>AWS Community Day</h4><p>Hotel El Panamá · 8:30 AM</p></div><a href="#">Add →</a></div>
+        <div class="item" data-k="build"><div class="d"><b>02</b><small>NOV</small></div><div><h4>Python Panamá: Data Night</h4><p>Casco Viejo · 7:00 PM</p></div><a href="#">Add →</a></div>
+        <div class="item rose" data-k="talks"><div class="d"><b>14</b><small>NOV</small></div><div><h4>DevFest Panamá 2026</h4><p>UTP Campus · 9:00 AM</p></div><a href="#">Add →</a></div>
+        <div class="item" data-k="build"><div class="d"><b>21</b><small>NOV</small></div><div><h4>Hack the Canal</h4><p>Ciudad del Saber · all weekend</p></div><a href="#">Add →</a></div>
+        <div class="item rose" data-k="social"><div class="d"><b>03</b><small>DEC</small></div><div><h4>Women in Tech Breakfast</h4><p>Costa del Este · 7:30 AM</p></div><a href="#">Add →</a></div>
+      </div>
+      <footer><span>parbin · Panamá</span><span>Open source on GitHub</span></footer>
+    </div>
+  </section>
+
+  <script>
+    const rail = document.getElementById("rail")
+    const step = () => rail.querySelector(".slide").offsetWidth + 20
+    document.getElementById("prev").onclick = () => rail.scrollBy({ left: -step() })
+    document.getElementById("next").onclick = () => rail.scrollBy({ left: step() })
+
+    let startX = 0, startScroll = 0, dragging = false
+    rail.addEventListener("pointerdown", (event) => {
+      if (event.pointerType !== "mouse" || event.target.closest("a")) return
+      dragging = true; startX = event.clientX; startScroll = rail.scrollLeft
+      rail.classList.add("drag")
+    })
+    addEventListener("pointermove", (event) => { if (dragging) rail.scrollLeft = startScroll - (event.clientX - startX) })
+    addEventListener("pointerup", () => { dragging = false; rail.classList.remove("drag") })
+
+    document.getElementById("seg").addEventListener("click", (event) => {
+      const btn = event.target.closest("button")
+      if (!btn) return
+      document.querySelectorAll("#seg button").forEach((b) => b.classList.toggle("on", b === btn))
+      document.querySelectorAll(".item").forEach((item) => item.classList.toggle("hidden", btn.dataset.k !== "all" && item.dataset.k !== btn.dataset.k))
+    })
+  </script>
+  <script src="switcher.js"></script>
+</body>
+</html>

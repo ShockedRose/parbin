@@ -34,6 +34,7 @@ parbin/
 │   ├── package.json
 │   ├── vite.config.ts
 │   ├── components.json   # shadcn/ui config
+│   ├── docs/history/     # Archived HTML design candidates (Calm Calendar chosen)
 │   └── src/
 │       ├── App.tsx       # RouterProvider entry
 │       ├── main.tsx
@@ -76,7 +77,8 @@ parbin/
 | Area | Role |
 | ---- | ---- |
 | `router.tsx` | Declares routes: `/`, `events/$eventId`, `suggest`, `admin`, `admin/dashboard`, `past-events`; root component is `AppShell`. |
-| `main-page.tsx` | Layout shell: decorative background layers, `AppHeader`, `Outlet`, `AppFooter`, global banners. |
+| `main-page.tsx` | Layout shell: `.parbin-backdrop`, `AppHeader`, `Outlet`, `AppFooter`, global banners. |
+| `docs/history/` | Archived static design candidates; #04 Calm Calendar is the shipped direction. |
 | `hooks/use-event-manager.ts` | Central client state: admin session, events, mutations, talks to `lib/api.ts`. |
 | `lib/api.ts` | `fetch` wrapper with `credentials: "include"`, base URL `VITE_API_URL`, typed API functions. |
 | `lib/posthog.ts` / `lib/analytics.ts` | Optional PostHog init + product event helpers; no-ops when token unset. |

@@ -4,13 +4,12 @@ import { TagInput } from "@/components/tag-input"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
 import type { EventFormFields } from "@/types/event"
 
 interface EventFormPanelProps {
   title: string
-  accent: string
+  description?: string
   form: EventFormFields
   preview: string | null
   submitLabel: string
@@ -27,7 +26,7 @@ interface EventFormPanelProps {
 
 export function EventFormPanel({
   title,
-  accent,
+  description,
   form,
   preview,
   submitLabel,
@@ -39,103 +38,78 @@ export function EventFormPanel({
   onSubmit,
 }: EventFormPanelProps) {
   return (
-    <div className="relative rounded-xl border border-border bg-card p-8">
-      <div
-        className="absolute inset-x-6 top-0 h-px"
-        style={{
-          background: `linear-gradient(90deg, transparent, ${accent}, transparent)`,
-          opacity: 0.45,
-        }}
-      />
-
-      <div className="mb-6 border-b border-border pb-3 text-[10px] text-muted-foreground">
-        ▸ {title}
+    <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
+      <div className="mb-6">
+        <h2 className="font-serif text-xl font-semibold">{title}</h2>
+        {description ? (
+          <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+        ) : null}
       </div>
 
       <div className="space-y-5">
         <div className="space-y-2">
-          <Label className="text-[11px] text-primary uppercase">
-            event.title *
-          </Label>
+          <Label>Title *</Label>
           <Input
             value={form.title}
             onChange={(e) => onFieldChange("title", e.target.value)}
-            placeholder=">> Enter event title"
-            className="border-border bg-background"
+            placeholder="Panamá JS Meetup #42"
           />
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[11px] text-primary uppercase">
-            event.description
-          </Label>
+          <Label>Description</Label>
           <Textarea
             rows={4}
             value={form.description}
             onChange={(e) => onFieldChange("description", e.target.value)}
-            placeholder=">> Describe the event..."
-            className="border-border bg-background"
+            placeholder="What's happening, who it's for, anything to bring…"
           />
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label className="text-[11px] text-primary uppercase">
-              date.start *
-            </Label>
+            <Label>Starts *</Label>
             <Input
               type="datetime-local"
               value={form.date}
               onChange={(e) => onFieldChange("date", e.target.value)}
-              className="border-border bg-background"
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-[11px] text-primary uppercase">
-              date.end *
-            </Label>
+            <Label>Ends *</Label>
             <Input
               type="datetime-local"
               value={form.endDate}
               onChange={(e) => onFieldChange("endDate", e.target.value)}
-              className="border-border bg-background"
             />
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[11px] text-primary uppercase">
-            event.location
-          </Label>
+          <Label>Location</Label>
           <Input
             value={form.location}
             onChange={(e) => onFieldChange("location", e.target.value)}
-            placeholder=">> Venue, City, State"
-            className="border-border bg-background"
+            placeholder="Venue, neighborhood"
           />
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[11px] text-primary uppercase">
-            event.source_event_page
-          </Label>
+          <Label>Event page</Label>
           <Input
             type="url"
             inputMode="url"
             value={form.sourceEventPage}
             onChange={(e) => onFieldChange("sourceEventPage", e.target.value)}
-            placeholder=">> https://… (optional external listing)"
-            className="border-border bg-background"
+            placeholder="https://… (optional)"
           />
-          <p className="text-[10px] text-muted-foreground">
-            Optional link to the original event page (e.g. Meetup, Eventbrite).
+          <p className="text-xs text-muted-foreground">
+            Link to the original listing, e.g. Meetup or Eventbrite.
           </p>
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[11px] text-primary uppercase">
-            event.tags[]
-          </Label>
+          <Label>Tags</Label>
           <TagInput
             value={form.tags}
             onChange={(tags) => onFieldChange("tags", tags)}
@@ -145,42 +119,33 @@ export function EventFormPanel({
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[11px] text-primary uppercase">
-            event.image_url
-          </Label>
+          <Label>Image URL</Label>
           <Input
             value={form.image}
             onChange={(e) => onFieldChange("image", e.target.value)}
-            placeholder=">> https://..."
-            className="border-border bg-background"
+            placeholder="https://…"
           />
           {preview && (
-            <div className="relative mt-3">
+            <div className="relative mt-3 overflow-hidden rounded-xl border border-border">
               <img
                 src={preview}
                 alt="Preview"
-                className="h-40 w-full border border-border object-cover"
-                style={{
-                  filter: "saturate(0.6) brightness(0.8) contrast(1.1)",
-                }}
+                className="h-40 w-full object-cover"
               />
-              <div className="absolute top-2 right-2 bg-background/80 px-2 py-0.5 text-[10px] text-primary">
-                PREVIEW
-              </div>
+              <span className="absolute top-2 right-2 rounded-md bg-background/80 px-2 py-0.5 text-xs text-muted-foreground">
+                Preview
+              </span>
             </div>
           )}
         </div>
 
-        <Separator className="border-border" />
-
         <Button
           onClick={onSubmit}
-          className="parbin-glow-primary-sm w-full text-[11px] uppercase"
-          size="lg"
+          className="mt-2 h-11 w-full rounded-xl text-[15px]"
           disabled={disabled || !form.title || !form.date || !form.endDate}
         >
           {submitIcon}
-          {busy ? "PROCESSING..." : submitLabel}
+          {busy ? "Working…" : submitLabel}
         </Button>
       </div>
     </div>

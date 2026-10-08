@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>02 · Rose Season — Parbin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Gloock&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --rose: #e11d48;
+      --rose-deep: #b5163a;
+      --paper: #f1f5fb;
+      --ink: #0a0e14;
+      --navy: #101922;
+      --ink-soft: #4a5d75;
+      --steel: #8ba3c0;
+      --line: #d5deea;
+      --blue: #0095ff;
+      --serif: "Gloock", Georgia, serif;
+      --sans: "Instrument Sans", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--paper); color: var(--ink); font: 400 16px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+
+    .hero { background: var(--rose); color: #fff; position: relative; overflow: hidden; }
+    .hero::after {
+      content: ""; position: absolute; width: 640px; height: 640px; right: -180px; bottom: -320px; border-radius: 50%;
+      background: var(--rose-deep); opacity: .6;
+    }
+    .hero .wrap { position: relative; z-index: 1; }
+    header { display: flex; justify-content: space-between; align-items: center; padding: 28px 0; }
+    .logo { font: 400 28px var(--serif); }
+    nav { display: flex; gap: 30px; font-weight: 500; }
+    nav a { position: relative; opacity: .85; transition: opacity .2s; }
+    nav a:hover, nav a.active { opacity: 1; }
+    nav a.active::after { content: ""; position: absolute; left: 0; right: 0; bottom: -4px; height: 2px; background: #fff; border-radius: 2px; }
+    .hero-body { padding: 70px 0 90px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 40px; }
+    .hero h1 { font: 400 clamp(56px, 9vw, 132px)/0.95 var(--serif); letter-spacing: -.02em; }
+    .hero h1 span { color: var(--navy); }
+    .hero p { font-size: 19px; max-width: 40ch; margin-top: 26px; opacity: .92; }
+    .count { text-align: right; }
+    .count b { display: block; font: 400 120px/0.9 var(--serif); }
+    .count span { font-weight: 500; opacity: .85; }
+    .hero .btn { display: inline-block; margin-top: 30px; padding: 14px 26px; border-radius: 999px; background: var(--navy); color: #fff; font-weight: 600; transition: transform .2s, background .2s; }
+    .hero .btn:hover { transform: translateY(-2px); background: var(--ink); }
+
+    .list-head { display: flex; justify-content: space-between; align-items: baseline; padding: 64px 0 18px; border-bottom: 2px solid var(--ink); }
+    .list-head h2 { font: 400 40px var(--serif); }
+    .list-head span { color: var(--ink-soft); }
+
+    .events { list-style: none; }
+    .ev {
+      display: grid; grid-template-columns: 140px 1fr 260px 40px; gap: 24px; align-items: center;
+      padding: 28px 0; border-bottom: 1px solid var(--line); cursor: pointer; position: relative;
+      transition: padding .35s ease, color .25s;
+    }
+    .ev:hover { padding-left: 16px; }
+    .ev .date { font-weight: 600; color: var(--rose); }
+    .ev .date small { display: block; color: var(--ink-soft); font-weight: 400; }
+    .ev h3 { font: 400 clamp(26px, 3.2vw, 40px)/1.05 var(--serif); transition: color .25s; }
+    .ev:hover h3 { color: var(--rose); }
+    .ev .place { color: var(--ink-soft); font-size: 15px; }
+    .ev .place b { display: block; color: var(--ink); font-weight: 500; }
+    .arrow {
+      width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--ink); display: grid; place-items: center;
+      font-size: 18px; transition: all .3s ease;
+    }
+    .ev:hover .arrow { background: var(--rose); border-color: var(--rose); color: #fff; transform: rotate(-45deg); }
+
+    .peek {
+      position: fixed; left: 0; top: 0; width: 300px; pointer-events: none; z-index: 20;
+      background: var(--navy); color: #fff; border-radius: 18px; overflow: hidden;
+      opacity: 0; transform: translate(-50%, -50%) scale(.85); transition: opacity .25s, transform .25s;
+      box-shadow: 0 30px 60px -20px rgba(10,14,20,.5);
+    }
+    .peek.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    .peek .pic { height: 140px; background: linear-gradient(135deg, var(--blue), var(--navy) 80%); position: relative; }
+    .peek .pic::after { content: ""; position: absolute; right: 20px; bottom: -30px; width: 90px; height: 90px; border-radius: 50%; background: var(--rose); }
+    .peek .txt { padding: 18px 20px 20px; font-size: 14px; color: var(--steel); }
+    .peek .txt b { display: block; color: #fff; font-size: 15px; margin-bottom: 6px; }
+
+    .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin: 72px 0 0; }
+    .box { border-radius: 24px; padding: 36px; }
+    .box h3 { font: 400 32px/1.1 var(--serif); margin-bottom: 10px; }
+    .box p { margin-bottom: 22px; }
+    .box a { font-weight: 600; border-bottom: 2px solid currentColor; padding-bottom: 2px; }
+    .box.navy { background: var(--navy); color: #fff; }
+    .box.navy p { color: var(--steel); }
+    .box.navy a { color: #7cc8ff; }
+    .box.blue { background: var(--blue); color: #fff; }
+
+    footer { display: flex; justify-content: space-between; padding: 40px 0 100px; color: var(--ink-soft); font-size: 14px; }
+
+    @media (max-width: 900px) {
+      nav { display: none; }
+      .hero-body { grid-template-columns: 1fr; }
+      .count { text-align: left; }
+      .ev { grid-template-columns: 1fr 40px; }
+      .ev .date, .ev .place { grid-column: 1; }
+      .ev .arrow { grid-row: 1; grid-column: 2; }
+      .duo { grid-template-columns: 1fr; }
+      .peek { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <div class="wrap">
+      <header>
+        <a class="logo" href="#">Parbin</a>
+        <nav><a href="#" class="active">Upcoming</a><a href="#">Past</a><a href="#">Suggest</a><a href="#">Admin</a></nav>
+      </header>
+      <div class="hero-body">
+        <div>
+          <h1>Tech nights<br />in <span>Panamá.</span></h1>
+          <p>The meetups, talks and community gatherings worth leaving the house for — collected and kept up to date.</p>
+          <a class="btn" href="#list">See what's on</a>
+        </div>
+        <div class="count"><b>6</b><span>events this season</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="list-head" id="list"><h2>Coming up</h2><span>October — December</span></div>
+    <ul class="events">
+      <li class="ev" data-desc="Signals in React, a deep dive into Bun 2, and pizza on the terrace.">
+        <div class="date">Thu, Oct 15<small>6:30 PM</small></div>
+        <h3>Panamá JS Meetup #42</h3>
+        <div class="place"><b>Ciudad del Saber</b>Clayton</div>
+        <span class="arrow">→</span>
+      </li>
+      <li class="ev" data-desc="Three tracks on serverless, platform engineering and cost.">
+        <div class="date">Sat, Oct 24<small>8:30 AM</small></div>
+        <h3>AWS Community Day</h3>
+        <div class="place"><b>Hotel El Panamá</b>El Cangrejo</div>
+        <span class="arrow">→</span>
+      </li>
+      <li class="ev" data-desc="Polars vs pandas in real projects, then a hands-on build session.">
+        <div class="date">Mon, Nov 2<small>7:00 PM</small></div>
+        <h3>Python Panamá: Data Night</h3>
+        <div class="place"><b>Selina Coworking</b>Casco Viejo</div>
+        <span class="arrow">→</span>
+      </li>
+      <li class="ev" data-desc="The biggest community conference of the year, with a lightning-talk marathon.">
+        <div class="date">Sat, Nov 14<small>9:00 AM</small></div>
+        <h3>DevFest Panamá 2026</h3>
+        <div class="place"><b>UTP</b>Víctor Levi Sasso campus</div>
+        <span class="arrow">→</span>
+      </li>
+      <li class="ev" data-desc="A weekend building tools for logistics, maritime data and civic projects.">
+        <div class="date">Nov 21 – 22<small>All weekend</small></div>
+        <h3>Hack the Canal</h3>
+        <div class="place"><b>Ciudad del Saber</b>Clayton</div>
+        <span class="arrow">→</span>
+      </li>
+      <li class="ev" data-desc="Mentorship circles over coffee and a fireside chat on leading teams.">
+        <div class="date">Thu, Dec 3<small>7:30 AM</small></div>
+        <h3>Women in Tech Breakfast</h3>
+        <div class="place"><b>Town Center</b>Costa del Este</div>
+        <span class="arrow">→</span>
+      </li>
+    </ul>
+
+    <section class="duo">
+      <div class="box navy"><h3>Missed one?</h3><p>Browse the last ten events that already happened, with links to slides and recordings.</p><a href="#">Past events</a></div>
+      <div class="box blue"><h3>Hosting a meetup?</h3><p>Send it over. Every suggestion is reviewed before it goes on the list.</p><a href="#">Suggest an event</a></div>
+    </section>
+
+    <footer><span>Parbin · Panamá</span><span>Open source on GitHub</span></footer>
+  </div>
+
+  <div class="peek" id="peek"><div class="pic"></div><div class="txt"><b id="peek-title"></b><span id="peek-desc"></span></div></div>
+
+  <script>
+    const peek = document.getElementById("peek")
+    let x = 0, y = 0, px = 0, py = 0, frame = 0
+    const follow = () => {
+      px += (x - px) * 0.14
+      py += (y - py) * 0.14
+      peek.style.left = px + "px"
+      peek.style.top = py + "px"
+      frame = Math.abs(x - px) + Math.abs(y - py) > 0.5 ? requestAnimationFrame(follow) : 0
+    }
+    document.querySelectorAll(".ev").forEach((ev) => {
+      ev.addEventListener("pointerenter", (event) => {
+        document.getElementById("peek-title").textContent = ev.querySelector("h3").textContent
+        document.getElementById("peek-desc").textContent = ev.dataset.desc
+        if (!peek.classList.contains("show")) { px = event.clientX + 180; py = event.clientY }
+        peek.classList.add("show")
+      })
+      ev.addEventListener("pointerleave", () => peek.classList.remove("show"))
+    })
+    addEventListener("pointermove", (event) => {
+      x = event.clientX + 180
+      y = event.clientY
+      if (!frame) frame = requestAnimationFrame(follow)
+    })
+  </script>
+  <script src="switcher.js"></script>
+</body>
+</html>

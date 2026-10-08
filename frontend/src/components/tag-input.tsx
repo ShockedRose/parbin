@@ -167,8 +167,8 @@ export function TagInput({
     <div ref={rootRef} className="space-y-1.5">
       <div
         className={cn(
-          "flex min-h-8 w-full flex-wrap items-center gap-1.5 rounded-lg border border-border bg-background px-2 py-1 transition-colors",
-          "focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50",
+          "flex min-h-10 w-full flex-wrap items-center gap-1.5 rounded-xl border border-border bg-input px-2.5 py-1.5 transition-colors",
+          "focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/30",
           disabled && "pointer-events-none opacity-50"
         )}
         onClick={() => inputRef.current?.focus()}
@@ -176,8 +176,8 @@ export function TagInput({
         {value.map((tag) => (
           <Badge
             key={tag}
-            variant="node"
-            className="h-6 gap-1 pr-1 text-[10px] font-medium tracking-wide uppercase"
+            variant="tag"
+            className="h-6 gap-1 pr-1 text-xs"
           >
             {tag}
             <button
@@ -208,13 +208,13 @@ export function TagInput({
           placeholder={
             value.length === 0
               ? allowCreate
-                ? ">> Search or create a tag"
-                : ">> Search existing tags"
+                ? "Search or create a tag"
+                : "Search existing tags"
               : atLimit
                 ? ""
-                : ">> Add tag"
+                : "Add tag"
           }
-          className="min-w-[8rem] flex-1 bg-transparent py-0.5 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed"
+          className="min-w-[8rem] flex-1 bg-transparent py-0.5 text-sm outline-none placeholder:text-muted-foreground/70 disabled:cursor-not-allowed"
           role="combobox"
           aria-autocomplete="list"
           aria-expanded={showMenu}
@@ -231,7 +231,7 @@ export function TagInput({
         <ul
           id={listId}
           role="listbox"
-          className="z-50 max-h-48 overflow-y-auto rounded-lg border border-border bg-popover p-1 text-sm shadow-md"
+          className="z-50 max-h-48 overflow-y-auto rounded-xl border border-border bg-popover p-1 text-sm shadow-md"
         >
           {options.map((option, index) => (
             <li
@@ -240,7 +240,7 @@ export function TagInput({
               role="option"
               aria-selected={index === resolvedIndex}
               className={cn(
-                "cursor-pointer rounded-md px-2 py-1.5 text-[11px] tracking-wide uppercase",
+                "cursor-pointer rounded-lg px-2.5 py-1.5 text-sm",
                 index === resolvedIndex
                   ? "bg-primary/12 text-primary"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -258,12 +258,12 @@ export function TagInput({
           ))}
         </ul>
       ) : open && !atLimit && !disabled && normalizeTagName(query) !== "" ? (
-        <div className="rounded-lg border border-border bg-popover px-2 py-1.5 text-[11px] text-muted-foreground">
+        <div className="rounded-xl border border-border bg-popover px-2.5 py-1.5 text-sm text-muted-foreground">
           No matching tags.
         </div>
       ) : null}
 
-      <p className="text-[10px] text-muted-foreground">
+      <p className="text-xs text-muted-foreground">
         {allowCreate
           ? `Select up to ${MAX_EVENT_TAGS} tags. New names are created when you save.`
           : `Select up to ${MAX_EVENT_TAGS} tags from the catalog.`}

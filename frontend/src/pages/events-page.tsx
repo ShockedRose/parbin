@@ -1,168 +1,113 @@
-import { useNavigate } from "@tanstack/react-router"
+import { useMemo, useState } from "react"
 
-import { Badge } from "@/components/ui/badge"
+import { EventCalendar } from "@/components/event-calendar"
+import { EventCard } from "@/components/event-card"
+import { StatePanel } from "@/components/state-panel"
 import { Button } from "@/components/ui/button"
 import { useEventManagerContext } from "@/event-manager-context"
-import {
-  downloadICS,
-  formatDateRange,
-  getGoogleCalendarUrl,
-  trackGoogleCalendarOpen,
-} from "@/lib/calendar"
-import {
-  getEventImageTransitionName,
-  runViewTransition,
-} from "@/lib/view-transitions"
-import { Calendar, Download, MapPin } from "lucide-react"
-import type { KeyboardEvent, MouseEvent } from "react"
+import { getEventDayKeys } from "@/lib/event-days"
+import { X } from "lucide-react"
+
+function formatDayKey(dayKey: string) {
+  return new Date(`${dayKey}T12:00:00`).toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  })
+}
 
 export function EventsPage() {
   const mgr = useEventManagerContext()
-  const navigate = useNavigate()
+  const [selectedDay, setSelectedDay] = useState<string | null>(null)
 
-  const openEventDetails = (eventId: string) => {
-    runViewTransition(() =>
-      navigate({
-        to: "/events/$eventId",
-        params: { eventId },
-      })
+  const eventDays = useMemo(
+    () => new Map(mgr.events.map((event) => [event.id, getEventDayKeys(event)])),
+    [mgr.events]
+  )
+
+  const isOnSelectedDay = (eventId: string) =>
+    selectedDay != null && (eventDays.get(eventId) ?? []).includes(selectedDay)
+
+  const selectDay = (dayKey: string) => {
+    const next = dayKey === selectedDay ? null : dayKey
+    setSelectedDay(next)
+    if (!next) return
+
+    const firstMatch = mgr.events.find((event) =>
+      (eventDays.get(event.id) ?? []).includes(next)
     )
+    if (!firstMatch) return
+
+    requestAnimationFrame(() => {
+      document
+        .querySelector(`[data-event-id="${firstMatch.id}"]`)
+        ?.scrollIntoView({ behavior: "smooth", block: "center" })
+    })
   }
 
-  const stopCardNavigation = (event: MouseEvent<HTMLElement>) => {
-    event.stopPropagation()
-  }
-
-  const handleCardKeyDown = (
-    event: KeyboardEvent<HTMLElement>,
-    eventId: string
-  ) => {
-    if (event.key !== "Enter" && event.key !== " ") {
-      return
-    }
-
-    event.preventDefault()
-    openEventDetails(eventId)
-  }
+  const isLoading = mgr.isBootstrapping || mgr.isEventsLoading
 
   return (
-    <div>
-      <div className="mb-10">
-        <div className="mb-1 text-[10px] text-muted-foreground">
-          ▸ ACTIVE_FEED // {mgr.events.length} NODES DETECTED
-        </div>
-        <h2 className="font-display text-3xl font-bold tracking-tight sm:text-5xl">
-          <span className="text-foreground">EVENT_</span>
-          <span className="text-primary">STREAM</span>
-        </h2>
-      </div>
-
-      {mgr.isBootstrapping || mgr.isEventsLoading ? (
-        <div className="rounded-xl border border-border bg-card px-6 py-12 text-center text-xs text-primary">
-          SYNCING_EVENT_FEED...
-        </div>
-      ) : mgr.events.length === 0 ? (
-        <div className="rounded-xl border border-border bg-card px-6 py-12 text-center text-xs text-muted-foreground">
-          NO_EVENTS_FOUND
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {mgr.events.map((event) => (
-            <article
-              key={event.id}
-              className="group relative flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-border bg-card transition-all duration-300 hover:border-primary/60 hover:shadow-[0_0_24px_color-mix(in_srgb,var(--primary)_14%,transparent)]"
-              role="button"
-              tabIndex={0}
-              onClick={() => openEventDetails(event.id)}
-              onKeyDown={(clickedEvent) =>
-                handleCardKeyDown(clickedEvent, event.id)
-              }
+    <div className="space-y-12">
+      <section>
+        <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h1 className="font-serif text-2xl font-semibold sm:text-3xl">
+              {selectedDay ? formatDayKey(selectedDay) : "Coming up"}
+            </h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {isLoading
+                ? "Loading events…"
+                : selectedDay
+                  ? "Highlighting the events on this day."
+                  : `${mgr.events.length} upcoming ${mgr.events.length === 1 ? "event" : "events"} in Panamá`}
+            </p>
+          </div>
+          {selectedDay ? (
+            <Button
+              variant="outline"
+              size="lg"
+              className="rounded-xl px-4"
+              onClick={() => setSelectedDay(null)}
             >
-              <div className="relative h-52 shrink-0 overflow-hidden">
-                <img
-                  src={event.image}
-                  alt={event.title}
-                  className="h-full w-full object-cover"
-                  style={{
-                    filter: "saturate(1) brightness(0.72) contrast(1.18)",
-                    viewTransitionName: getEventImageTransitionName(event.id),
-                  }}
-                />
-              </div>
-
-              <div className="flex min-h-0 flex-1 flex-col p-5">
-                <div
-                  className="mb-3 h-0.5 w-9 rounded-full bg-accent shadow-[0_0_12px_color-mix(in_srgb,var(--accent)_35%,transparent)]"
-                  aria-hidden
-                />
-                <h3 className="mb-2 font-display text-base font-semibold text-foreground">
-                  {event.title}
-                </h3>
-
-                <div className="mb-3 space-y-1 text-xs text-muted-foreground">
-                  <div className="flex items-center gap-1.5">
-                    <Calendar className="h-3 w-3 text-primary" />
-                    {formatDateRange(event.date, event.endDate)}
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <MapPin className="h-3 w-3 text-accent" />
-                    {event.location}
-                  </div>
-                </div>
-
-                <p className="mb-4 line-clamp-3 text-xs leading-relaxed text-muted-foreground">
-                  {event.description}
-                </p>
-
-                <div className="mb-4 flex flex-wrap gap-1.5">
-                  {event.tags.map((tag) => (
-                    <Badge
-                      key={tag}
-                      variant="node"
-                      className="text-[10px] font-medium tracking-wide uppercase"
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-
-                <div className="mt-auto flex shrink-0 flex-col gap-2 sm:flex-row">
-                  <Button
-                    size="sm"
-                    className="h-auto min-h-11 w-full flex-1 py-3 text-[10px] uppercase parbin-glow-primary-sm sm:h-7 sm:min-h-0 sm:py-0 sm:min-w-0"
-                    asChild
-                  >
-                    <a
-                      href={getGoogleCalendarUrl(event)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(clickedEvent) => {
-                        stopCardNavigation(clickedEvent)
-                        trackGoogleCalendarOpen(event)
-                      }}
-                    >
-                      <Calendar className="mr-1.5 h-3.5 w-3.5" />
-                      ADD TO CALENDAR
-                    </a>
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-auto min-h-11 w-full shrink-0 border-white/20 py-3 text-[10px] uppercase sm:h-7 sm:min-h-0 sm:py-0 sm:w-auto"
-                    onClick={(clickedEvent) => {
-                      stopCardNavigation(clickedEvent)
-                      downloadICS(event)
-                    }}
-                  >
-                    <Download className="mr-1 h-3 w-3" />
-                    ICS
-                  </Button>
-                </div>
-              </div>
-            </article>
-          ))}
+              <X />
+              Show all
+            </Button>
+          ) : null}
         </div>
-      )}
+
+        {isLoading ? (
+          <StatePanel>Loading events…</StatePanel>
+        ) : mgr.events.length === 0 ? (
+          <StatePanel>
+            No upcoming events yet. Know of one? Suggest it from the top bar.
+          </StatePanel>
+        ) : (
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {mgr.events.map((event) => (
+              <EventCard
+                key={event.id}
+                event={event}
+                emphasis={
+                  selectedDay == null
+                    ? "none"
+                    : isOnSelectedDay(event.id)
+                      ? "highlighted"
+                      : "dimmed"
+                }
+              />
+            ))}
+          </div>
+        )}
+      </section>
+
+      {!isLoading && mgr.events.length > 0 ? (
+        <EventCalendar
+          events={mgr.events}
+          selectedDay={selectedDay}
+          onSelectDay={selectDay}
+        />
+      ) : null}
     </div>
   )
 }

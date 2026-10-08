@@ -72,8 +72,8 @@ export function EventsByTagChart({ rows }: { rows: LabeledCount[] }) {
 
   if (!rows.some((row) => row.count > 0)) {
     return (
-      <div className="flex h-[280px] items-center justify-center border border-border text-[11px] text-muted-foreground">
-        NO_DATA
+      <div className="flex h-[280px] items-center justify-center rounded-xl border border-dashed border-border text-sm text-muted-foreground">
+        No data yet
       </div>
     )
   }

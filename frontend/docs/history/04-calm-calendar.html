@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>04 · Calm Calendar — Parbin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --mist: #e4ebf4;
+      --mist-2: #d3deeb;
+      --white: #ffffff;
+      --ink: #0a0e14;
+      --navy: #101922;
+      --ink-soft: #4a5d75;
+      --steel: #8ba3c0;
+      --blue: #0095ff;
+      --blue-soft: #d6ecff;
+      --rose: #e11d48;
+      --rose-soft: #fde4ea;
+      --serif: "Literata", Georgia, serif;
+      --sans: "Schibsted Grotesk", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--mist); color: var(--ink); font: 400 15px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px 110px; }
+
+    header { display: flex; justify-content: space-between; align-items: center; padding: 26px 0 10px; }
+    .logo { font: 600 26px var(--serif); display: flex; align-items: center; gap: 10px; }
+    .logo span { width: 28px; height: 28px; border-radius: 8px; background: var(--navy); display: grid; place-items: center; }
+    .logo span::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--rose); }
+    nav { display: flex; gap: 26px; font-weight: 500; color: var(--ink-soft); }
+    nav a { transition: color .2s; }
+    nav a:hover, nav a.active { color: var(--ink); }
+    nav a.active { font-weight: 700; }
+    .suggest { font-weight: 600; padding: 10px 18px; border-radius: 12px; background: var(--white); border: 1px solid var(--mist-2); transition: border-color .2s, color .2s; }
+    .suggest:hover { border-color: var(--rose); color: var(--rose); }
+
+    .greet { padding: 52px 0 36px; }
+    .greet h1 { font: 400 clamp(36px, 4.6vw, 56px)/1.12 var(--serif); max-width: 20ch; letter-spacing: -.01em; }
+    .greet h1 em { color: var(--blue); }
+    .greet p { color: var(--ink-soft); font-size: 17px; margin-top: 14px; }
+
+    .layout { display: grid; grid-template-columns: 380px 1fr; gap: 26px; align-items: start; }
+    .panel { background: var(--white); border-radius: 24px; padding: 24px; box-shadow: 0 1px 2px rgba(10,14,20,.05), 0 20px 40px -32px rgba(10,14,20,.35); }
+
+    .cal { position: sticky; top: 20px; }
+    .cal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+    .cal-head h2 { font: 600 22px var(--serif); }
+    .cal-head .nav { display: flex; gap: 6px; }
+    .cal-head .nav button { width: 36px; height: 36px; border-radius: 10px; background: var(--mist); font-size: 16px; transition: background .2s; }
+    .cal-head .nav button:hover { background: var(--mist-2); }
+    .dow, .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
+    .dow span { font-size: 12px; font-weight: 600; color: var(--steel); padding-bottom: 8px; }
+    .day { aspect-ratio: 1; border-radius: 12px; display: grid; place-items: center; position: relative; font-weight: 500; color: var(--ink-soft); transition: background .2s, color .2s; }
+    .day.empty { visibility: hidden; }
+    .day.has { color: var(--ink); font-weight: 700; background: var(--blue-soft); }
+    .day.has::after { content: ""; position: absolute; bottom: 6px; width: 5px; height: 5px; border-radius: 50%; background: var(--blue); }
+    .day.has:hover { background: var(--blue); color: #fff; }
+    .day.has:hover::after { background: #fff; }
+    .day.sel { background: var(--rose) !important; color: #fff !important; }
+    .day.sel::after { background: #fff !important; }
+    .day.today { box-shadow: inset 0 0 0 1.5px var(--navy); }
+    .legend { display: flex; gap: 16px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--mist); font-size: 13px; color: var(--ink-soft); }
+    .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+
+    .agenda-head { display: flex; justify-content: space-between; align-items: baseline; margin: 4px 4px 14px; }
+    .agenda-head h2 { font: 600 22px var(--serif); }
+    .agenda-head button { font-weight: 600; color: var(--blue); font-size: 14px; }
+    .agenda-head button[hidden] { display: none; }
+    .agenda { display: flex; flex-direction: column; gap: 12px; }
+    .ev {
+      display: grid; grid-template-columns: 6px 1fr auto; gap: 20px; background: var(--white); border-radius: 20px;
+      padding: 20px 22px 20px 0; overflow: hidden; transition: transform .3s ease, box-shadow .3s ease, opacity .3s;
+      box-shadow: 0 1px 2px rgba(10,14,20,.05);
+    }
+    .ev::before { content: ""; background: var(--blue); border-radius: 0 6px 6px 0; }
+    .ev.rose::before { background: var(--rose); }
+    .ev:hover { transform: translateY(-2px); box-shadow: 0 18px 32px -24px rgba(10,14,20,.45); }
+    .ev.dim { opacity: .35; }
+    .ev.hit { box-shadow: 0 0 0 2px var(--rose), 0 18px 32px -24px rgba(225,29,72,.6); }
+    .ev .when { font-size: 13px; font-weight: 600; color: var(--ink-soft); }
+    .ev h3 { font: 600 21px/1.25 var(--serif); margin: 4px 0 6px; }
+    .ev p { color: var(--ink-soft); }
+    .ev .chips { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
+    .ev .chips span { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 8px; background: var(--mist); color: var(--ink-soft); }
+    .ev .acts { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; justify-content: center; }
+    .btn { font-weight: 600; font-size: 14px; padding: 10px 16px; border-radius: 12px; background: var(--navy); color: #fff; white-space: nowrap; transition: background .2s; }
+    .btn:hover { background: var(--blue); }
+    .btn.ghost { background: none; color: var(--ink-soft); padding: 4px 6px; }
+    .btn.ghost:hover { color: var(--ink); background: none; }
+
+    @media (max-width: 920px) {
+      nav { display: none; }
+      .layout { grid-template-columns: 1fr; }
+      .cal { position: static; }
+      .ev { grid-template-columns: 6px 1fr; }
+      .ev .acts { grid-column: 2; flex-direction: row; justify-content: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a class="logo" href="#"><span></span>Parbin</a>
+      <nav><a href="#" class="active">Calendar</a><a href="#">Past events</a><a href="#">Admin</a></nav>
+      <a class="suggest" href="#">+ Suggest an event</a>
+    </header>
+
+    <section class="greet">
+      <h1>Your calendar for <em>tech in Panamá</em>, without the noise.</h1>
+      <p>Pick a day to see what's happening, or scroll the full list.</p>
+    </section>
+
+    <div class="layout">
+      <aside class="panel cal">
+        <div class="cal-head">
+          <h2 id="month-label">October 2026</h2>
+          <div class="nav"><button id="prev" aria-label="Previous month">‹</button><button id="next" aria-label="Next month">›</button></div>
+        </div>
+        <div class="dow"><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span></div>
+        <div class="days" id="days"></div>
+        <div class="legend"><span><i style="background:var(--blue-soft);box-shadow:inset 0 0 0 2px var(--blue)"></i>Has events</span><span><i style="background:var(--rose)"></i>Selected</span></div>
+      </aside>
+
+      <section>
+        <div class="agenda-head"><h2 id="agenda-label">Everything coming up</h2><button id="clear" hidden>Show all</button></div>
+        <div class="agenda" id="agenda">
+          <article class="ev rose" data-date="2026-10-15">
+            <div><div class="when">Thursday, October 15 · 6:30 PM</div><h3>Panamá JS Meetup #42</h3><p>Ciudad del Saber, Clayton</p><div class="chips"><span>JavaScript</span><span>Web</span></div></div>
+            <div class="acts"><a class="btn" href="#">Add to calendar</a><a class="btn ghost" href="#">Download .ics</a></div>
+          </article>
+          <article class="ev" data-date="2026-10-24">
+            <div><div class="when">Saturday, October 24 · 8:30 AM</div><h3>AWS Community Day Panamá</h3><p>Hotel El Panamá, El Cangrejo</p><div class="chips"><span>Cloud</span></div></div>
+            <div class="acts"><a class="btn" href="#">Add to calendar</a><a class="btn ghost" href="#">Download .ics</a></div>
+          </article>
+          <article class="ev" data-date="2026-11-02">
+            <div><div class="when">Monday, November 2 · 7:00 PM</div><h3>Python Panamá: Data Night</h3><p>Selina Coworking, Casco Viejo</p><div class="chips"><span>Python</span><span>Data</span></div></div>
+            <div class="acts"><a class="btn" href="#">Add to calendar</a><a class="btn ghost" href="#">Download .ics</a></div>
+          </article>
+          <article class="ev rose" data-date="2026-11-14">
+            <div><div class="when">Saturday, November 14 · 9:00 AM</div><h3>DevFest Panamá 2026</h3><p>UTP, Víctor Levi Sasso campus</p><div class="chips"><span>Conference</span></div></div>
+            <div class="acts"><a class="btn" href="#">Add to calendar</a><a class="btn ghost" href="#">Download .ics</a></div>
+          </article>
+          <article class="ev" data-date="2026-11-21">
+            <div><div class="when">November 21 – 22 · All weekend</div><h3>Hack the Canal</h3><p>Ciudad del Saber, Clayton</p><div class="chips"><span>Hackathon</span></div></div>
+            <div class="acts"><a class="btn" href="#">Add to calendar</a><a class="btn ghost" href="#">Download .ics</a></div>
+          </article>
+          <article class="ev" data-date="2026-12-03">
+            <div><div class="when">Thursday, December 3 · 7:30 AM</div><h3>Women in Tech Breakfast</h3><p>Town Center, Costa del Este</p><div class="chips"><span>Community</span><span>Careers</span></div></div>
+            <div class="acts"><a class="btn" href="#">Add to calendar</a><a class="btn ghost" href="#">Download .ics</a></div>
+          </article>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const events = [...document.querySelectorAll(".ev")]
+    const dates = new Set(events.map((ev) => ev.dataset.date))
+    const months = [[2026, 9], [2026, 10], [2026, 11]]
+    const today = "2026-10-07"
+    let current = 0
+    let selected = null
+
+    const iso = (y, m, d) => `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`
+
+    function render() {
+      const [y, m] = months[current]
+      document.getElementById("month-label").textContent = new Date(y, m).toLocaleString("en-US", { month: "long", year: "numeric" })
+      const offset = (new Date(y, m, 1).getDay() + 6) % 7
+      const total = new Date(y, m + 1, 0).getDate()
+      const days = document.getElementById("days")
+      days.innerHTML = ""
+      for (let i = 0; i < offset; i++) days.insertAdjacentHTML("beforeend", '<span class="day empty"></span>')
+      for (let d = 1; d <= total; d++) {
+        const key = iso(y, m, d)
+        const el = document.createElement(dates.has(key) ? "button" : "span")
+        el.className = "day" + (dates.has(key) ? " has" : "") + (key === selected ? " sel" : "") + (key === today ? " today" : "")
+        el.textContent = d
+        if (dates.has(key)) el.onclick = () => select(key)
+        days.appendChild(el)
+      }
+    }
+
+    function select(key) {
+      selected = selected === key ? null : key
+      render()
+      const clear = document.getElementById("clear")
+      clear.hidden = !selected
+      document.getElementById("agenda-label").textContent = selected
+        ? new Date(selected + "T12:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })
+        : "Everything coming up"
+      events.forEach((ev) => {
+        ev.classList.toggle("dim", !!selected && ev.dataset.date !== selected)
+        ev.classList.toggle("hit", ev.dataset.date === selected)
+      })
+      const hit = events.find((ev) => ev.dataset.date === selected)
+      if (hit) hit.scrollIntoView({ behavior: "smooth", block: "center" })
+    }
+
+    document.getElementById("prev").onclick = () => { current = Math.max(0, current - 1); render() }
+    document.getElementById("next").onclick = () => { current = Math.min(months.length - 1, current + 1); render() }
+    document.getElementById("clear").onclick = () => select(selected)
+    render()
+  </script>
+  <script src="switcher.js"></script>
+</body>
+</html>

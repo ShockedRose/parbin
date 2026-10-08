@@ -54,7 +54,7 @@ function ChartTooltip({
   }
 
   return (
-    <div className="rounded-lg border border-border bg-card px-3 py-2 text-[11px] shadow-lg">
+    <div className="rounded-xl border border-border bg-popover px-3 py-2 text-xs shadow-lg">
       {label != null && label !== "" ? (
         <div className="mb-1 text-muted-foreground">{String(label)}</div>
       ) : null}
@@ -90,21 +90,21 @@ function ChartCard({
 }) {
   return (
     <section
-      className={cn("rounded-xl border border-border bg-card p-5", className)}
+      className={cn("rounded-2xl border border-border bg-card p-5 sm:p-6", className)}
     >
       <div className="mb-4">
-        <div className="text-[10px] text-primary uppercase">{eyebrow}</div>
-        <h3 className="mt-1 font-display text-lg tracking-tight">{title}</h3>
-        <p className="mt-1 text-xs text-muted-foreground">{description}</p>
+        <div className="text-xs font-semibold text-primary">{eyebrow}</div>
+        <h3 className="mt-1 font-serif text-lg font-semibold">{title}</h3>
+        <p className="mt-1 text-sm text-muted-foreground">{description}</p>
       </div>
       {children}
     </section>
   )
 }
 
-function EmptyChart({ label = "NO_DATA" }: { label?: string }) {
+function EmptyChart({ label = "No data yet" }: { label?: string }) {
   return (
-    <div className="flex h-[260px] items-center justify-center border border-border text-[11px] text-muted-foreground">
+    <div className="flex h-[260px] items-center justify-center rounded-xl border border-dashed border-border text-sm text-muted-foreground">
       {label}
     </div>
   )
@@ -130,7 +130,7 @@ function MixLegend({
   colors: Record<string, string>
 }) {
   return (
-    <div className="mt-3 flex flex-wrap justify-center gap-3 text-[10px] uppercase">
+    <div className="mt-3 flex flex-wrap justify-center gap-3 text-xs">
       {items.map((item) => (
         <div key={item.label} className="flex items-center gap-1.5">
           <span
@@ -203,7 +203,7 @@ function HorizontalBars({ data }: { data: LabeledCount[] }) {
           <XAxis
             type="number"
             allowDecimals={false}
-            tick={{ fill: "var(--muted-foreground)", fontSize: 10 }}
+            tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
             axisLine={{ stroke: "var(--border)" }}
             tickLine={false}
           />
@@ -211,7 +211,7 @@ function HorizontalBars({ data }: { data: LabeledCount[] }) {
             type="category"
             dataKey="label"
             width={108}
-            tick={{ fill: "var(--muted-foreground)", fontSize: 10 }}
+            tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
             axisLine={false}
             tickLine={false}
             tickFormatter={(value: string) =>
@@ -245,7 +245,7 @@ export function DashboardCharts({ data }: { data: AdminDashboard }) {
     <div className="grid gap-6">
       <div className="grid gap-6 xl:grid-cols-2">
         <ChartCard
-          eyebrow="MODERATION_PIPELINE"
+          eyebrow="Moderation"
           title="Suggestion status"
           description="Pending queue versus approved and rejected proposals."
         >
@@ -253,7 +253,7 @@ export function DashboardCharts({ data }: { data: AdminDashboard }) {
         </ChartCard>
 
         <ChartCard
-          eyebrow="INTAKE_ORIGIN"
+          eyebrow="Sources"
           title="Catalog source mix"
           description="Published events with an external source URL versus manually entered ones."
         >
@@ -262,7 +262,7 @@ export function DashboardCharts({ data }: { data: AdminDashboard }) {
       </div>
 
       <ChartCard
-        eyebrow="CALENDAR_DENSITY"
+        eyebrow="Calendar"
         title="Events by start month"
         description={`Meetup volume over the last 12 months in ${data.timezone}.`}
       >
@@ -270,7 +270,7 @@ export function DashboardCharts({ data }: { data: AdminDashboard }) {
       </ChartCard>
 
       <ChartCard
-        eyebrow="REVIEW_THROUGHPUT"
+        eyebrow="Review"
         title="Suggestions submitted"
         description="Monthly intake from the public form and scraper, stacked by review outcome."
       >
@@ -284,13 +284,13 @@ export function DashboardCharts({ data }: { data: AdminDashboard }) {
               />
               <XAxis
                 dataKey="label"
-                tick={{ fill: "var(--muted-foreground)", fontSize: 10 }}
+                tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
                 axisLine={{ stroke: "var(--border)" }}
                 tickLine={false}
               />
               <YAxis
                 allowDecimals={false}
-                tick={{ fill: "var(--muted-foreground)", fontSize: 10 }}
+                tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
                 axisLine={false}
                 tickLine={false}
                 width={32}
@@ -329,7 +329,7 @@ export function DashboardCharts({ data }: { data: AdminDashboard }) {
 
       <div className="grid gap-6 xl:grid-cols-2">
         <ChartCard
-          eyebrow="TOPIC_SIGNAL"
+          eyebrow="Topics"
           title="Events by tag"
           description="Most common tags on published meetups."
         >
@@ -337,7 +337,7 @@ export function DashboardCharts({ data }: { data: AdminDashboard }) {
         </ChartCard>
 
         <ChartCard
-          eyebrow="GEOGRAPHY"
+          eyebrow="Places"
           title="Top locations"
           description="Where Panama tech meetups are listed as happening."
         >
@@ -347,7 +347,7 @@ export function DashboardCharts({ data }: { data: AdminDashboard }) {
 
       <div className="grid gap-6 xl:grid-cols-2">
         <ChartCard
-          eyebrow="SCHEDULE"
+          eyebrow="Schedule"
           title="Start weekday"
           description="Which days of the week published events typically begin."
         >
@@ -361,13 +361,13 @@ export function DashboardCharts({ data }: { data: AdminDashboard }) {
                 />
                 <XAxis
                   dataKey="label"
-                  tick={{ fill: "var(--muted-foreground)", fontSize: 10 }}
+                  tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
                   axisLine={{ stroke: "var(--border)" }}
                   tickLine={false}
                 />
                 <YAxis
                   allowDecimals={false}
-                  tick={{ fill: "var(--muted-foreground)", fontSize: 10 }}
+                  tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
                   axisLine={false}
                   tickLine={false}
                   width={32}
@@ -389,7 +389,7 @@ export function DashboardCharts({ data }: { data: AdminDashboard }) {
         </ChartCard>
 
         <ChartCard
-          eyebrow="SUGGESTION_ORIGIN"
+          eyebrow="Sources"
           title="Suggestion source mix"
           description="Proposals with a source event page (scraper or pasted URL) versus community-only submissions."
         >
