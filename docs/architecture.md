@@ -24,7 +24,7 @@ flowchart LR
 
 ```
 parbin/
-├── .github/workflows/    # event-scraper.yml: Mon/Fri 12:00 America/Panama
+├── .github/workflows/    # event-scraper.yml: manual Actions run
 ├── package.json          # Root scripts: dev:all, db:up, prepare:*
 ├── pnpm-lock.yaml
 ├── README.md

@@ -26,11 +26,11 @@ From repo root: `pnpm scraper:run`
 
 ## GitHub Actions
 
-`.github/workflows/event-scraper.yml` runs this job every Monday and Friday at 12:00 America/Panama (17:00 UTC). GitHub cron is UTC.
+`.github/workflows/event-scraper.yml` runs only when you start it from the Actions tab (**Run workflow**).
 
 Set the required repository secret and the optional repository variables (Settings → Secrets and variables → Actions):
 
-| Name | Kind | Scheduled job |
+| Name | Kind | Manual run |
 | --- | --- | --- |
 | `PARBIN_API_URL` | Secret | Required. Backend base URL. |
 | `SCRAPER_TIMEOUT_MS` | Variable | Optional. Defaults to `45000` when unset. |

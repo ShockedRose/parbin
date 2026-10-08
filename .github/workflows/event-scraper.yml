@@ -1,10 +1,6 @@
 name: Event scraper
 
 on:
-  schedule:
-    # GitHub cron is UTC. 17:00 UTC is 12:00 in America/Panama (UTC-5, no DST).
-    # 1 = Monday, 5 = Friday.
-    - cron: "0 17 * * 1,5"
   workflow_dispatch:
 
 concurrency:

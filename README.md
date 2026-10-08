@@ -31,10 +31,10 @@ Parbin is split into:
 
 The roadmap for Parbin represents the high level goals for the application. There'll be improvements to be made to user experience, optimization, deployment capabilities, and many more; however the latter ones will be handled as issues separated from these main goals:  
 
-- [x] Introduce a cron job to scrape external event pages and suggest candidates for the main listing (admin moderation)
+- [x] Scrape external event pages and suggest candidates for the main listing (admin moderation)
   - [x] Add sources for the scraper (allowlist, config, per-site rules) — see `jobs/event-scraper/sources.json`
   - [x] Implement the scraper (fetch, parse, normalize into suggestion-ready records) — see `jobs/event-scraper/`
-  - [x] Deploy the scraper (scheduled runner in the target environment) — GitHub Actions cron in `.github/workflows/event-scraper.yml` (Monday and Friday at 12:00 America/Panama)
+  - [x] Run the scraper from GitHub Actions — manual trigger in `.github/workflows/event-scraper.yml`
 
 ## Local development
 
@@ -143,7 +143,7 @@ pnpm scraper:run
 
 ## Notes
 
-- The event scraper runs on GitHub Actions every Monday and Friday at 12:00 America/Panama (17:00 UTC). Set the `PARBIN_API_URL` repository secret, and optionally the `SCRAPER_TIMEOUT_MS` and `LOG_LEVEL` repository variables, under Settings → Secrets and variables → Actions. `SCRAPER_HEADLESS` is forced to `true` in that workflow.
+- The event scraper workflow (`.github/workflows/event-scraper.yml`) runs only when started manually from the Actions tab. Set the `PARBIN_API_URL` repository secret, and optionally the `SCRAPER_TIMEOUT_MS` and `LOG_LEVEL` repository variables, under Settings → Secrets and variables → Actions. `SCRAPER_HEADLESS` is forced to `true` in that workflow.
 - The backend auto-runs SQL migrations on startup.
 - A seed admin is auto-provisioned on boot when `SEED_ADMIN_AUTO_PROVISION=true`.
 - Event timestamps and the upcoming/past day boundary use the backend `APP_TIMEZONE` setting, which defaults to `America/Panama`.
