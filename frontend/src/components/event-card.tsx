@@ -76,13 +76,6 @@ export function EventCard({
       </div>
 
       <div className="relative flex min-h-0 flex-1 flex-col px-5 pt-4 pb-5">
-        <span
-          className={cn(
-            "absolute top-4 bottom-5 left-0 w-1 rounded-r-full",
-            emphasis === "highlighted" ? "bg-accent" : "bg-primary"
-          )}
-          aria-hidden
-        />
         <div className="text-[13px] font-semibold text-muted-foreground">
           {formatDateRange(event.date, event.endDate)}
         </div>
