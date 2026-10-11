@@ -157,10 +157,13 @@ Common status codes:
 
 Configured in `internal/httpapi/router.go`:
 
-- **AllowOrigins**: `FRONTEND_ORIGIN` only
+- **AllowOrigins**: `FRONTEND_ORIGIN`
+- **Browser extensions**: when `CORS_ALLOW_BROWSER_EXTENSIONS` is `true` (the default), origins starting with `chrome-extension://`, `moz-extension://`, `safari-extension://` or `ms-browser-extension://` are also allowed, but only on `/healthz`, `/api/tags`, `/api/event-suggestions` and `/api/event-suggestions/source-urls`. Other routes return **403** for those origins. This is what the extension in `extension/` uses.
 - **Methods**: GET, POST, PUT, OPTIONS
 - **Headers**: `Content-Type`
 - **AllowCredentials**: true
+
+Suggestion `date` / `endDate` also accept RFC 3339 with an offset (e.g. `2026-07-16T23:00:00.000Z`). The extension sends that form; values without an offset are read in `APP_TIMEZONE`.
 
 ## Environment (backend)
 

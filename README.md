@@ -10,6 +10,7 @@ Parbin is split into:
 - A Go + Gin backend in `backend/`
 - A Postgres database for local development via `backend/docker-compose.yml`
 - A scheduled TypeScript scraper in `jobs/event-scraper/`
+- A browser extension in `extension/` for Chrome, Brave, Edge and Firefox. It reads the event on the current page (Meetup for now) and sends it as a suggestion. See [`extension/README.md`](./extension/README.md)
 
 ## Backend features
 
@@ -63,6 +64,7 @@ pnpm db:up
 | `APP_TIMEZONE` | No | `America/Panama` | Timezone used for event timestamps and app time handling. |
 | `DATABASE_URL` | Yes | None | Postgres connection string for the backend database. |
 | `FRONTEND_ORIGIN` | No | `http://localhost:5173` | Allowed frontend origin for browser requests and cookies. |
+| `CORS_ALLOW_BROWSER_EXTENSIONS` | No | `true` | Allows `chrome-extension://`, `moz-extension://` and other browser-extension origins on the public routes the Parbin extension calls (`/healthz`, `/api/tags`, `/api/event-suggestions`, `/api/event-suggestions/source-urls`). Admin and auth routes are unaffected. |
 | `SESSION_COOKIE_NAME` | No | `parbin_session` | Name of the session cookie used for admin auth. |
 | `SESSION_SECRET` | Yes | None | Secret used to sign and validate session data. |
 | `SESSION_TTL` | No | `7d` in code, `2h` in `backend/.env.example` | Session lifetime parsed as a Go duration string. |
@@ -139,6 +141,13 @@ Run the event scraper once (requires backend reachable and Playwright browsers i
 
 ```bash
 pnpm scraper:run
+```
+
+Build the browser extension into `extension/dist/`, then load that folder as an unpacked extension (Chrome, Brave, Edge) or as a temporary add-on (Firefox). The backend URL is set inside the extension's popup.
+
+```bash
+pnpm prepare:extension
+pnpm extension:build
 ```
 
 ## Notes
