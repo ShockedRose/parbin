@@ -79,14 +79,19 @@ func NewRouter(cfg config.Config, authService *service.AuthService, eventService
 		eventService: eventService,
 	}
 
-	router := gin.Default()
-	router.Use(cors.New(cors.Config{
+	corsConfig := cors.Config{
 		AllowOrigins:     []string{cfg.FrontendOrigin},
 		AllowMethods:     []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodOptions},
 		AllowHeaders:     []string{"Content-Type"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
-	}))
+	}
+	if cfg.CORSAllowExtensions {
+		corsConfig.AllowOriginWithContextFunc = allowExtensionOrigin
+	}
+
+	router := gin.Default()
+	router.Use(cors.New(corsConfig))
 
 	router.GET("/healthz", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
@@ -113,6 +118,27 @@ func NewRouter(cfg config.Config, authService *service.AuthService, eventService
 	admin.POST("/admin/event-suggestions/:id/reject", server.rejectSuggestion)
 
 	return router
+}
+
+// Browser extensions get unique per-install origins, so they are matched by
+// scheme and limited to the public endpoints the Parbin extension calls.
+var extensionPublicPaths = map[string]struct{}{
+	"/healthz":                           {},
+	"/api/tags":                          {},
+	"/api/event-suggestions":             {},
+	"/api/event-suggestions/source-urls": {},
+}
+
+func allowExtensionOrigin(c *gin.Context, origin string) bool {
+	if _, ok := extensionPublicPaths[c.Request.URL.Path]; !ok {
+		return false
+	}
+	for _, scheme := range cors.ExtensionSchemas {
+		if strings.HasPrefix(origin, scheme) {
+			return true
+		}
+	}
+	return false
 }
 
 func (s *Server) listTags(c *gin.Context) {

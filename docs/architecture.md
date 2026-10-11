@@ -48,6 +48,11 @@ parbin/
 │       └── types/        # Shared TS types (events, admin, dashboard)
 ├── jobs/
 │   └── event-scraper/    # TypeScript + Playwright; POST suggestions + dedupe via API
+├── extension/            # MV3 browser extension (Chrome/Brave/Edge/Firefox), esbuild → dist/
+│   ├── static/           # manifest.json, popup.html/css, icons
+│   └── src/
+│       ├── content/      # Injected on click; per-site strategies (meetup.ts) + registry
+│       └── popup/        # Review form, backend URL setting, API client
 └── backend/              # Go module: parbin/backend
     ├── cmd/api/main.go   # Process entry: env, DB, migrations, HTTP server
     ├── docker-compose.yml # Local Postgres
@@ -65,9 +70,9 @@ parbin/
 | Package | Role |
 | ------- | ---- |
 | `cmd/api` | Loads `.env`, opens Postgres, runs migrations, wires stores and services, starts `http.Server` with Gin. |
-| `internal/config` | Required: `DATABASE_URL`, `SESSION_SECRET`. Optional: `PORT`, `APP_TIMEZONE`, `FRONTEND_ORIGIN`, session and seed admin settings. |
+| `internal/config` | Required: `DATABASE_URL`, `SESSION_SECRET`. Optional: `PORT`, `APP_TIMEZONE`, `FRONTEND_ORIGIN`, `CORS_ALLOW_BROWSER_EXTENSIONS`, session and seed admin settings. |
 | `internal/database` | Applies SQL migrations from `internal/database/migrations/` on startup. |
-| `internal/httpapi` | Defines routes under `/api`, CORS for `FRONTEND_ORIGIN`, JSON request/response types, maps service errors to HTTP status. |
+| `internal/httpapi` | Defines routes under `/api`, CORS for `FRONTEND_ORIGIN` (plus extension origins on public suggestion routes), JSON request/response types, maps service errors to HTTP status. |
 | `internal/service` | Business logic: login/logout, event CRUD, suggestion workflow, timezone-aware “today” for feeds. |
 | `internal/store` | PostgreSQL access via `pgx` pool; models in `models.go`; tags, events, suggestions, dashboard aggregations; `ErrNotFound`, `ErrConflict` for HTTP mapping. |
 | `internal/auth` | Password verification and session token handling used by `AuthService`. |
@@ -101,7 +106,8 @@ Defined in `backend/internal/database/migrations/` (`001_init.sql` plus later fi
 ## Cross-cutting concerns
 
 - **Timezones**: Backend loads `APP_TIMEZONE` (default `America/Panama`) and uses it for “upcoming vs past” day boundaries and for formatting API `date` / `endDate` strings.
-- **CORS + cookies**: API allows the configured frontend origin, methods GET/POST/PUT, `AllowCredentials: true`. Admin routes rely on an HTTP-only session cookie.
+- **CORS + cookies**: API allows the configured frontend origin, methods GET/POST/PUT, `AllowCredentials: true`. Admin routes rely on an HTTP-only session cookie. Browser-extension origins are allowed only on the public tag and suggestion routes (`CORS_ALLOW_BROWSER_EXTENSIONS`).
+- **Browser extension**: `extension/` is a standalone client. On click, the popup injects `extract.js` into the active tab. The script picks an `EventPageStrategy` by hostname (only Meetup today) and returns the event. The user reviews it and the popup POSTs `/api/event-suggestions` to the backend URL saved in extension storage.
 - **Local database**: `pnpm db:up` starts Postgres via `backend/docker-compose.yml`.
 
 ## Request path (example)

@@ -15,6 +15,7 @@ type Config struct {
 	AppTimezone            string
 	Location               *time.Location
 	FrontendOrigin         string
+	CORSAllowExtensions    bool
 	SessionCookieName      string
 	SessionSecret          string
 	SessionTTL             time.Duration
@@ -38,6 +39,7 @@ func Load() (Config, error) {
 		AppTimezone:            timezone,
 		Location:               location,
 		FrontendOrigin:         getEnv("FRONTEND_ORIGIN", "http://localhost:5173"),
+		CORSAllowExtensions:    getEnvBool("CORS_ALLOW_BROWSER_EXTENSIONS", true),
 		SessionCookieName:      getEnv("SESSION_COOKIE_NAME", "parbin_session"),
 		SessionSecret:          getEnv("SESSION_SECRET", ""),
 		SessionTTL:             getEnvDuration("SESSION_TTL", 7*24*time.Hour),

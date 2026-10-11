@@ -1,0 +1,249 @@
+:root {
+  --background: #0a0e14;
+  --foreground: #f1f5fb;
+  --card: #101922;
+  --muted: #161f2e;
+  --muted-foreground: #8ba3c0;
+  --primary: #0095ff;
+  --primary-foreground: #ffffff;
+  --accent: #e11d48;
+  --warn: #f59e0b;
+  --success: #22c55e;
+  --border: #1f2a3a;
+  --radius: 0.75rem;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  width: 380px;
+  max-height: 600px;
+  margin: 0;
+  padding: 12px 14px 14px;
+  background: var(--background);
+  color: var(--foreground);
+  font: 13px/1.45 "Schibsted Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.badge {
+  padding: 1px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.icon-button {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+}
+
+.icon-button:hover,
+.icon-button[aria-expanded="true"] {
+  border-color: var(--border);
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+.panel {
+  margin-bottom: 12px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.field > span {
+  color: var(--muted-foreground);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 7px 9px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--muted);
+  color: var(--foreground);
+  font: inherit;
+}
+
+textarea {
+  resize: vertical;
+}
+
+input:focus,
+textarea:focus,
+button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+.button {
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--muted);
+  color: var(--foreground);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.button-primary {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.hint {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+
+.hint.ok {
+  color: var(--success);
+}
+
+.hint.error {
+  color: var(--accent);
+}
+
+.notice {
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--muted-foreground);
+}
+
+.notice-warn {
+  border-color: color-mix(in srgb, var(--warn) 50%, transparent);
+  color: var(--warn);
+}
+
+.notice-error {
+  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  color: #fda4af;
+}
+
+.notice-success {
+  border-color: color-mix(in srgb, var(--success) 50%, transparent);
+  color: var(--success);
+}
+
+.preview {
+  width: 100%;
+  max-height: 150px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px 2px 9px;
+  border: 1px solid color-mix(in srgb, var(--primary) 45%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary) 15%, transparent);
+  font-size: 12px;
+}
+
+.chip button {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted-foreground);
+  line-height: 1;
+  cursor: pointer;
+}
+
+.chip button:hover {
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+.source {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+a {
+  color: var(--primary);
+}
