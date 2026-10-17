@@ -53,13 +53,15 @@ export function EventsPage() {
         <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
           <div>
             <h1 className="font-serif text-2xl font-semibold sm:text-3xl">
-              {selectedDay ? formatDayKey(selectedDay) : "Next Events"}
+              {selectedDay ? formatDayKey(selectedDay) : "Coming up"}
             </h1>
-            {selectedDay ? (
-              <p className="mt-1 text-sm text-muted-foreground">
-                Highlighting the events on this day.
-              </p>
-            ) : null}
+            <p className="mt-1 text-sm text-muted-foreground">
+              {isLoading
+                ? "Loading events…"
+                : selectedDay
+                  ? "Highlighting the events on this day."
+                  : `${mgr.events.length} upcoming ${mgr.events.length === 1 ? "event" : "events"} in Panamá`}
+            </p>
           </div>
           {selectedDay ? (
             <Button
