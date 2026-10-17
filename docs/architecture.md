@@ -51,7 +51,7 @@ parbin/
 ├── extension/            # MV3 browser extension (Chrome/Brave/Edge/Firefox), esbuild → dist/
 │   ├── static/           # manifest.json, popup.html/css, icons
 │   └── src/
-│       ├── content/      # Injected on click; per-site strategies (meetup.ts) + registry
+│       ├── content/      # Injected on click; per-site strategies (meetup.ts, bevy.ts) + registry
 │       └── popup/        # Review form, backend URL setting, API client
 └── backend/              # Go module: parbin/backend
     ├── cmd/api/main.go   # Process entry: env, DB, migrations, HTTP server
@@ -107,7 +107,7 @@ Defined in `backend/internal/database/migrations/` (`001_init.sql` plus later fi
 
 - **Timezones**: Backend loads `APP_TIMEZONE` (default `America/Panama`) and uses it for “upcoming vs past” day boundaries and for formatting API `date` / `endDate` strings.
 - **CORS + cookies**: API allows the configured frontend origin, methods GET/POST/PUT, `AllowCredentials: true`. Admin routes rely on an HTTP-only session cookie. Browser-extension origins are allowed only on the public tag and suggestion routes (`CORS_ALLOW_BROWSER_EXTENSIONS`).
-- **Browser extension**: `extension/` is a standalone client. On click, the popup injects `extract.js` into the active tab. The script picks an `EventPageStrategy` by hostname (only Meetup today) and returns the event. The user reviews it and the popup POSTs `/api/event-suggestions` to the backend URL saved in extension storage.
+- **Browser extension**: `extension/` is a standalone client. On click, the popup injects `extract.js` into the active tab. The script picks an `EventPageStrategy` by hostname (Meetup, or Bevy for GDG/CNCF community sites) and returns the event. The user reviews it and the popup POSTs `/api/event-suggestions` to the backend URL saved in extension storage.
 - **Local database**: `pnpm db:up` starts Postgres via `backend/docker-compose.yml`.
 
 ## Request path (example)
