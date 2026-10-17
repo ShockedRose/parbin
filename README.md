@@ -10,7 +10,7 @@ Parbin is split into:
 - A Go + Gin backend in `backend/`
 - A Postgres database for local development via `backend/docker-compose.yml`
 - A scheduled TypeScript scraper in `jobs/event-scraper/`
-- A browser extension in `extension/` for Chrome, Brave, Edge and Firefox. It reads the event on the current page (Meetup for now) and sends it as a suggestion. See [`extension/README.md`](./extension/README.md)
+- A browser extension in `extension/` for Chrome, Brave, Edge and Firefox. It reads the event on the current page (Meetup, and Bevy community sites such as GDG and CNCF) and sends it as a suggestion. See [`extension/README.md`](./extension/README.md)
 
 ## Backend features
 

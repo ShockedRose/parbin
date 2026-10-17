@@ -2,7 +2,10 @@
 
 A Manifest V3 extension for **Chrome, Brave, Edge and Firefox**. When you open it on an event page, it detects the site, reads the event, and opens a form you can review before sending it to a Parbin backend as a suggestion (`POST /api/event-suggestions`). An admin then approves or rejects it as usual.
 
-Supported sites: **Meetup** (`meetup.com/<group>/events/<id>`).
+Supported sites:
+
+- **Meetup** (`meetup.com/<group>/events/<id>`)
+- **Bevy** community sites: Google Developer Groups (`gdg.community.dev` and other `*.community.dev` hosts) and CNCF (`community.cncf.io`, `community2.cncf.io`). Open an event at `/events/details/<event>`.
 
 ## Build
 
@@ -28,8 +31,8 @@ Firefox removes temporary add-ons when it restarts. For a permanent install, sig
 ## Use it
 
 1. Click the extension icon, then the gear button, and enter your Parbin **backend URL** (default `http://localhost:8080`). **Save & test** stores it in browser sync storage and calls `/healthz`.
-2. Open a Meetup event and click the extension icon. The form fills itself with the title, start and end times, location, image, description and source URL.
-3. Tags come from the backend catalog (`GET /api/tags`), the same as the web suggest form. The extension preselects catalog tags that match the Meetup topics or appear in the title or description, up to 6.
+2. Open a supported event page and click the extension icon. The form fills itself with the title, start and end times, location, image, description and source URL.
+3. Tags come from the backend catalog (`GET /api/tags`), the same as the web suggest form. The extension preselects catalog tags that match the page's topics (Meetup topics, Bevy event tags) or appear in the title or description, up to 6.
 4. If the event URL is already stored on an event or suggestion (`GET /api/event-suggestions/source-urls`), you'll see a warning before sending.
 5. Edit anything you need and click **Send suggestion**.
 
@@ -73,7 +76,7 @@ extension/
     ├── shared/types.ts  # ExtractedEvent, ExtractionResult, SuggestionPayload
     ├── content/         # injected on demand by the popup
     │   ├── extract.ts   # picks a strategy, returns ExtractionResult
-    │   ├── strategies/  # types.ts, registry.ts, meetup.ts
+    │   ├── strategies/  # types.ts, registry.ts, meetup.ts, bevy.ts
     │   └── util/page.ts
     └── popup/           # main.ts (UI), api.ts, settings.ts, tags.ts, browser.ts (chrome/browser shim)
 ```
