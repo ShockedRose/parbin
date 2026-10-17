@@ -25,7 +25,7 @@ flowchart LR
 ```
 parbin/
 ├── .github/workflows/    # event-scraper.yml: manual Actions run
-├── package.json          # Root scripts: dev:all, db:up, prepare:*
+├── package.json          # Root scripts: dev:all, db:up, db:seed, prepare:*
 ├── pnpm-lock.yaml
 ├── README.md
 ├── CONTRIBUTING.md
@@ -54,15 +54,18 @@ parbin/
 │       ├── content/      # Injected on click; per-site strategies (meetup.ts, bevy.ts) + registry
 │       └── popup/        # Review form, backend URL setting, API client
 └── backend/              # Go module: parbin/backend
-    ├── cmd/api/main.go   # Process entry: env, DB, migrations, HTTP server
+    ├── cmd/
+    │   ├── api/main.go   # Process entry: env, DB, migrations, HTTP server
+    │   └── seed/main.go  # Dev seed: admin, 20 tags, 20 events
     ├── docker-compose.yml # Local Postgres
     └── internal/
+        ├── auth/         # Password hashing, session token helpers
         ├── config/       # Env → Config
         ├── database/     # Migrations runner + SQL files
         ├── httpapi/      # Gin router, handlers, DTOs
+        ├── seed/         # Development catalog used by cmd/seed
         ├── service/      # AuthService, EventService, domain errors
-        ├── store/        # pgx pool, CRUD for admins, sessions, tags, events, suggestions
-        └── auth/         # Password hashing, session token helpers
+        └── store/        # pgx pool, CRUD for admins, sessions, tags, events, suggestions
 ```
 
 ## Backend modules
@@ -70,6 +73,8 @@ parbin/
 | Package | Role |
 | ------- | ---- |
 | `cmd/api` | Loads `.env`, opens Postgres, runs migrations, wires stores and services, starts `http.Server` with Gin. |
+| `cmd/seed` | Development entrypoint invoked by `pnpm db:seed` and `pnpm dev:all`. Loads the same env and migrations, then writes the sample admin, tags, and events. |
+| `internal/seed` | Builds that sample from the system clock in `APP_TIMEZONE` and upserts it. |
 | `internal/config` | Required: `DATABASE_URL`, `SESSION_SECRET`. Optional: `PORT`, `APP_TIMEZONE`, `FRONTEND_ORIGIN`, `CORS_ALLOW_BROWSER_EXTENSIONS`, session and seed admin settings. |
 | `internal/database` | Applies SQL migrations from `internal/database/migrations/` on startup. |
 | `internal/httpapi` | Defines routes under `/api`, CORS for `FRONTEND_ORIGIN` (plus extension origins on public suggestion routes), JSON request/response types, maps service errors to HTTP status. |
@@ -108,7 +113,7 @@ Defined in `backend/internal/database/migrations/` (`001_init.sql` plus later fi
 - **Timezones**: Backend loads `APP_TIMEZONE` (default `America/Panama`) and uses it for “upcoming vs past” day boundaries and for formatting API `date` / `endDate` strings.
 - **CORS + cookies**: API allows the configured frontend origin, methods GET/POST/PUT, `AllowCredentials: true`. Admin routes rely on an HTTP-only session cookie. Browser-extension origins are allowed only on the public tag and suggestion routes (`CORS_ALLOW_BROWSER_EXTENSIONS`).
 - **Browser extension**: `extension/` is a standalone client. On click, the popup injects `extract.js` into the active tab. The script picks an `EventPageStrategy` by hostname (Meetup, or Bevy for GDG/CNCF community sites) and returns the event. The user reviews it and the popup POSTs `/api/event-suggestions` to the backend URL saved in extension storage.
-- **Local database**: `pnpm db:up` starts Postgres via `backend/docker-compose.yml`.
+- **Local database**: `pnpm db:up` starts Postgres via `backend/docker-compose.yml`. `pnpm db:seed` (also run by `pnpm dev:all`) ensures the dev admin, 20 tags, and 20 events.
 
 ## Request path (example)
 

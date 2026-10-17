@@ -105,6 +105,16 @@ To run frontend and backend together from the repo root:
 pnpm dev:all
 ```
 
+`pnpm dev:all` runs `pnpm db:seed` before the dev servers. The seed uses `backend/.env` and the same Postgres instance as the API, so start the database with `pnpm db:up` first. Run the seed on its own with `pnpm db:seed`.
+
+The seed ensures the admin account from `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD`, 20 catalog tags, and 20 sample events. Event copy, locations, and tags come from a fixed shuffle. Start and end times are rebuilt from the system clock in `APP_TIMEZONE` on every run:
+
+- 5 events start on earlier days, so they stay on the past feed
+- 14 events start on later days, so they stay on the upcoming feed
+- 1 event starts today, so it stays on the upcoming feed until the next local midnight and then shows up as a past event
+
+Sample rows are matched by title. A later run refreshes those times and keeps descriptions, locations, images, and tags, including edits. The seed command refuses to run when `APP_ENV=production`.
+
 ### 4. Configure the frontend
 
 Install frontend dependencies from the repo root:
@@ -155,5 +165,6 @@ pnpm extension:build
 - The event scraper workflow (`.github/workflows/event-scraper.yml`) runs only when started manually from the Actions tab. Set the `PARBIN_API_URL` repository secret, and optionally the `SCRAPER_TIMEOUT_MS` and `LOG_LEVEL` repository variables, under Settings → Secrets and variables → Actions. `SCRAPER_HEADLESS` is forced to `true` in that workflow.
 - The backend auto-runs SQL migrations on startup.
 - A seed admin is auto-provisioned on boot when `SEED_ADMIN_AUTO_PROVISION=true`.
+- `pnpm dev:all` runs `pnpm db:seed` before the dev servers. That script ensures the seed admin, 20 tags, and 20 events (5 past, 14 on later days, and 1 that starts today in `APP_TIMEZONE`).
 - Event timestamps and the upcoming/past day boundary use the backend `APP_TIMEZONE` setting, which defaults to `America/Panama`.
 - Helpful local command: `pnpm db:down`

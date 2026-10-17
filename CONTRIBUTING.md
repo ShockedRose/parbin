@@ -23,6 +23,8 @@ Configure `backend/.env` (see `backend/.env.example`) and optionally `frontend/.
 pnpm dev:all
 ```
 
+This seeds a local admin, 20 tags, and 20 sample events, then starts the frontend and backend.
+
 More detail: [README.md](./README.md).
 
 ## Fork and branch naming
