@@ -310,7 +310,7 @@ async function init(): Promise<void> {
   const result = await readActiveTab()
   switch (result.status) {
     case "unsupported":
-      showStatus(`${result.hostname} isn't a supported events site yet. Supported: Meetup.`, "warn")
+      showStatus(`${result.hostname} isn't a supported events site yet. Supported: Meetup, Bevy (GDG, CNCF).`, "warn")
       return
     case "not-event":
       els.siteBadge.textContent = result.strategy.label

@@ -84,6 +84,49 @@ export function canonicalEventUrl(href: string): string {
   }
 }
 
+const PARAGRAPH_TAGS = new Set(["P", "DIV", "H1", "H2", "H3", "H4", "H5", "H6", "BLOCKQUOTE", "PRE", "UL", "OL", "TABLE"])
+
+/** Rich-text HTML to plain text with paragraph and list breaks. Parsed inertly, so no scripts or images load. */
+export function htmlToText(html: string): string {
+  if (!/<[a-z][\s\S]*>/i.test(html)) return html.trim()
+  const body = new DOMParser().parseFromString(html, "text/html").body
+  const lines: string[] = [""]
+  let listDepth = 0
+  const breakLine = (blank: boolean): void => {
+    if (lines[lines.length - 1]!.trim() !== "") lines.push("")
+    if (blank && lines.length > 1 && lines[lines.length - 2]!.trim() !== "") lines.push("")
+  }
+  const walk = (node: Node): void => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const text = (node.textContent ?? "").replace(/[\s\u200b]+/g, " ")
+      const last = lines.length - 1
+      lines[last] = lines[last] === "" || lines[last]!.endsWith("- ") ? lines[last] + text.trimStart() : lines[last] + text
+      return
+    }
+    if (!(node instanceof Element)) return
+    const tag = node.tagName
+    if (tag === "BR") return breakLine(false)
+    if (tag === "LI") {
+      breakLine(false)
+      lines[lines.length - 1] = `${"  ".repeat(Math.max(0, listDepth - 1))}- `
+      for (const child of node.childNodes) walk(child)
+      return breakLine(false)
+    }
+    const paragraph = PARAGRAPH_TAGS.has(tag) && listDepth === 0
+    if (tag === "UL" || tag === "OL") listDepth++
+    if (paragraph) breakLine(true)
+    for (const child of node.childNodes) walk(child)
+    if (tag === "UL" || tag === "OL") listDepth--
+    if (paragraph) breakLine(true)
+  }
+  walk(body)
+  return lines
+    .map((line) => line.trimEnd())
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim()
+}
+
 export function isValidDate(value: string): boolean {
   return !!value && !Number.isNaN(Date.parse(value))
 }
