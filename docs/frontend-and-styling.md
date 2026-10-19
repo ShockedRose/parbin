@@ -74,6 +74,7 @@ Prettier includes **prettier-plugin-tailwindcss** for class sorting.
 | `VITE_API_URL` | `http://localhost:8080` | Backend base URL for `lib/api.ts` |
 | `VITE_POSTHOG_PROJECT_TOKEN` | _(empty)_ | PostHog project token; omit locally to disable analytics |
 | `VITE_POSTHOG_HOST` | `https://us.i.posthog.com` | PostHog ingestion host |
+| `VITE_HTTPS` | `true` | Set to `false` to serve the dev server over HTTP (no mkcert CA/sudo). The E2E harness uses HTTP. |
 
 Copy `frontend/.env.example` to `frontend/.env` when overriding.
 

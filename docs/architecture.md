@@ -25,7 +25,9 @@ flowchart LR
 ```
 parbin/
 ├── .github/workflows/    # event-scraper.yml: manual Actions run
-├── package.json          # Root scripts: dev:all, db:up, db:seed, prepare:*
+├── package.json          # Root scripts: dev:all, db:up, db:seed, test:e2e, prepare:*
+├── playwright.config.ts  # E2E harness (auto-starts the frontend Vite dev server)
+├── e2e/                  # Playwright end-to-end specs
 ├── pnpm-lock.yaml
 ├── README.md
 ├── CONTRIBUTING.md
@@ -95,6 +97,10 @@ parbin/
 | `components/ui/*` | shadcn/Radix primitives (buttons, dialogs, etc.). |
 | `components/tanstack-charts.tsx` | TanStack Charts bars for events-by-tag and events-by-month on the admin dashboard. |
 | `pages/*` | Screen-level composition for each route. |
+
+## End-to-end tests
+
+Playwright specs live in `e2e/` at the repo root with `playwright.config.ts`. The config boots a dedicated Vite dev server from `frontend/` (HTTP, port 5199) and drives it in Chromium. Run with `pnpm test:e2e`.
 
 ## Data model (PostgreSQL)
 
