@@ -70,6 +70,7 @@ Closes #123
 ## Code style
 
 - **Frontend**: ESLint + Prettier (`pnpm --dir frontend lint`, `pnpm format:frontend`).
+- **E2E**: Playwright (`pnpm test:e2e`, after a one-time `pnpm playwright:install`). Specs live in `e2e/`.
 - **Backend**: Standard Go formatting (`gofmt` / your editor’s Go format).
 - Root Prettier config: `.prettierrc`.
 

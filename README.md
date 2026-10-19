@@ -54,6 +54,9 @@ pnpm db:up
 | `VITE_API_URL` | No | `http://localhost:8080` | Base URL used by the frontend when calling the backend API. |
 | `VITE_POSTHOG_PROJECT_TOKEN` | No | None | PostHog project token. When unset, analytics is disabled. |
 | `VITE_POSTHOG_HOST` | No | `https://us.i.posthog.com` | PostHog API host (`https://eu.i.posthog.com` for EU cloud). |
+| `VITE_HTTPS` | No | `true` | Set to `false` to serve the Vite dev server over plain HTTP. HTTPS uses a locally generated mkcert certificate whose CA install needs sudo; the E2E suite sets this to `false`. |
+| `E2E_BASE_URL` | No | `http://localhost:5199` | Base URL used by the Playwright E2E suite. Point it at an already-running app to skip the auto-started dev server. |
+| `E2E_HTTPS` | No | `false` | When `true`, the E2E harness targets an `https://` app and boots the dev server over HTTPS. |
 
 ### Backend
 
@@ -159,6 +162,18 @@ Build the browser extension into `extension/dist/`, then load that folder as an 
 pnpm prepare:extension
 pnpm extension:build
 ```
+
+### 6. Run the end-to-end tests
+
+Playwright E2E tests live in `e2e/` at the repo root and are configured by `playwright.config.ts`. The config starts a dedicated Vite dev server on `http://localhost:5199` (separate from `pnpm dev:frontend` on 5173) and drives the specs in Chromium. That avoids needing to trust the dev server's self-signed HTTPS certificate; set `E2E_HTTPS=true` to target HTTPS instead. Some specs read real event data, so start the database and backend (`pnpm db:up`, `pnpm db:seed`, `pnpm dev:backend`) when they need it.
+
+```bash
+pnpm playwright:install   # one-time: download the Chromium browser
+pnpm test:e2e             # run the suite headless
+pnpm test:e2e:ui          # run in Playwright's interactive UI mode
+```
+
+Set `E2E_BASE_URL` to point the suite at an already-running app instead of the auto-started dev server.
 
 ## Notes
 

@@ -30,6 +30,7 @@ Keep **CONTRIBUTING.md** accurate if contribution or review steps change.
 - Backend: `cd backend && go build ./...` (or `go test ./...` when tests exist).
 - Event scraper: `pnpm scraper:run` (after `pnpm prepare:scraper` and `pnpm --dir jobs/event-scraper run install:browsers` locally).
 - Browser extension: `pnpm typecheck:extension`, `pnpm extension:build` (after `pnpm prepare:extension`). Load `extension/dist/` unpacked. New event sites are strategies in `extension/src/content/strategies/`.
+- End-to-end: `pnpm test:e2e` (Playwright, auto-starts the Vite dev server; `pnpm playwright:install` once to fetch Chromium). Specs live in `e2e/`.
 
 ## Conventions
 

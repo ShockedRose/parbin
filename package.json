@@ -25,9 +25,14 @@
     "scraper:run": "pnpm --dir jobs/event-scraper start",
     "extension:build": "pnpm --dir extension build",
     "extension:watch": "pnpm --dir extension watch",
-    "typecheck:extension": "pnpm --dir extension typecheck"
+    "typecheck:extension": "pnpm --dir extension typecheck",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report",
+    "playwright:install": "playwright install chromium"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "concurrently": "^9.2.1"
   }
 }
