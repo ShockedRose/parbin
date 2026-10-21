@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils"
 import { Menu, Plus } from "lucide-react"
 
 type NavigationItem = {
-  to: "/" | "/suggest" | "/admin" | "/admin/dashboard"
+  to: "/" | "/past-events" | "/suggest" | "/admin" | "/admin/dashboard"
   label: string
   description: string
   adminOnly?: boolean
@@ -24,6 +24,11 @@ const navigationItems: NavigationItem[] = [
     to: "/",
     label: "Upcoming",
     description: "Events and the monthly calendar",
+  },
+  {
+    to: "/past-events",
+    label: "Past events",
+    description: "Events that already took place",
   },
   {
     to: "/admin",

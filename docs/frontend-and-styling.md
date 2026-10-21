@@ -40,7 +40,7 @@ Dark mode variant: `@custom-variant dark (&:is(.dark *));`. The app ships a sing
 - Prefer **semantic tokens** (`bg-card`, `text-muted-foreground`, `border-border`, `text-primary`) over hard-coded hex values so the theme stays consistent.
 - Use **`font-serif`** (Literata) for page and card headings; body defaults to **Schibsted Grotesk** via `font-sans`.
 - Start route screens with `PageHeader` (serif title, description, actions slot) and use `StatePanel` for loading / empty / error states so pages stay in sync.
-- Event lists use `EventCard` in a `grid-cols-1 md:grid-cols-2 lg:grid-cols-3` grid; tags use the `tag` badge variant.
+- Event lists use `EventCard` in a `grid-cols-1 md:grid-cols-2 lg:grid-cols-3` grid; tags use the `tag` badge variant. The past-events page uses a compact flat list instead: each row shows the title, up to three tags, and a `+N` badge for the rest.
 - New primitives should go under `src/components/ui/` following existing shadcn patterns; run shadcn CLI aligned with `components.json` if adding official blocks.
 
 ## UI folder structure
