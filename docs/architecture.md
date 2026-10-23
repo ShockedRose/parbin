@@ -93,7 +93,8 @@ parbin/
 | `docs/history/` | Archived static design candidates; #04 Calm Calendar is the shipped direction. |
 | `hooks/use-event-manager.ts` | Central client state: admin session, events, mutations, talks to `lib/api.ts`. |
 | `lib/api.ts` | `fetch` wrapper with `credentials: "include"`, base URL `VITE_API_URL`, typed API functions. |
-| `lib/posthog.ts` / `lib/analytics.ts` | Optional PostHog init + product event helpers; no-ops when token unset. |
+| `lib/env.ts` | Shared environment flags (`isProduction`) used to gate third-party integrations. |
+| `lib/posthog.ts` / `lib/analytics.ts` | Optional PostHog init + product event helpers; enabled only in production with a token. |
 | `components/ui/*` | shadcn/Radix primitives (buttons, dialogs, etc.). |
 | `components/tanstack-charts.tsx` | TanStack Charts bars for events-by-tag and events-by-month on the admin dashboard. |
 | `pages/*` | Screen-level composition for each route. |

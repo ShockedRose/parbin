@@ -1,10 +1,16 @@
 import posthog from "posthog-js"
 
+import { isProduction } from "@/lib/env"
+
 const token = import.meta.env.VITE_POSTHOG_PROJECT_TOKEN?.trim()
 const host =
   import.meta.env.VITE_POSTHOG_HOST?.trim() || "https://us.i.posthog.com"
 
-export const isPostHogEnabled = Boolean(token)
+/**
+ * PostHog runs only in production builds with a configured project token.
+ * Local development and preview environments stay untracked.
+ */
+export const isPostHogEnabled = isProduction && Boolean(token)
 
 if (isPostHogEnabled && token) {
   posthog.init(token, {

@@ -53,7 +53,8 @@ Dark mode variant: `@custom-variant dark (&:is(.dark *));`. The app ships a sing
 | `src/hooks/` | e.g. `use-event-manager.ts` — session, queries, mutations |
 | `src/lib/utils.ts` | `cn()` helper (clsx + tailwind-merge) |
 | `src/lib/event-days.ts` | `toDayKey` / `getEventDayKeys` — maps events to local calendar days |
-| `src/lib/posthog.ts` / `analytics.ts` | PostHog init (optional) and typed product-event helpers |
+| `src/lib/env.ts` | Shared environment flags (`isProduction`) gating third-party integrations |
+| `src/lib/posthog.ts` / `analytics.ts` | PostHog init (production only) and typed product-event helpers |
 
 Global event/admin state is provided via **`EventManagerContext`** from `event-manager-context.ts`, populated by `useEventManager()`.
 
@@ -72,7 +73,8 @@ Prettier includes **prettier-plugin-tailwindcss** for class sorting.
 | Variable | Default | Purpose |
 | -------- | ------- | ------- |
 | `VITE_API_URL` | `http://localhost:8080` | Backend base URL for `lib/api.ts` |
-| `VITE_POSTHOG_PROJECT_TOKEN` | _(empty)_ | PostHog project token; omit locally to disable analytics |
+| `VITE_IS_PRODUCTION` | `false` | Shared production flag; gates third-party integrations such as PostHog |
+| `VITE_POSTHOG_PROJECT_TOKEN` | _(empty)_ | PostHog project token; analytics stays off while empty |
 | `VITE_POSTHOG_HOST` | `https://us.i.posthog.com` | PostHog ingestion host |
 | `VITE_HTTPS` | `true` | Set to `false` to serve the dev server over HTTP (no mkcert CA/sudo). The E2E harness uses HTTP. |
 

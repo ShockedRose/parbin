@@ -52,7 +52,8 @@ pnpm db:up
 | Variable | Required | Default | Description |
 | --- | --- | --- | --- |
 | `VITE_API_URL` | No | `http://localhost:8080` | Base URL used by the frontend when calling the backend API. |
-| `VITE_POSTHOG_PROJECT_TOKEN` | No | None | PostHog project token. When unset, analytics is disabled. |
+| `VITE_IS_PRODUCTION` | No | `false` | Shared production flag for third-party integrations. Set to `true` in production; leave `false` locally so analytics and similar SDKs stay disabled. |
+| `VITE_POSTHOG_PROJECT_TOKEN` | No | None | PostHog project token. Analytics stays disabled while this is unset, even if `VITE_IS_PRODUCTION=true`. |
 | `VITE_POSTHOG_HOST` | No | `https://us.i.posthog.com` | PostHog API host (`https://eu.i.posthog.com` for EU cloud). |
 | `VITE_HTTPS` | No | `true` | Set to `false` to serve the Vite dev server over plain HTTP. HTTPS uses a locally generated mkcert certificate whose CA install needs sudo; the E2E suite sets this to `false`. |
 | `E2E_BASE_URL` | No | `http://localhost:5199` | Base URL used by the Playwright E2E suite. Point it at an already-running app to skip the auto-started dev server. |
@@ -126,17 +127,18 @@ Install frontend dependencies from the repo root:
 pnpm prepare:frontend
 ```
 
-Create `frontend/.env` from `frontend/.env.example` if you need to override the backend URL or enable PostHog analytics.
+Create `frontend/.env` from `frontend/.env.example` if you need to override the backend URL or configure production-only integrations such as PostHog.
 
 Default frontend env:
 
 ```bash
 VITE_API_URL=http://localhost:8080
+VITE_IS_PRODUCTION=false
 VITE_POSTHOG_PROJECT_TOKEN=
 VITE_POSTHOG_HOST=https://us.i.posthog.com
 ```
 
-PostHog tracks pageviews and product events (suggestions, calendar actions, admin auth/moderation) when `VITE_POSTHOG_PROJECT_TOKEN` is set.
+`VITE_IS_PRODUCTION` is the shared gate for third-party integrations. PostHog tracks pageviews and product events (suggestions, calendar actions, admin auth/moderation) only when `VITE_IS_PRODUCTION=true` **and** `VITE_POSTHOG_PROJECT_TOKEN` is set. Local development keeps it disabled.
 
 ### 5. Run the frontend
 

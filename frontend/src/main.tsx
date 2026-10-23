@@ -6,7 +6,7 @@ import { createRoot } from "react-dom/client"
 import "./index.css"
 import App from "./App.tsx"
 import { ThemeProvider } from "@/components/theme-provider.tsx"
-import { posthog } from "@/lib/posthog"
+import { isPostHogEnabled, posthog } from "@/lib/posthog"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -17,14 +17,20 @@ const queryClient = new QueryClient({
   },
 })
 
+const app = (
+  <QueryClientProvider client={queryClient}>
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
+  </QueryClientProvider>
+)
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <PostHogProvider client={posthog}>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <App />
-        </ThemeProvider>
-      </QueryClientProvider>
-    </PostHogProvider>
+    {isPostHogEnabled ? (
+      <PostHogProvider client={posthog}>{app}</PostHogProvider>
+    ) : (
+      app
+    )}
   </StrictMode>
 )
