@@ -46,6 +46,7 @@ parbin/
 │       ├── components/   # Feature + ui/ (shadcn)
 │       ├── pages/        # Route-level screens
 │       ├── hooks/        # e.g. use-event-manager
+│       ├── i18n/         # i18next setup + es/en locale resources
 │       ├── lib/          # api.ts, utils, calendar helpers
 │       └── types/        # Shared TS types (events, admin, dashboard)
 ├── jobs/
@@ -92,6 +93,7 @@ parbin/
 | `main-page.tsx` | Layout shell: `.parbin-backdrop`, `AppHeader`, `Outlet`, `AppFooter`, global banners. |
 | `docs/history/` | Archived static design candidates; #04 Calm Calendar is the shipped direction. |
 | `hooks/use-event-manager.ts` | Central client state: admin session, events, mutations, talks to `lib/api.ts`. |
+| `i18n/` | i18next + react-i18next resources (Spanish default, English alternate); database-backed event content is not translated. |
 | `lib/api.ts` | `fetch` wrapper with `credentials: "include"`, base URL `VITE_API_URL`, typed API functions. |
 | `lib/env.ts` | Shared environment flags (`isProduction`) used to gate third-party integrations. |
 | `lib/posthog.ts` / `lib/analytics.ts` | Optional PostHog init + product event helpers; enabled only in production with a token. |

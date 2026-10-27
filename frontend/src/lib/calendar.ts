@@ -1,4 +1,5 @@
 import { AnalyticsEvent, trackEvent } from "@/lib/analytics"
+import { getIntlLocale } from "@/lib/i18n-date"
 import type { MeetupEvent } from "@/types/event"
 
 function toICSDate(dateStr: string): string {
@@ -63,7 +64,7 @@ export function downloadICS(event: MeetupEvent): void {
 }
 
 export function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString("en-US", {
+  return new Date(dateStr).toLocaleDateString(getIntlLocale(), {
     weekday: "short",
     month: "short",
     day: "numeric",
@@ -72,7 +73,7 @@ export function formatDate(dateStr: string): string {
 }
 
 export function formatTime(dateStr: string): string {
-  return new Date(dateStr).toLocaleTimeString("en-US", {
+  return new Date(dateStr).toLocaleTimeString(getIntlLocale(), {
     hour: "numeric",
     minute: "2-digit",
     hour12: true,

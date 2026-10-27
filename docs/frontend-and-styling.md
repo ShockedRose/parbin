@@ -10,6 +10,7 @@ The UI is a **React 19** single-page app built with **Vite 7**, **TypeScript**, 
 | Routing | TanStack Router (`src/router.tsx`), `defaultPreload: "intent"` |
 | Server state / caching | TanStack Query (`@tanstack/react-query`) |
 | HTTP | Native `fetch` in `src/lib/api.ts` with `credentials: "include"` for cookies |
+| Internationalization | `i18next` + `react-i18next` (`src/i18n/`), Spanish default, English alternate |
 | Analytics | PostHog (`posthog-js` + `@posthog/react`) via `src/lib/posthog.ts` |
 | Styling | **Tailwind CSS v4** via `@tailwindcss/vite` |
 | Component primitives | **shadcn/ui** (style `radix-nova`), **Radix UI**, **lucide-react** icons |
@@ -20,6 +21,18 @@ The UI is a **React 19** single-page app built with **Vite 7**, **TypeScript**, 
 | Local HTTPS (dev) | `vite-plugin-mkcert` in `vite.config.ts` |
 
 Path alias: `@/` → `frontend/src/` (see `vite.config.ts` and `tsconfig`).
+
+## Internationalization
+
+The UI ships in **Spanish (default)** and **English** via `i18next` + `react-i18next`:
+
+- `src/i18n/index.ts` initializes i18next, reads the saved locale from `localStorage` (`parbin.language`), falls back to `es`, and updates `<html lang>` when the language changes.
+- `src/i18n/locales/es.ts` and `en.ts` hold every UI string. Add new copy to both files and reference it with `useTranslation()` / `t("key")`.
+- `LanguageProvider` (`src/components/language-provider.tsx`) syncs `document.title`; `LanguageSwitcher` (`src/components/language-switcher.tsx`) is the shadcn `DropdownMenu` + `DropdownMenuRadioGroup` picker in the header. Switching updates the UI immediately without a reload.
+- Dates and chart month labels follow the active locale through `src/lib/i18n-date.ts` (`date-fns` locale + `Intl` locale).
+- Event, tag, and other database-backed content is displayed exactly as stored; translations only cover UI chrome. Event-derived dashboard labels (`Pending`, `Sourced`, weekday names, etc.) are mapped to translations at render time.
+
+To add a language: add a locale file, register it in `src/i18n/index.ts`, and extend `SUPPORTED_LANGUAGES` plus the switcher options.
 
 ## Global styles and design tokens
 
@@ -48,10 +61,12 @@ Dark mode variant: `@custom-variant dark (&:is(.dark *));`. The app ships a sing
 | Path | Contents |
 | ---- | -------- |
 | `src/components/ui/` | Reusable primitives: button, card, dialog, select, tabs, etc. |
-| `src/components/` | App chrome and features: `app-header`, `app-footer`, `page-header`, `state-panel`, `event-card`, `event-calendar` (sliding/swipeable month calendar shown below the upcoming feed), `event-form-panel`, `tag-input`, `status-banner`, … |
+| `src/components/` | App chrome and features: `app-header`, `app-footer`, `page-header`, `state-panel`, `event-card`, `event-calendar` (sliding/swipeable month calendar shown below the upcoming feed), `event-form-panel`, `tag-input`, `status-banner`, `language-switcher`, … |
 | `src/pages/` | Route screens: `events-page`, `event-details-page`, `suggest-page`, `admin-page`, `admin-dashboard-page`, `past-events-page` |
+| `src/i18n/` | i18next setup and `locales/es.ts` / `locales/en.ts` translation resources |
 | `src/hooks/` | e.g. `use-event-manager.ts` — session, queries, mutations |
 | `src/lib/utils.ts` | `cn()` helper (clsx + tailwind-merge) |
+| `src/lib/i18n-date.ts` | Locale-aware `date-fns` / `Intl` helpers for dates and chart labels |
 | `src/lib/event-days.ts` | `toDayKey` / `getEventDayKeys` — maps events to local calendar days |
 | `src/lib/env.ts` | Shared environment flags (`isProduction`) gating third-party integrations |
 | `src/lib/posthog.ts` / `analytics.ts` | PostHog init (production only) and typed product-event helpers |

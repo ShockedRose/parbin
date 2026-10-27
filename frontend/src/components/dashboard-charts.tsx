@@ -1,5 +1,7 @@
 import { format } from "date-fns"
+import type { TFunction } from "i18next"
 import type { ReactNode } from "react"
+import { useTranslation } from "react-i18next"
 import {
   Bar,
   BarChart,
@@ -17,6 +19,7 @@ import {
   EventsByMonthChart,
   EventsByTagChart,
 } from "@/components/tanstack-charts"
+import { getDateFnsLocale } from "@/lib/i18n-date"
 import { cn } from "@/lib/utils"
 import type { AdminDashboard, LabeledCount } from "@/types/dashboard"
 
@@ -30,6 +33,22 @@ const SOURCE_COLORS: Record<string, string> = {
   Sourced: "var(--primary)",
   Manual: "var(--chart-2)",
   Community: "var(--chart-2)",
+}
+
+const DATA_LABEL_KEYS: Record<string, string> = {
+  Pending: "status.pending",
+  Approved: "status.approved",
+  Rejected: "status.rejected",
+  Sourced: "charts.sourced",
+  Manual: "charts.manual",
+  Community: "charts.community",
+  Sun: "weekdays.sun",
+  Mon: "weekdays.mon",
+  Tue: "weekdays.tue",
+  Wed: "weekdays.wed",
+  Thu: "weekdays.thu",
+  Fri: "weekdays.fri",
+  Sat: "weekdays.sat",
 }
 
 const CHART_MARGIN = { top: 8, right: 8, left: 4, bottom: 4 }
@@ -90,7 +109,10 @@ function ChartCard({
 }) {
   return (
     <section
-      className={cn("rounded-2xl border border-border bg-card p-5 sm:p-6", className)}
+      className={cn(
+        "rounded-2xl border border-border bg-card p-5 sm:p-6",
+        className
+      )}
     >
       <div className="mb-4">
         <div className="text-xs font-semibold text-primary">{eyebrow}</div>
@@ -102,10 +124,12 @@ function ChartCard({
   )
 }
 
-function EmptyChart({ label = "No data yet" }: { label?: string }) {
+function EmptyChart({ label }: { label?: string }) {
+  const { t } = useTranslation()
+
   return (
     <div className="flex h-[260px] items-center justify-center rounded-xl border border-dashed border-border text-sm text-muted-foreground">
-      {label}
+      {label ?? t("charts.noData")}
     </div>
   )
 }
@@ -114,12 +138,39 @@ function hasCounts(items: LabeledCount[]) {
   return items.some((item) => item.count > 0)
 }
 
-function formatMonthLabel(month: string) {
+function formatMonthLabel(
+  month: string,
+  locale: ReturnType<typeof getDateFnsLocale>
+) {
   const [year, monthIndex] = month.split("-").map(Number)
   if (!year || !monthIndex) {
     return month
   }
-  return format(new Date(year, monthIndex - 1, 1), "MMM yy")
+  return format(new Date(year, monthIndex - 1, 1), "MMM yy", { locale })
+}
+
+function localizeCounts(
+  items: LabeledCount[],
+  translate: TFunction,
+  colors?: Record<string, string>
+) {
+  const data = items.map((item) => {
+    const key = DATA_LABEL_KEYS[item.label]
+    return {
+      ...item,
+      label: key ? translate(key) : item.label,
+    }
+  })
+
+  const localizedColors: Record<string, string> = {}
+  if (colors) {
+    data.forEach((item, index) => {
+      localizedColors[item.label] =
+        colors[items[index].label] ?? "var(--primary)"
+    })
+  }
+
+  return { data, colors: localizedColors }
 }
 
 function MixLegend({
@@ -187,6 +238,8 @@ function DonutChart({
 }
 
 function HorizontalBars({ data }: { data: LabeledCount[] }) {
+  const { t } = useTranslation()
+
   if (!hasCounts(data)) {
     return <EmptyChart />
   }
@@ -224,7 +277,7 @@ function HorizontalBars({ data }: { data: LabeledCount[] }) {
           />
           <Bar
             dataKey="count"
-            name="Events"
+            name={t("charts.events")}
             fill="var(--primary)"
             radius={[0, 4, 4, 0]}
             maxBarSize={18}
@@ -236,43 +289,58 @@ function HorizontalBars({ data }: { data: LabeledCount[] }) {
 }
 
 export function DashboardCharts({ data }: { data: AdminDashboard }) {
+  const { t } = useTranslation()
+  const dateLocale = getDateFnsLocale()
   const suggestionsByMonth = data.suggestionsByMonth.map((row) => ({
     ...row,
-    label: formatMonthLabel(row.month),
+    label: formatMonthLabel(row.month, dateLocale),
   }))
+  const statusMix = localizeCounts(data.suggestionStatusMix, t, STATUS_COLORS)
+  const eventSourceMix = localizeCounts(data.eventSourceMix, t, SOURCE_COLORS)
+  const suggestionSourceMix = localizeCounts(
+    data.suggestionSourceMix,
+    t,
+    SOURCE_COLORS
+  )
+  const weekdayMix = localizeCounts(data.eventsByWeekday, t)
 
   return (
     <div className="grid gap-6">
       <div className="grid gap-6 xl:grid-cols-2">
         <ChartCard
-          eyebrow="Moderation"
-          title="Suggestion status"
-          description="Pending queue versus approved and rejected proposals."
+          eyebrow={t("charts.moderation")}
+          title={t("charts.suggestionStatus")}
+          description={t("charts.suggestionStatusDescription")}
         >
-          <DonutChart data={data.suggestionStatusMix} colors={STATUS_COLORS} />
+          <DonutChart data={statusMix.data} colors={statusMix.colors} />
         </ChartCard>
 
         <ChartCard
-          eyebrow="Sources"
-          title="Catalog source mix"
-          description="Published events with an external source URL versus manually entered ones."
+          eyebrow={t("charts.sources")}
+          title={t("charts.catalogSourceMix")}
+          description={t("charts.catalogSourceMixDescription")}
         >
-          <DonutChart data={data.eventSourceMix} colors={SOURCE_COLORS} />
+          <DonutChart
+            data={eventSourceMix.data}
+            colors={eventSourceMix.colors}
+          />
         </ChartCard>
       </div>
 
       <ChartCard
-        eyebrow="Calendar"
-        title="Events by start month"
-        description={`Meetup volume over the last 12 months in ${data.timezone}.`}
+        eyebrow={t("charts.calendar")}
+        title={t("charts.eventsByMonth")}
+        description={t("charts.eventsByMonthDescription", {
+          timezone: data.timezone,
+        })}
       >
         <EventsByMonthChart rows={data.eventsByMonth} />
       </ChartCard>
 
       <ChartCard
-        eyebrow="Review"
-        title="Suggestions submitted"
-        description="Monthly intake from the public form and scraper, stacked by review outcome."
+        eyebrow={t("charts.review")}
+        title={t("charts.suggestionsSubmitted")}
+        description={t("charts.suggestionsSubmittedDescription")}
       >
         <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
@@ -301,21 +369,21 @@ export function DashboardCharts({ data }: { data: AdminDashboard }) {
               />
               <Bar
                 dataKey="pending"
-                name="Pending"
+                name={t("status.pending")}
                 stackId="status"
                 fill={STATUS_COLORS.Pending}
                 maxBarSize={28}
               />
               <Bar
                 dataKey="approved"
-                name="Approved"
+                name={t("status.approved")}
                 stackId="status"
                 fill={STATUS_COLORS.Approved}
                 maxBarSize={28}
               />
               <Bar
                 dataKey="rejected"
-                name="Rejected"
+                name={t("status.rejected")}
                 stackId="status"
                 fill={STATUS_COLORS.Rejected}
                 radius={[4, 4, 0, 0]}
@@ -324,22 +392,22 @@ export function DashboardCharts({ data }: { data: AdminDashboard }) {
             </BarChart>
           </ResponsiveContainer>
         </div>
-        <MixLegend items={data.suggestionStatusMix} colors={STATUS_COLORS} />
+        <MixLegend items={statusMix.data} colors={statusMix.colors} />
       </ChartCard>
 
       <div className="grid gap-6 xl:grid-cols-2">
         <ChartCard
-          eyebrow="Topics"
-          title="Events by tag"
-          description="Most common tags on published meetups."
+          eyebrow={t("charts.topics")}
+          title={t("charts.eventsByTag")}
+          description={t("charts.eventsByTagDescription")}
         >
           <EventsByTagChart rows={data.topTags} />
         </ChartCard>
 
         <ChartCard
-          eyebrow="Places"
-          title="Top locations"
-          description="Where Panama tech meetups are listed as happening."
+          eyebrow={t("charts.places")}
+          title={t("charts.topLocations")}
+          description={t("charts.topLocationsDescription")}
         >
           <HorizontalBars data={data.topLocations} />
         </ChartCard>
@@ -347,13 +415,13 @@ export function DashboardCharts({ data }: { data: AdminDashboard }) {
 
       <div className="grid gap-6 xl:grid-cols-2">
         <ChartCard
-          eyebrow="Schedule"
-          title="Start weekday"
-          description="Which days of the week published events typically begin."
+          eyebrow={t("charts.schedule")}
+          title={t("charts.startWeekday")}
+          description={t("charts.startWeekdayDescription")}
         >
           <div className="h-[260px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data.eventsByWeekday} margin={CHART_MARGIN}>
+              <BarChart data={weekdayMix.data} margin={CHART_MARGIN}>
                 <CartesianGrid
                   stroke="var(--border)"
                   strokeDasharray="3 3"
@@ -378,7 +446,7 @@ export function DashboardCharts({ data }: { data: AdminDashboard }) {
                 />
                 <Bar
                   dataKey="count"
-                  name="Events"
+                  name={t("charts.events")}
                   fill="var(--primary)"
                   radius={[4, 4, 0, 0]}
                   maxBarSize={28}
@@ -389,11 +457,14 @@ export function DashboardCharts({ data }: { data: AdminDashboard }) {
         </ChartCard>
 
         <ChartCard
-          eyebrow="Sources"
-          title="Suggestion source mix"
-          description="Proposals with a source event page (scraper or pasted URL) versus community-only submissions."
+          eyebrow={t("charts.sources")}
+          title={t("charts.suggestionSourceMix")}
+          description={t("charts.suggestionSourceMixDescription")}
         >
-          <DonutChart data={data.suggestionSourceMix} colors={SOURCE_COLORS} />
+          <DonutChart
+            data={suggestionSourceMix.data}
+            colors={suggestionSourceMix.colors}
+          />
         </ChartCard>
       </div>
     </div>

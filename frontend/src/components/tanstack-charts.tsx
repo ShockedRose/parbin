@@ -5,7 +5,9 @@ import { scaleLinear } from "@tanstack/charts/scales/linear"
 import { tooltip } from "@tanstack/charts/tooltip"
 import { format } from "date-fns"
 import { useMemo } from "react"
+import { useTranslation } from "react-i18next"
 
+import { getDateFnsLocale } from "@/lib/i18n-date"
 import type { LabeledCount, MonthCount } from "@/types/dashboard"
 
 const CHART_FILL = "var(--primary)"
@@ -16,12 +18,15 @@ const CHART_THEME = {
   background: "transparent",
 } as const
 
-function formatMonthLabel(month: string) {
+function formatMonthLabel(
+  month: string,
+  locale: ReturnType<typeof getDateFnsLocale>
+) {
   const [year, monthIndex] = month.split("-").map(Number)
   if (!year || !monthIndex) {
     return month
   }
-  return format(new Date(year, monthIndex - 1, 1), "MMM yy")
+  return format(new Date(year, monthIndex - 1, 1), "MMM yy", { locale })
 }
 
 function truncateLabel(value: string, max = 16) {
@@ -33,6 +38,8 @@ function integerTick(value: unknown) {
 }
 
 export function EventsByTagChart({ rows }: { rows: LabeledCount[] }) {
+  const { t } = useTranslation()
+  const eventsLabel = t("charts.events")
   const definition = useMemo(() => {
     const maxCount = Math.max(0, ...rows.map((row) => row.count))
 
@@ -51,7 +58,7 @@ export function EventsByTagChart({ rows }: { rows: LabeledCount[] }) {
         nice: true,
         grid: true,
         axis: {
-          label: "Events",
+          label: eventsLabel,
           ticks: { format: integerTick },
         },
       },
@@ -68,12 +75,12 @@ export function EventsByTagChart({ rows }: { rows: LabeledCount[] }) {
         format: (point) => `${point.datum.label}: ${point.datum.count}`,
       },
     })
-  }, [rows])
+  }, [eventsLabel, rows])
 
   if (!rows.some((row) => row.count > 0)) {
     return (
       <div className="flex h-[280px] items-center justify-center rounded-xl border border-dashed border-border text-sm text-muted-foreground">
-        No data yet
+        {t("charts.noData")}
       </div>
     )
   }
@@ -83,19 +90,21 @@ export function EventsByTagChart({ rows }: { rows: LabeledCount[] }) {
       definition={definition}
       height={280}
       className="parbin-ts-chart w-full"
-      ariaLabel="Published events by tag"
+      ariaLabel={t("charts.eventsByTagAria")}
     />
   )
 }
 
 export function EventsByMonthChart({ rows }: { rows: MonthCount[] }) {
+  const { t } = useTranslation()
+  const dateLocale = getDateFnsLocale()
   const data = useMemo(
     () =>
       rows.map((row) => ({
-        label: formatMonthLabel(row.month),
+        label: formatMonthLabel(row.month, dateLocale),
         count: row.count,
       })),
-    [rows]
+    [dateLocale, rows]
   )
 
   const definition = useMemo(() => {
@@ -136,7 +145,7 @@ export function EventsByMonthChart({ rows }: { rows: MonthCount[] }) {
       definition={definition}
       height={280}
       className="parbin-ts-chart w-full"
-      ariaLabel="Published events by start month"
+      ariaLabel={t("charts.eventsByMonthAria")}
     />
   )
 }

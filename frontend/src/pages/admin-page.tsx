@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router"
+import { useTranslation } from "react-i18next"
 
 import { AdminLoginCard } from "@/components/admin-login-card"
 import { EventFormPanel } from "@/components/event-form-panel"
@@ -27,13 +28,14 @@ const STATUS_STYLES: Record<EventSuggestion["status"], string> = {
   rejected: "border-accent/40 bg-accent/10 text-foreground",
 }
 
-const STATUS_LABELS: Record<EventSuggestion["status"], string> = {
-  pending: "Pending",
-  approved: "Approved",
-  rejected: "Rejected",
+const STATUS_LABEL_KEYS: Record<EventSuggestion["status"], string> = {
+  pending: "status.pending",
+  approved: "status.approved",
+  rejected: "status.rejected",
 }
 
 export function AdminPage() {
+  const { t } = useTranslation()
   const mgr = useEventManagerContext()
   const navigate = useNavigate()
 
@@ -48,10 +50,10 @@ export function AdminPage() {
   return (
     <div>
       <PageHeader
-        title="Admin"
+        title={t("pages.admin.title")}
         description={
           mgr.admin
-            ? `Signed in as ${mgr.admin.email}. Create events and review community suggestions.`
+            ? t("pages.admin.signedInDescription", { email: mgr.admin.email })
             : undefined
         }
         actions={
@@ -65,7 +67,7 @@ export function AdminPage() {
               >
                 <Link to="/admin/dashboard">
                   <BarChart3 />
-                  Dashboard
+                  {t("pages.admin.dashboard")}
                 </Link>
               </Button>
               <Button
@@ -78,7 +80,9 @@ export function AdminPage() {
                 disabled={mgr.isAuthenticating}
               >
                 <LogOut />
-                {mgr.isAuthenticating ? "Signing out…" : "Sign out"}
+                {mgr.isAuthenticating
+                  ? t("pages.admin.signingOut")
+                  : t("pages.admin.signOut")}
               </Button>
             </>
           ) : undefined
@@ -90,11 +94,11 @@ export function AdminPage() {
       ) : (
         <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
           <EventFormPanel
-            title="Create an event"
-            description="Published right away to the public feed."
+            title={t("pages.admin.createTitle")}
+            description={t("pages.admin.createDescription")}
             form={mgr.eventForm}
             preview={mgr.eventImagePreview}
-            submitLabel="Publish event"
+            submitLabel={t("pages.admin.publish")}
             submitIcon={<Plus />}
             busy={mgr.isSubmitting}
             disabled={mgr.isSubmitting}
@@ -109,13 +113,13 @@ export function AdminPage() {
             <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
               <div>
                 <h2 className="flex items-center gap-2 font-serif text-xl font-semibold">
-                  Review queue
+                  {t("pages.admin.reviewQueue")}
                   <Badge variant="tag" className="font-sans">
                     {mgr.suggestions.length}
                   </Badge>
                 </h2>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Approving a suggestion turns it into a published event.
+                  {t("pages.admin.reviewDescription")}
                 </p>
               </div>
               <Button
@@ -133,17 +137,17 @@ export function AdminPage() {
                 <RefreshCw
                   className={cn(mgr.isSuggestionsRefreshing && "animate-spin")}
                 />
-                Refresh
+                {t("common.refresh")}
               </Button>
             </div>
 
             {mgr.isSuggestionsLoading ? (
               <div className="rounded-xl border border-border px-4 py-10 text-center text-sm text-muted-foreground">
-                Loading suggestions…
+                {t("pages.admin.loadingSuggestions")}
               </div>
             ) : mgr.suggestions.length === 0 ? (
               <div className="rounded-xl border border-border px-4 py-10 text-center text-sm text-muted-foreground">
-                Nothing to review right now.
+                {t("pages.admin.emptySuggestions")}
               </div>
             ) : (
               <div className="space-y-4">
@@ -171,7 +175,8 @@ export function AdminPage() {
                             </div>
                             <div className="flex items-center gap-1.5">
                               <MapPin className="h-3.5 w-3.5 shrink-0" />
-                              {suggestion.location || "No location provided"}
+                              {suggestion.location ||
+                                t("pages.admin.noLocation")}
                             </div>
                             {suggestion.sourceEventPage ? (
                               <div className="flex min-w-0 items-start gap-1.5">
@@ -193,7 +198,7 @@ export function AdminPage() {
                           variant="outline"
                           className={STATUS_STYLES[suggestion.status]}
                         >
-                          {STATUS_LABELS[suggestion.status]}
+                          {t(STATUS_LABEL_KEYS[suggestion.status])}
                         </Badge>
                       </div>
 
@@ -205,7 +210,8 @@ export function AdminPage() {
                             : undefined
                         }
                       >
-                        {suggestion.description || "No description provided."}
+                        {suggestion.description ||
+                          t("pages.admin.noDescription")}
                       </p>
 
                       {suggestion.tags.length > 0 ? (
@@ -238,7 +244,9 @@ export function AdminPage() {
                           className="rounded-lg px-3"
                         >
                           <Check />
-                          {isBusy ? "Working…" : "Approve"}
+                          {isBusy
+                            ? t("common.working")
+                            : t("pages.admin.approve")}
                         </Button>
                         <Button
                           variant="destructive"
@@ -249,7 +257,7 @@ export function AdminPage() {
                           className="rounded-lg px-3"
                         >
                           <X />
-                          Reject
+                          {t("pages.admin.reject")}
                         </Button>
                       </div>
                     </article>

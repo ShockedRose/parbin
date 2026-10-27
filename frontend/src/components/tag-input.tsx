@@ -8,6 +8,7 @@ import {
   type KeyboardEvent,
 } from "react"
 import { X } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 import { Badge } from "@/components/ui/badge"
 import { listTags } from "@/lib/api"
@@ -39,6 +40,7 @@ export function TagInput({
   allowCreate = false,
   disabled = false,
 }: TagInputProps) {
+  const { t } = useTranslation()
   const listId = useId()
   const rootRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -174,11 +176,7 @@ export function TagInput({
         onClick={() => inputRef.current?.focus()}
       >
         {value.map((tag) => (
-          <Badge
-            key={tag}
-            variant="tag"
-            className="h-6 gap-1 pr-1 text-xs"
-          >
+          <Badge key={tag} variant="tag" className="h-6 gap-1 pr-1 text-xs">
             {tag}
             <button
               type="button"
@@ -187,7 +185,7 @@ export function TagInput({
                 event.stopPropagation()
                 removeTag(tag)
               }}
-              aria-label={`Remove ${tag}`}
+              aria-label={t("tagInput.removeTag", { tag })}
               disabled={disabled}
             >
               <X className="h-3 w-3" />
@@ -208,11 +206,11 @@ export function TagInput({
           placeholder={
             value.length === 0
               ? allowCreate
-                ? "Search or create a tag"
-                : "Search existing tags"
+                ? t("tagInput.searchOrCreate")
+                : t("tagInput.searchExisting")
               : atLimit
                 ? ""
-                : "Add tag"
+                : t("tagInput.addTag")
           }
           className="min-w-[8rem] flex-1 bg-transparent py-0.5 text-sm outline-none placeholder:text-muted-foreground/70 disabled:cursor-not-allowed"
           role="combobox"
@@ -252,22 +250,22 @@ export function TagInput({
               onMouseEnter={() => setActiveIndex(index)}
             >
               {option.type === "create"
-                ? `Create "${option.name}"`
+                ? t("tagInput.create", { name: option.name })
                 : option.name}
             </li>
           ))}
         </ul>
       ) : open && !atLimit && !disabled && normalizeTagName(query) !== "" ? (
         <div className="rounded-xl border border-border bg-popover px-2.5 py-1.5 text-sm text-muted-foreground">
-          No matching tags.
+          {t("tagInput.noMatches")}
         </div>
       ) : null}
 
       <p className="text-xs text-muted-foreground">
         {allowCreate
-          ? `Select up to ${MAX_EVENT_TAGS} tags. New names are created when you save.`
-          : `Select up to ${MAX_EVENT_TAGS} tags from the catalog.`}
-        {atLimit ? " Limit reached." : ""}
+          ? t("tagInput.hintCreate", { count: MAX_EVENT_TAGS })
+          : t("tagInput.hintSelect", { count: MAX_EVENT_TAGS })}
+        {atLimit ? ` ${t("tagInput.limitReached")}` : ""}
       </p>
     </div>
   )

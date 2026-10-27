@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
 import { RefreshCw, Settings } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 import { AdminLoginCard } from "@/components/admin-login-card"
 import { DashboardCharts } from "@/components/dashboard-charts"
@@ -47,6 +48,7 @@ function StatCard({
 }
 
 export function AdminDashboardPage() {
+  const { t } = useTranslation()
   const mgr = useEventManagerContext()
   const dashboardQuery = useQuery({
     queryKey: queryKeys.dashboard,
@@ -57,11 +59,13 @@ export function AdminDashboardPage() {
   return (
     <div>
       <PageHeader
-        title="Dashboard"
+        title={t("dashboard.title")}
         description={
           dashboardQuery.data
-            ? `Catalog and moderation at a glance · ${dashboardQuery.data.timezone}`
-            : "Catalog and moderation at a glance."
+            ? t("dashboard.descriptionWithTimezone", {
+                timezone: dashboardQuery.data.timezone,
+              })
+            : t("dashboard.description")
         }
         actions={
           mgr.admin ? (
@@ -74,7 +78,7 @@ export function AdminDashboardPage() {
               >
                 <Link to="/admin">
                   <Settings />
-                  Admin
+                  {t("dashboard.admin")}
                 </Link>
               </Button>
               <Button
@@ -89,7 +93,7 @@ export function AdminDashboardPage() {
                 <RefreshCw
                   className={cn(dashboardQuery.isFetching && "animate-spin")}
                 />
-                Refresh
+                {t("dashboard.refresh")}
               </Button>
             </>
           ) : undefined
@@ -99,36 +103,46 @@ export function AdminDashboardPage() {
       {!mgr.admin ? (
         <AdminLoginCard />
       ) : dashboardQuery.isPending ? (
-        <StatePanel>Loading dashboard…</StatePanel>
+        <StatePanel>{t("dashboard.loading")}</StatePanel>
       ) : dashboardQuery.isError ? (
-        <StatePanel tone="error">The dashboard is unavailable.</StatePanel>
+        <StatePanel tone="error">{t("dashboard.unavailable")}</StatePanel>
       ) : dashboardQuery.data ? (
         <div className="space-y-6">
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
             <StatCard
-              label="Published events"
+              label={t("dashboard.publishedEvents")}
               value={dashboardQuery.data.summary.totalEvents}
-              hint={`${dashboardQuery.data.summary.upcomingEvents} upcoming · ${dashboardQuery.data.summary.pastEvents} past`}
+              hint={t("dashboard.upcomingPastHint", {
+                upcoming: dashboardQuery.data.summary.upcomingEvents,
+                past: dashboardQuery.data.summary.pastEvents,
+              })}
             />
             <StatCard
-              label="Pending review"
+              label={t("dashboard.pendingReview")}
               value={dashboardQuery.data.summary.pendingSuggestions}
-              hint={`${dashboardQuery.data.summary.totalSuggestions} total suggestions`}
+              hint={t("dashboard.totalSuggestions", {
+                count: dashboardQuery.data.summary.totalSuggestions,
+              })}
             />
             <StatCard
-              label="Approval rate"
+              label={t("dashboard.approvalRate")}
               value={formatPercent(dashboardQuery.data.summary.approvalRate)}
-              hint={`${dashboardQuery.data.summary.approvedSuggestions} approved · ${dashboardQuery.data.summary.rejectedSuggestions} rejected`}
+              hint={t("dashboard.approvedRejected", {
+                approved: dashboardQuery.data.summary.approvedSuggestions,
+                rejected: dashboardQuery.data.summary.rejectedSuggestions,
+              })}
             />
             <StatCard
-              label="Avg. review time"
+              label={t("dashboard.avgReviewTime")}
               value={formatHours(dashboardQuery.data.summary.avgReviewHours)}
-              hint="From suggestion to decision"
+              hint={t("dashboard.fromSuggestionToDecision")}
             />
             <StatCard
-              label="With a source link"
+              label={t("dashboard.withSourceLink")}
               value={dashboardQuery.data.summary.eventsWithSourcePage}
-              hint={`${dashboardQuery.data.summary.eventsWithoutSourcePage} added manually`}
+              hint={t("dashboard.addedManually", {
+                count: dashboardQuery.data.summary.eventsWithoutSourcePage,
+              })}
             />
           </div>
 

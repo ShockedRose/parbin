@@ -1,6 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 
+import { LanguageSwitcher } from "@/components/language-switcher"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -14,39 +16,39 @@ import { Menu, Plus } from "lucide-react"
 
 type NavigationItem = {
   to: "/" | "/past-events" | "/suggest" | "/admin" | "/admin/dashboard"
-  label: string
-  description: string
+  labelKey: string
+  descriptionKey: string
   adminOnly?: boolean
 }
 
 const navigationItems: NavigationItem[] = [
   {
     to: "/",
-    label: "Upcoming",
-    description: "Events and the monthly calendar",
+    labelKey: "nav.upcoming",
+    descriptionKey: "nav.upcomingDescription",
   },
   {
     to: "/past-events",
-    label: "Past events",
-    description: "Events that already took place",
+    labelKey: "nav.pastEvents",
+    descriptionKey: "nav.pastEventsDescription",
   },
   {
     to: "/admin",
-    label: "Admin",
-    description: "Create events and review suggestions",
+    labelKey: "nav.admin",
+    descriptionKey: "nav.adminDescription",
   },
   {
     to: "/admin/dashboard",
-    label: "Dashboard",
-    description: "Catalog and moderation charts",
+    labelKey: "nav.dashboard",
+    descriptionKey: "nav.dashboardDescription",
     adminOnly: true,
   },
 ]
 
 const suggestItem: NavigationItem = {
   to: "/suggest",
-  label: "Suggest an event",
-  description: "Send a meetup for review",
+  labelKey: "nav.suggest",
+  descriptionKey: "nav.suggestDescription",
 }
 
 function useCurrentPathname() {
@@ -56,6 +58,8 @@ function useCurrentPathname() {
 }
 
 function Logo() {
+  const { t } = useTranslation()
+
   return (
     <Link to="/" className="flex items-center gap-3">
       <span
@@ -65,9 +69,11 @@ function Logo() {
         <span className="h-3 w-3 rounded-full bg-accent" />
       </span>
       <span className="leading-tight">
-        <span className="block font-serif text-xl font-semibold">Parbin</span>
-        <span className="block text-xs text-muted-foreground">
-          Tech meetups in Panamá
+        <span className="block font-serif text-xl font-semibold">
+          {t("common.appName")}
+        </span>
+        <span className="hidden text-xs text-muted-foreground sm:block">
+          {t("common.tagline")}
         </span>
       </span>
     </Link>
@@ -75,6 +81,7 @@ function Logo() {
 }
 
 export function AppHeader({ adminEmail }: { adminEmail?: string | null }) {
+  const { t } = useTranslation()
   const pathname = useCurrentPathname()
   const isAdmin = Boolean(adminEmail)
   const navItems = navigationItems.filter((item) => !item.adminOnly || isAdmin)
@@ -100,7 +107,7 @@ export function AppHeader({ adminEmail }: { adminEmail?: string | null }) {
                       : "text-muted-foreground hover:text-foreground"
                   )}
                 >
-                  {item.label}
+                  {t(item.labelKey)}
                   {isActive ? (
                     <span className="absolute inset-x-3 -bottom-[17px] h-0.5 rounded-full bg-accent" />
                   ) : null}
@@ -115,6 +122,7 @@ export function AppHeader({ adminEmail }: { adminEmail?: string | null }) {
                 {adminEmail}
               </span>
             ) : null}
+            <LanguageSwitcher />
             <Button
               asChild
               variant="outline"
@@ -126,29 +134,36 @@ export function AppHeader({ adminEmail }: { adminEmail?: string | null }) {
             >
               <Link to={suggestItem.to}>
                 <Plus />
-                {suggestItem.label}
+                {t(suggestItem.labelKey)}
               </Link>
             </Button>
           </div>
 
-          <Button
-            variant="outline"
-            size="lg"
-            className="rounded-xl px-3 md:hidden"
-            onClick={() => setIsMobileMenuOpen(true)}
-          >
-            <Menu />
-            Menu
-          </Button>
+          <div className="flex items-center gap-2 md:hidden">
+            <LanguageSwitcher />
+            <Button
+              variant="outline"
+              size="lg"
+              className="rounded-xl px-3"
+              onClick={() => setIsMobileMenuOpen(true)}
+            >
+              <Menu />
+              {t("common.menu")}
+            </Button>
+          </div>
         </div>
       </header>
 
       <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
         <SheetContent side="left" className="border-border bg-card p-0">
           <SheetHeader className="border-b border-border px-5 py-4">
-            <SheetTitle className="font-serif text-xl">Parbin</SheetTitle>
+            <SheetTitle className="font-serif text-xl">
+              {t("common.appName")}
+            </SheetTitle>
             <SheetDescription>
-              {adminEmail ? `Signed in as ${adminEmail}` : "Tech meetups in Panamá"}
+              {adminEmail
+                ? t("common.signedInAs", { email: adminEmail })
+                : t("common.tagline")}
             </SheetDescription>
           </SheetHeader>
 
@@ -169,10 +184,10 @@ export function AppHeader({ adminEmail }: { adminEmail?: string | null }) {
                     {isActive ? (
                       <span className="h-1.5 w-1.5 rounded-full bg-accent" />
                     ) : null}
-                    {item.label}
+                    {t(item.labelKey)}
                   </span>
                   <span className="mt-0.5 block text-sm text-muted-foreground">
-                    {item.description}
+                    {t(item.descriptionKey)}
                   </span>
                 </Link>
               )

@@ -7,6 +7,7 @@ import {
   type Dispatch,
   type SetStateAction,
 } from "react"
+import { useTranslation } from "react-i18next"
 
 import {
   approveSuggestion as approveSuggestionRequest,
@@ -74,12 +75,12 @@ function toPayload(form: EventFormFields): EventPayload {
   }
 }
 
-function getErrorMessage(error: unknown): string {
+function getErrorMessage(error: unknown, fallback: string): string {
   if (error instanceof Error) {
     return error.message
   }
 
-  return "Something went wrong."
+  return fallback
 }
 
 async function fetchSession(): Promise<AdminSession | null> {
@@ -94,12 +95,17 @@ async function fetchSession(): Promise<AdminSession | null> {
 }
 
 export function useEventManager() {
+  const { t } = useTranslation()
   const queryClient = useQueryClient()
   const [eventForm, setEventForm] = useState<EventFormFields>(emptyEventForm)
   const [suggestionForm, setSuggestionForm] =
     useState<EventFormFields>(emptyEventForm)
   const [loginForm, setLoginForm] = useState<LoginFormState>(emptyLoginForm)
-  const [notice, setNotice] = useState<string | null>(null)
+  const [noticeKey, setNoticeKey] = useState<string | null>(null)
+  const notice = useMemo(
+    () => (noticeKey ? t(noticeKey) : null),
+    [noticeKey, t]
+  )
 
   const eventsQuery = useQuery({
     queryKey: queryKeys.events,
@@ -137,7 +143,7 @@ export function useEventManager() {
     mutationFn: () => createEventRequest(toPayload(eventForm)),
     onSuccess: (created) => {
       setEventForm(emptyEventForm)
-      setNotice("Event published.")
+      setNoticeKey("notices.eventPublished")
       trackEvent(AnalyticsEvent.EventCreated, {
         event_id: created.id,
         title: created.title,
@@ -153,7 +159,7 @@ export function useEventManager() {
     mutationFn: () => createSuggestionRequest(toPayload(suggestionForm)),
     onSuccess: (created) => {
       setSuggestionForm(emptyEventForm)
-      setNotice("Suggestion submitted for review.")
+      setNoticeKey("notices.suggestionSubmitted")
       trackEvent(AnalyticsEvent.SuggestionSubmitted, {
         suggestion_id: created.id,
         title: created.title,
@@ -166,7 +172,7 @@ export function useEventManager() {
     mutationFn: () => loginRequest(loginForm.email, loginForm.password),
     onSuccess: (nextAdmin) => {
       setLoginForm(emptyLoginForm)
-      setNotice("Signed in.")
+      setNoticeKey("notices.signedIn")
       identifyAdmin(nextAdmin)
       trackEvent(AnalyticsEvent.AdminLoggedIn, { admin_id: nextAdmin.id })
       queryClient.setQueryData(queryKeys.session, nextAdmin)
@@ -178,7 +184,7 @@ export function useEventManager() {
   const logoutMutation = useMutation({
     mutationFn: logoutRequest,
     onSuccess: () => {
-      setNotice("Signed out.")
+      setNoticeKey("notices.signedOut")
       trackEvent(AnalyticsEvent.AdminLoggedOut)
       resetAnalytics()
       queryClient.setQueryData(queryKeys.session, null)
@@ -190,7 +196,7 @@ export function useEventManager() {
   const approveSuggestionMutation = useMutation({
     mutationFn: approveSuggestionRequest,
     onSuccess: (updated) => {
-      setNotice("Suggestion converted into an event.")
+      setNoticeKey("notices.suggestionApproved")
       trackEvent(AnalyticsEvent.SuggestionApproved, {
         suggestion_id: updated.id,
         title: updated.title,
@@ -210,7 +216,7 @@ export function useEventManager() {
   const rejectSuggestionMutation = useMutation({
     mutationFn: rejectSuggestionRequest,
     onSuccess: (updated) => {
-      setNotice("Suggestion rejected.")
+      setNoticeKey("notices.suggestionRejected")
       trackEvent(AnalyticsEvent.SuggestionRejected, {
         suggestion_id: updated.id,
         title: updated.title,
@@ -230,7 +236,7 @@ export function useEventManager() {
     mutationFn: ({ id, payload }: { id: string; payload: EventPayload }) =>
       updateEventRequest(id, payload),
     onSuccess: (updated, { id }) => {
-      setNotice("Event updated.")
+      setNoticeKey("notices.eventUpdated")
       trackEvent(AnalyticsEvent.EventUpdated, {
         event_id: id,
         title: updated.title,
@@ -245,11 +251,11 @@ export function useEventManager() {
   const queryErrorMessage = useMemo(() => {
     for (const q of [eventsQuery, sessionQuery, suggestionsQuery]) {
       if (q.error) {
-        return getErrorMessage(q.error)
+        return getErrorMessage(q.error, t("common.somethingWentWrong"))
       }
     }
     return null
-  }, [eventsQuery, sessionQuery, suggestionsQuery])
+  }, [eventsQuery, sessionQuery, suggestionsQuery, t])
 
   const mutationErrorMessage = useMemo(() => {
     for (const m of [
@@ -262,7 +268,7 @@ export function useEventManager() {
       updateEventMutation,
     ]) {
       if (m.error) {
-        return getErrorMessage(m.error)
+        return getErrorMessage(m.error, t("common.somethingWentWrong"))
       }
     }
     return null
@@ -274,6 +280,7 @@ export function useEventManager() {
     approveSuggestionMutation,
     rejectSuggestionMutation,
     updateEventMutation,
+    t,
   ])
 
   const error = mutationErrorMessage ?? queryErrorMessage
@@ -419,7 +426,7 @@ export function useEventManager() {
     error,
     notice,
     setError,
-    setNotice,
+    setNotice: setNoticeKey,
     isBootstrapping,
     isEventsLoading: eventsQuery.isFetching && eventsQuery.data === undefined,
     isSuggestionsLoading: suggestionsQuery.isLoading,

@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react"
+import { useTranslation } from "react-i18next"
 
 import { EventCalendar } from "@/components/event-calendar"
 import { EventCard } from "@/components/event-card"
@@ -6,22 +7,29 @@ import { StatePanel } from "@/components/state-panel"
 import { Button } from "@/components/ui/button"
 import { useEventManagerContext } from "@/event-manager-context"
 import { getEventDayKeys } from "@/lib/event-days"
+import { getIntlLocale } from "@/lib/i18n-date"
 import { X } from "lucide-react"
 
 function formatDayKey(dayKey: string) {
-  return new Date(`${dayKey}T12:00:00`).toLocaleDateString("en-US", {
+  return new Date(`${dayKey}T12:00:00`).toLocaleDateString(getIntlLocale(), {
     weekday: "long",
     month: "long",
     day: "numeric",
   })
 }
 
+function capitalizeFirst(value: string) {
+  return value.charAt(0).toUpperCase() + value.slice(1)
+}
+
 export function EventsPage() {
+  const { t } = useTranslation()
   const mgr = useEventManagerContext()
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
 
   const eventDays = useMemo(
-    () => new Map(mgr.events.map((event) => [event.id, getEventDayKeys(event)])),
+    () =>
+      new Map(mgr.events.map((event) => [event.id, getEventDayKeys(event)])),
     [mgr.events]
   )
 
@@ -53,11 +61,13 @@ export function EventsPage() {
         <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
           <div>
             <h1 className="font-serif text-2xl font-semibold sm:text-3xl">
-              {selectedDay ? formatDayKey(selectedDay) : "Next Events"}
+              {selectedDay
+                ? capitalizeFirst(formatDayKey(selectedDay))
+                : t("pages.events.nextEvents")}
             </h1>
             {selectedDay ? (
               <p className="mt-1 text-sm text-muted-foreground">
-                Highlighting the events on this day.
+                {t("pages.events.highlightingDay")}
               </p>
             ) : null}
           </div>
@@ -69,17 +79,15 @@ export function EventsPage() {
               onClick={() => setSelectedDay(null)}
             >
               <X />
-              Show all
+              {t("pages.events.showAll")}
             </Button>
           ) : null}
         </div>
 
         {isLoading ? (
-          <StatePanel>Loading events…</StatePanel>
+          <StatePanel>{t("pages.events.loading")}</StatePanel>
         ) : mgr.events.length === 0 ? (
-          <StatePanel>
-            No upcoming events yet. Know of one? Suggest it from the top bar.
-          </StatePanel>
+          <StatePanel>{t("pages.events.empty")}</StatePanel>
         ) : (
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
             {mgr.events.map((event) => (

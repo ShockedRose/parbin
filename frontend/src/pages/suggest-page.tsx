@@ -1,4 +1,5 @@
 import { useNavigate } from "@tanstack/react-router"
+import { useTranslation } from "react-i18next"
 
 import { EventFormPanel } from "@/components/event-form-panel"
 import { PageHeader } from "@/components/page-header"
@@ -6,6 +7,7 @@ import { useEventManagerContext } from "@/event-manager-context"
 import { Send } from "lucide-react"
 
 export function SuggestPage() {
+  const { t } = useTranslation()
   const mgr = useEventManagerContext()
   const navigate = useNavigate()
 
@@ -20,16 +22,16 @@ export function SuggestPage() {
   return (
     <div className="mx-auto max-w-3xl">
       <PageHeader
-        title="Suggest an event"
-        description="Know about a meetup that isn't listed? Send it over. An admin reviews every suggestion before it goes live."
+        title={t("pages.suggest.title")}
+        description={t("pages.suggest.description")}
       />
 
       <EventFormPanel
-        title="Event details"
-        description="Fields marked with * are required."
+        title={t("pages.suggest.formTitle")}
+        description={t("pages.suggest.formDescription")}
         form={mgr.suggestionForm}
         preview={mgr.suggestionImagePreview}
-        submitLabel="Send for review"
+        submitLabel={t("pages.suggest.submit")}
         submitIcon={<Send />}
         busy={mgr.isSubmitting}
         disabled={mgr.isSubmitting}

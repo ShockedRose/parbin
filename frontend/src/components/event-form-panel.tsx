@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { useTranslation } from "react-i18next"
 
 import { TagInput } from "@/components/tag-input"
 import { Button } from "@/components/ui/button"
@@ -37,6 +38,8 @@ export function EventFormPanel({
   onFieldChange,
   onSubmit,
 }: EventFormPanelProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
       <div className="mb-6">
@@ -48,27 +51,27 @@ export function EventFormPanel({
 
       <div className="space-y-5">
         <div className="space-y-2">
-          <Label>Title *</Label>
+          <Label>{t("eventForm.titleLabel")}</Label>
           <Input
             value={form.title}
             onChange={(e) => onFieldChange("title", e.target.value)}
-            placeholder="Panamá JS Meetup #42"
+            placeholder={t("eventForm.titlePlaceholder")}
           />
         </div>
 
         <div className="space-y-2">
-          <Label>Description</Label>
+          <Label>{t("eventForm.descriptionLabel")}</Label>
           <Textarea
             rows={4}
             value={form.description}
             onChange={(e) => onFieldChange("description", e.target.value)}
-            placeholder="What's happening, who it's for, anything to bring…"
+            placeholder={t("eventForm.descriptionPlaceholder")}
           />
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label>Starts *</Label>
+            <Label>{t("eventForm.starts")}</Label>
             <Input
               type="datetime-local"
               value={form.date}
@@ -76,7 +79,7 @@ export function EventFormPanel({
             />
           </div>
           <div className="space-y-2">
-            <Label>Ends *</Label>
+            <Label>{t("eventForm.ends")}</Label>
             <Input
               type="datetime-local"
               value={form.endDate}
@@ -86,30 +89,30 @@ export function EventFormPanel({
         </div>
 
         <div className="space-y-2">
-          <Label>Location</Label>
+          <Label>{t("eventForm.location")}</Label>
           <Input
             value={form.location}
             onChange={(e) => onFieldChange("location", e.target.value)}
-            placeholder="Venue, neighborhood"
+            placeholder={t("eventForm.locationPlaceholder")}
           />
         </div>
 
         <div className="space-y-2">
-          <Label>Event page</Label>
+          <Label>{t("eventForm.eventPage")}</Label>
           <Input
             type="url"
             inputMode="url"
             value={form.sourceEventPage}
             onChange={(e) => onFieldChange("sourceEventPage", e.target.value)}
-            placeholder="https://… (optional)"
+            placeholder={t("eventForm.eventPagePlaceholder")}
           />
           <p className="text-xs text-muted-foreground">
-            Link to the original listing, e.g. Meetup or Eventbrite.
+            {t("eventForm.eventPageHint")}
           </p>
         </div>
 
         <div className="space-y-2">
-          <Label>Tags</Label>
+          <Label>{t("eventForm.tags")}</Label>
           <TagInput
             value={form.tags}
             onChange={(tags) => onFieldChange("tags", tags)}
@@ -119,7 +122,7 @@ export function EventFormPanel({
         </div>
 
         <div className="space-y-2">
-          <Label>Image URL</Label>
+          <Label>{t("eventForm.imageUrl")}</Label>
           <Input
             value={form.image}
             onChange={(e) => onFieldChange("image", e.target.value)}
@@ -129,11 +132,11 @@ export function EventFormPanel({
             <div className="relative mt-3 overflow-hidden rounded-xl border border-border">
               <img
                 src={preview}
-                alt="Preview"
+                alt={t("eventForm.previewAlt")}
                 className="h-40 w-full object-cover"
               />
               <span className="absolute top-2 right-2 rounded-md bg-background/80 px-2 py-0.5 text-xs text-muted-foreground">
-                Preview
+                {t("common.preview")}
               </span>
             </div>
           )}
@@ -145,7 +148,7 @@ export function EventFormPanel({
           disabled={disabled || !form.title || !form.date || !form.endDate}
         >
           {submitIcon}
-          {busy ? "Working…" : submitLabel}
+          {busy ? t("eventForm.working") : submitLabel}
         </Button>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { useNavigate } from "@tanstack/react-router"
 import { CalendarPlus, Download, MapPin } from "lucide-react"
 import type { KeyboardEvent, MouseEvent } from "react"
+import { useTranslation } from "react-i18next"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -27,6 +28,7 @@ export function EventCard({
   emphasis?: EventCardEmphasis
 }) {
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const openEventDetails = () => {
     runViewTransition(() =>
@@ -113,7 +115,7 @@ export function EventCard({
               }}
             >
               <CalendarPlus />
-              Add to calendar
+              {t("eventCard.addToCalendar")}
             </a>
           </Button>
           <Button

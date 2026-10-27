@@ -11,18 +11,24 @@ import {
 } from "date-fns"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useMemo, useRef, useState, type PointerEvent } from "react"
+import { useTranslation } from "react-i18next"
 
 import { Button } from "@/components/ui/button"
 import { getEventDayKeys, toDayKey } from "@/lib/event-days"
+import { getDateFnsLocale } from "@/lib/i18n-date"
 import { cn } from "@/lib/utils"
 import { runViewTransition } from "@/lib/view-transitions"
 import type { MeetupEvent } from "@/types/event"
 
-const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+const WEEKDAY_KEYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const
 const MAX_VISIBLE_PER_DAY = 2
 const SWIPE_THRESHOLD_PX = 60
 
 type SlideDirection = "next" | "prev" | null
+
+function capitalizeFirst(value: string) {
+  return value.charAt(0).toUpperCase() + value.slice(1)
+}
 
 export function EventCalendar({
   events,
@@ -34,10 +40,15 @@ export function EventCalendar({
   onSelectDay: (dayKey: string) => void
 }) {
   const navigate = useNavigate()
+  const { t } = useTranslation()
+  const dateLocale = getDateFnsLocale()
   const todayKey = toDayKey(new Date())
 
   const [month, setMonth] = useState(() =>
     startOfMonth(events[0] ? new Date(events[0].date) : new Date())
+  )
+  const monthLabel = capitalizeFirst(
+    format(month, "LLLL yyyy", { locale: dateLocale })
   )
   const [direction, setDirection] = useState<SlideDirection>(null)
   const swipeStart = useRef<{ x: number; y: number } | null>(null)
@@ -117,12 +128,12 @@ export function EventCalendar({
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
           <h2 className="font-serif text-2xl font-semibold sm:text-3xl">
-            {format(month, "MMMM yyyy")}
+            {monthLabel}
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
             {monthEventCount === 0
-              ? "Nothing scheduled this month yet."
-              : `${monthEventCount} ${monthEventCount === 1 ? "event" : "events"} this month`}
+              ? t("calendar.nothingScheduled")
+              : t("calendar.eventCount", { count: monthEventCount })}
           </p>
         </div>
 
@@ -133,13 +144,13 @@ export function EventCalendar({
             className="rounded-xl px-4"
             onClick={goToToday}
           >
-            Today
+            {t("calendar.today")}
           </Button>
           <Button
             variant="outline"
             size="icon-lg"
             className="rounded-xl"
-            aria-label="Previous month"
+            aria-label={t("calendar.previousMonth")}
             onClick={() => slide(-1)}
           >
             <ChevronLeft />
@@ -148,7 +159,7 @@ export function EventCalendar({
             variant="outline"
             size="icon-lg"
             className="rounded-xl"
-            aria-label="Next month"
+            aria-label={t("calendar.nextMonth")}
             onClick={() => slide(1)}
           >
             <ChevronRight />
@@ -157,12 +168,15 @@ export function EventCalendar({
       </div>
 
       <div className="grid grid-cols-7 gap-1 pb-2 text-center text-xs font-semibold text-muted-foreground/70 sm:gap-2">
-        {WEEKDAYS.map((weekday) => (
-          <span key={weekday}>
-            <span className="sm:hidden">{weekday[0]}</span>
-            <span className="hidden sm:inline">{weekday}</span>
-          </span>
-        ))}
+        {WEEKDAY_KEYS.map((weekdayKey) => {
+          const label = t(`weekdays.${weekdayKey}`)
+          return (
+            <span key={weekdayKey}>
+              <span className="sm:hidden">{label.charAt(0)}</span>
+              <span className="hidden sm:inline">{label}</span>
+            </span>
+          )
+        })}
       </div>
 
       <div
@@ -180,9 +194,9 @@ export function EventCalendar({
         <div
           key={toDayKey(month)}
           role="grid"
-          aria-label={format(month, "MMMM yyyy")}
+          aria-label={monthLabel}
           className={cn(
-            "grid grid-cols-7 gap-1 duration-300 ease-out animate-in fade-in sm:gap-2",
+            "grid animate-in grid-cols-7 gap-1 duration-300 ease-out fade-in sm:gap-2",
             direction === "next" && "slide-in-from-right-10",
             direction === "prev" && "slide-in-from-left-10"
           )}
@@ -216,7 +230,10 @@ export function EventCalendar({
                     <button
                       type="button"
                       aria-pressed={isSelected}
-                      aria-label={`${format(day, "EEEE, MMMM d")}, ${dayEvents.length} ${dayEvents.length === 1 ? "event" : "events"}`}
+                      aria-label={t("calendar.dayAria", {
+                        date: format(day, "PPPP", { locale: dateLocale }),
+                        count: dayEvents.length,
+                      })}
                       className={cn(
                         "grid h-7 w-7 place-items-center rounded-lg text-sm font-bold outline-none focus-visible:ring-3 focus-visible:ring-ring/40",
                         isSelected
@@ -279,7 +296,7 @@ export function EventCalendar({
                       ))}
                       {hiddenCount > 0 ? (
                         <span className="px-2 text-xs text-muted-foreground">
-                          +{hiddenCount} more
+                          {t("calendar.more", { count: hiddenCount })}
                         </span>
                       ) : null}
                     </div>
@@ -294,18 +311,18 @@ export function EventCalendar({
       <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 border-t border-border pt-4 text-xs text-muted-foreground">
         <span className="flex items-center gap-2">
           <i className="h-3 w-3 rounded-[4px] border border-primary/50 bg-primary/15" />
-          Has events
+          {t("calendar.hasEvents")}
         </span>
         <span className="flex items-center gap-2">
           <i className="h-3 w-3 rounded-[4px] bg-accent" />
-          Selected day
+          {t("calendar.selectedDay")}
         </span>
         <span className="flex items-center gap-2">
           <i className="h-3 w-3 rounded-[4px] ring-1 ring-foreground/70" />
-          Today
+          {t("calendar.today")}
         </span>
         <span className="ml-auto hidden sm:inline">
-          Swipe or use the arrows to change months
+          {t("calendar.swipeHint")}
         </span>
       </div>
     </section>

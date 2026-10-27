@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
 import { Funnel } from "lucide-react"
 import { useMemo, useState } from "react"
+import { useTranslation } from "react-i18next"
 
 import { PageHeader } from "@/components/page-header"
 import { StatePanel } from "@/components/state-panel"
@@ -14,13 +15,14 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { listPastEvents } from "@/lib/api"
+import { getIntlLocale } from "@/lib/i18n-date"
 import { queryKeys } from "@/lib/query-keys"
 import type { MeetupEvent } from "@/types/event"
 
 const MAX_VISIBLE_TAGS = 3
 
 function formatShortDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString("en-US", {
+  return new Date(dateStr).toLocaleDateString(getIntlLocale(), {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -69,6 +71,7 @@ function PastEventRow({ event }: { event: MeetupEvent }) {
 }
 
 export function PastEventsPage() {
+  const { t } = useTranslation()
   const {
     data: events = [],
     isPending,
@@ -88,17 +91,19 @@ export function PastEventsPage() {
   return (
     <div>
       <PageHeader
-        title="Past events"
-        description="The ten most recent events that already took place."
+        title={t("pages.pastEvents.title")}
+        description={t("pages.pastEvents.description")}
         actions={
           <div className="flex items-center gap-2">
             <Funnel className="h-4 w-4 text-muted-foreground" aria-hidden />
             <Select value={selectedTag} onValueChange={setSelectedTag}>
-              <SelectTrigger aria-label="Filter past events by tag">
-                <SelectValue placeholder="All tags" />
+              <SelectTrigger aria-label={t("pages.pastEvents.filterLabel")}>
+                <SelectValue placeholder={t("pages.pastEvents.allTags")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All tags</SelectItem>
+                <SelectItem value="all">
+                  {t("pages.pastEvents.allTags")}
+                </SelectItem>
                 {tagOptions.map((tag) => (
                   <SelectItem key={tag} value={tag}>
                     {tag}
@@ -111,11 +116,11 @@ export function PastEventsPage() {
       />
 
       {isPending ? (
-        <StatePanel>Loading past events…</StatePanel>
+        <StatePanel>{t("pages.pastEvents.loading")}</StatePanel>
       ) : isError ? (
-        <StatePanel tone="error">Failed to load past events.</StatePanel>
+        <StatePanel tone="error">{t("pages.pastEvents.error")}</StatePanel>
       ) : events.length === 0 ? (
-        <StatePanel>No past events yet.</StatePanel>
+        <StatePanel>{t("pages.pastEvents.empty")}</StatePanel>
       ) : (
         <div className="divide-y divide-border/70 overflow-hidden rounded-2xl border border-border bg-card">
           {events.map((event) => (

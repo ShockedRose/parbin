@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -5,13 +7,16 @@ import { useEventManagerContext } from "@/event-manager-context"
 import { LogIn } from "lucide-react"
 
 export function AdminLoginCard() {
+  const { t } = useTranslation()
   const mgr = useEventManagerContext()
 
   return (
     <div className="mx-auto max-w-md rounded-2xl border border-border bg-card p-6 sm:p-8">
-      <h2 className="font-serif text-xl font-semibold">Sign in</h2>
+      <h2 className="font-serif text-xl font-semibold">
+        {t("pages.login.title")}
+      </h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        Admin access is required for this page.
+        {t("pages.login.description")}
       </p>
 
       <form
@@ -22,7 +27,7 @@ export function AdminLoginCard() {
         }}
       >
         <div className="space-y-2">
-          <Label htmlFor="admin-email">Email</Label>
+          <Label htmlFor="admin-email">{t("pages.login.email")}</Label>
           <Input
             id="admin-email"
             type="email"
@@ -34,7 +39,7 @@ export function AdminLoginCard() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="admin-password">Password</Label>
+          <Label htmlFor="admin-password">{t("pages.login.password")}</Label>
           <Input
             id="admin-password"
             type="password"
@@ -54,7 +59,9 @@ export function AdminLoginCard() {
           }
         >
           <LogIn />
-          {mgr.isAuthenticating ? "Signing in…" : "Sign in"}
+          {mgr.isAuthenticating
+            ? t("pages.login.signingIn")
+            : t("pages.login.signIn")}
         </Button>
       </form>
     </div>
