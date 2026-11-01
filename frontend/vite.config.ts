@@ -11,6 +11,7 @@ const httpsEnabled = process.env.VITE_HTTPS !== "false"
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/',
   plugins: [react(), tailwindcss(), ...(httpsEnabled ? [mkcert()] : [])],
   resolve: {
     alias: {
