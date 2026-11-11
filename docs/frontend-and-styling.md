@@ -39,7 +39,7 @@ To add a language: add a locale file, register it in `src/i18n/index.ts`, and ex
 `src/index.css` is the single main stylesheet:
 
 1. Imports **Tailwind** (`@import "tailwindcss"`), **tw-animate-css**, and **shadcn**’s `tailwind.css`.
-2. Defines **CSS variables** on `:root` and `.dark` (identical, dark-only palette) for semantic colors: `background` (`#0a0e14`), `card`, `popover`, `muted`, `foreground`, `primary` blue (`#0095ff`, used for events), `accent` / destructive rose (`#e11d48`, used for selection and active states), `border`, `input`, `radius` (`0.75rem`), sidebar tokens, chart colors, etc.
+2. Defines **CSS variables** on `:root` and `.dark` (identical, dark-only palette) for semantic colors: `background` (`#151c26`), `card` (`#1c2632`), `popover`, `muted`, `foreground`, `primary` blue (`#0095ff`, used for events), `accent` / destructive rose (`#e11d48`, used for selection and active states), `border` (`#2e3d50`), `input`, `radius` (`0.75rem`), sidebar tokens, chart colors, etc. The background is deliberately lifted off pure near-black so elevation shadows (`rgba(0,0,0,…)`) stay visible; hover states lift cards with a Y-offset shadow rather than changing `border`.
 3. **`@theme inline`** maps those variables to Tailwind theme keys (`--font-sans: "Schibsted Grotesk"`, `--font-serif: "Literata"`, color and radius scales).
 4. **`@layer components`** defines Parbin-specific utilities:
    - `.parbin-backdrop` — fixed, soft radial blue glow behind the page top (rendered once in `main-page.tsx`)

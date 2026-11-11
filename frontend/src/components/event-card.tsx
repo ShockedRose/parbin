@@ -55,9 +55,9 @@ export function EventCard({
     <article
       data-event-id={event.id}
       className={cn(
-        "group flex h-full min-h-0 cursor-pointer flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all duration-300 outline-none hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-[0_22px_40px_-28px_rgba(0,0,0,0.9)] focus-visible:ring-3 focus-visible:ring-ring/40",
+        "flex h-full min-h-0 cursor-pointer flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all duration-300 outline-none hover:-translate-y-0.5 hover:shadow-[0_8px_16px_-8px_rgba(0,0,0,0.5),0_20px_36px_-20px_rgba(0,0,0,0.6)] focus-visible:ring-3 focus-visible:ring-ring/40",
         emphasis === "highlighted" &&
-          "border-accent/70 shadow-[0_0_0_1px_var(--accent),0_22px_40px_-28px_color-mix(in_srgb,var(--accent)_60%,transparent)] hover:border-accent/70",
+          "border-accent/70 shadow-[0_0_0_1px_var(--accent)] hover:shadow-[0_0_0_1px_var(--accent),0_8px_16px_-8px_rgba(0,0,0,0.5),0_20px_36px_-20px_rgba(0,0,0,0.6)]",
         emphasis === "dimmed" && "opacity-35 hover:opacity-80"
       )}
       role="button"
@@ -69,7 +69,7 @@ export function EventCard({
         <img
           src={event.image}
           alt={event.title}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          className="h-full w-full object-cover"
           style={{
             filter: "brightness(0.88)",
             viewTransitionName: getEventImageTransitionName(event.id),
