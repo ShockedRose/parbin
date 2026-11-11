@@ -9,12 +9,12 @@ import { cn } from "@/lib/utils"
 export function BrandMark({ className }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 92 46"
+      viewBox="3 0 89 46"
       aria-hidden
       className={cn("fill-accent", className)}
     >
-      {/* Featured pin behind the person, with a punched-out hole */}
-      <g transform="translate(0.65 18.715) scale(1.05)">
+      {/* Featured pin behind the person, tilted and ~20% smaller, hole punched out */}
+      <g transform="translate(1.6 18.5) rotate(-15 12 11.8) scale(0.96)">
         <path
           d="M12 21.7c-.33 0-.65-.13-.9-.37C8.6 18.9 3 13.4 3 10.3 3 5.5 7 1.9 12 1.9s9 3.6 9 8.4c0 3.1-5.6 8.6-8.1 11.03-.25.24-.57.37-.9.37ZM12 7.3a2.7 2.7 0 1 0 0 5.4 2.7 2.7 0 1 0 0-5.4Z"
           fillRule="evenodd"
