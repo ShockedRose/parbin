@@ -2,6 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 
+import { BrandMark } from "@/components/brand-mark"
 import { LanguageSwitcher } from "@/components/language-switcher"
 import { Button } from "@/components/ui/button"
 import {
@@ -62,12 +63,7 @@ function Logo() {
 
   return (
     <Link to="/" className="flex items-center gap-3">
-      <span
-        className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] border border-border bg-card"
-        aria-hidden
-      >
-        <span className="h-3 w-3 rounded-full bg-accent" />
-      </span>
+      <BrandMark className="h-11 w-auto shrink-0 max-sm:h-9" />
       <span className="leading-tight">
         <span className="block font-serif text-xl font-semibold">
           {t("common.appName")}
