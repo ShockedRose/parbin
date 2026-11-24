@@ -81,7 +81,7 @@ export function BrandMark({ className }: { className?: string }) {
             fontWeight="700"
             textLength="41.5"
             lengthAdjust="spacingAndGlyphs"
-            className="fill-card"
+            fill="#ffffff"
           >
             ¡Qué Xopa!
           </text>
