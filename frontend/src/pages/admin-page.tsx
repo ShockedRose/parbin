@@ -1,20 +1,26 @@
 import { Link, useNavigate } from "@tanstack/react-router"
+import { useState } from "react"
 import { useTranslation } from "react-i18next"
 
 import { AdminLoginCard } from "@/components/admin-login-card"
 import { EventFormPanel } from "@/components/event-form-panel"
 import { PageHeader } from "@/components/page-header"
+import { SuggestionPreviewDialog } from "@/components/suggestion-preview-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useEventManagerContext } from "@/event-manager-context"
 import { formatDateRange } from "@/lib/calendar"
+import {
+  SUGGESTION_STATUS_LABEL_KEYS,
+  SUGGESTION_STATUS_STYLES,
+} from "@/lib/suggestion-status"
 import { cn } from "@/lib/utils"
-import type { EventSuggestion } from "@/types/event"
 import {
   BarChart3,
   Calendar,
   Check,
   ExternalLink,
+  Eye,
   LogOut,
   MapPin,
   Plus,
@@ -22,22 +28,18 @@ import {
   X,
 } from "lucide-react"
 
-const STATUS_STYLES: Record<EventSuggestion["status"], string> = {
-  pending: "border-primary/40 bg-primary/10 text-foreground",
-  approved: "border-emerald-400/40 bg-emerald-400/10 text-emerald-300",
-  rejected: "border-accent/40 bg-accent/10 text-foreground",
-}
-
-const STATUS_LABEL_KEYS: Record<EventSuggestion["status"], string> = {
-  pending: "status.pending",
-  approved: "status.approved",
-  rejected: "status.rejected",
-}
-
 export function AdminPage() {
   const { t } = useTranslation()
   const mgr = useEventManagerContext()
   const navigate = useNavigate()
+  const [previewSuggestionId, setPreviewSuggestionId] = useState<string | null>(
+    null
+  )
+
+  const previewSuggestion =
+    mgr.suggestions.find(
+      (suggestion) => suggestion.id === previewSuggestionId
+    ) ?? null
 
   const handleAddEvent = async () => {
     const wasCreated = await mgr.addEvent()
@@ -196,9 +198,11 @@ export function AdminPage() {
 
                         <Badge
                           variant="outline"
-                          className={STATUS_STYLES[suggestion.status]}
+                          className={
+                            SUGGESTION_STATUS_STYLES[suggestion.status]
+                          }
                         >
-                          {t(STATUS_LABEL_KEYS[suggestion.status])}
+                          {t(SUGGESTION_STATUS_LABEL_KEYS[suggestion.status])}
                         </Badge>
                       </div>
 
@@ -237,6 +241,16 @@ export function AdminPage() {
 
                       <div className="flex flex-wrap gap-2">
                         <Button
+                          variant="outline"
+                          onClick={() => {
+                            setPreviewSuggestionId(suggestion.id)
+                          }}
+                          className="rounded-lg px-3"
+                        >
+                          <Eye />
+                          {t("common.preview")}
+                        </Button>
+                        <Button
                           onClick={() => {
                             void mgr.approveSuggestion(suggestion.id)
                           }}
@@ -266,6 +280,22 @@ export function AdminPage() {
               </div>
             )}
           </section>
+
+          <SuggestionPreviewDialog
+            suggestion={previewSuggestion}
+            open={previewSuggestion !== null}
+            onOpenChange={(open) => {
+              if (!open) {
+                setPreviewSuggestionId(null)
+              }
+            }}
+            onApprove={mgr.approveSuggestion}
+            onReject={mgr.rejectSuggestion}
+            busy={
+              previewSuggestion !== null &&
+              mgr.activeSuggestionId === previewSuggestion.id
+            }
+          />
         </div>
       )}
     </div>

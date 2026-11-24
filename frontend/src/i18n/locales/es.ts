@@ -90,6 +90,10 @@ export const es = {
       noDescription: "Sin descripción.",
       approve: "Aprobar",
       reject: "Rechazar",
+      previewTitle: "Vista previa del evento",
+      previewHint:
+        "Así se verá la sugerencia en la página pública del evento. Aprueba para publicarla o rechaza para descartarla.",
+      previewClose: "Cerrar vista previa",
     },
     eventDetails: {
       allEvents: "Todos los eventos",

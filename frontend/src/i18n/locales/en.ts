@@ -90,6 +90,10 @@ export const en = {
       noDescription: "No description provided.",
       approve: "Approve",
       reject: "Reject",
+      previewTitle: "Event preview",
+      previewHint:
+        "This is how the suggestion will appear on the public event page. Approve to publish it or reject to discard it.",
+      previewClose: "Close preview",
     },
     eventDetails: {
       allEvents: "All events",
