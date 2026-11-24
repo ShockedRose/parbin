@@ -388,16 +388,20 @@ export function useEventManager() {
   const approveSuggestion = async (id: string) => {
     try {
       await approveSuggestionMutation.mutateAsync(id)
+      return true
     } catch {
       /* surfaced via mutation error */
+      return false
     }
   }
 
   const rejectSuggestion = async (id: string) => {
     try {
       await rejectSuggestionMutation.mutateAsync(id)
+      return true
     } catch {
       /* surfaced via mutation error */
+      return false
     }
   }
 
