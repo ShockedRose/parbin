@@ -89,7 +89,7 @@ parbin/
 
 | Area | Role |
 | ---- | ---- |
-| `router.tsx` | Declares routes: `/`, `events/$eventId`, `suggest`, `admin`, `admin/dashboard`, `past-events`; root component is `AppShell`. |
+| `router.tsx` | Declares routes: `/`, `events/$eventId`, `suggest`, `admin`, `admin/dashboard`, `past-events`, `privacy`, `terms`; root component is `AppShell`. |
 | `main-page.tsx` | Layout shell: `.parbin-backdrop`, `AppHeader`, `Outlet`, `AppFooter`, global banners. |
 | `docs/history/` | Archived static design candidates; #04 Calm Calendar is the shipped direction. |
 | `hooks/use-event-manager.ts` | Central client state: admin session, events, mutations, talks to `lib/api.ts`. |

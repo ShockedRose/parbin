@@ -10,7 +10,9 @@ import { AdminPage } from "@/pages/admin-page"
 import { EventDetailsPage } from "@/pages/event-details-page"
 import { EventsPage } from "@/pages/events-page"
 import { PastEventsPage } from "@/pages/past-events-page"
+import { PrivacyPage } from "@/pages/privacy-page"
 import { SuggestPage } from "@/pages/suggest-page"
+import { TermsPage } from "@/pages/terms-page"
 
 const rootRoute = createRootRoute({
   component: AppShell,
@@ -52,6 +54,18 @@ const pastEventsRoute = createRoute({
   component: PastEventsPage,
 })
 
+const privacyRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "privacy",
+  component: PrivacyPage,
+})
+
+const termsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "terms",
+  component: TermsPage,
+})
+
 const routeTree = rootRoute.addChildren([
   eventsRoute,
   eventDetailsRoute,
@@ -59,6 +73,8 @@ const routeTree = rootRoute.addChildren([
   adminRoute,
   adminDashboardRoute,
   pastEventsRoute,
+  privacyRoute,
+  termsRoute,
 ])
 
 export const router = createRouter({
