@@ -62,7 +62,7 @@ Dark mode variant: `@custom-variant dark (&:is(.dark *));`. The app ships a sing
 | ---- | -------- |
 | `src/components/ui/` | Reusable primitives: button, card, dialog, select, tabs, etc. |
 | `src/components/` | App chrome and features: `app-header`, `app-footer`, `page-header`, `state-panel`, `event-card`, `event-calendar` (sliding/swipeable month calendar shown below the upcoming feed), `event-form-panel`, `tag-input`, `status-banner`, `language-switcher`, … |
-| `src/pages/` | Route screens: `events-page`, `event-details-page`, `suggest-page`, `admin-page`, `admin-dashboard-page`, `past-events-page` |
+| `src/pages/` | Route screens: `events-page`, `event-details-page`, `suggest-page`, `admin-page`, `admin-dashboard-page`, `past-events-page`, `privacy-page`, `terms-page` |
 | `src/i18n/` | i18next setup and `locales/es.ts` / `locales/en.ts` translation resources |
 | `src/hooks/` | e.g. `use-event-manager.ts` — session, queries, mutations |
 | `src/lib/utils.ts` | `cn()` helper (clsx + tailwind-merge) |
